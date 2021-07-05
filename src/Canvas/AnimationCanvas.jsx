@@ -29,9 +29,6 @@ function AnimationCanvas() {
           <BaseSprite position={s.position} />
         ))}
       </div>
-      <div style={{width: '100%', height: 200, borderTop: 'solid 1px #d7d7d7'}}>
-          
-      </div>
     </div>
   );
 }

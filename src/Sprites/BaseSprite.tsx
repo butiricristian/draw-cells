@@ -38,7 +38,7 @@ export default function BaseSprite({position}: BaseSpriteProps) {
 
   return (
     <>
-      <Draggable>
+      <Draggable bounds="parent">
         <div onContextMenu={handleClick} style={{width: 50, height: 50, backgroundColor: '#252525', cursor: 'pointer', position: 'absolute', left: position.x, top: position.y}}>
         </div>
       </Draggable>
