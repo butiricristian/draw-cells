@@ -1,63 +1,21 @@
-import React from 'react'
-import { AppBar, IconButton, makeStyles, Toolbar, Typography } from '@material-ui/core'
-import clsx from 'clsx'
-import MenuIcon from '@material-ui/icons/Menu';
-
-const drawerWidth = 240;
-
-const useStyles = makeStyles((theme) => ({
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  menuButton: {
-    marginRight: 36,
-  },
-  hide: {
-    display: 'none',
-  },
-}));
+import { AppBar, Button, Toolbar, Typography, useTheme } from '@material-ui/core';
+import React from 'react';
 
 interface HeaderProps {
-  handleDrawerOpen: () => void,
+  setIsAnimantionPreviewOpen: (value: boolean) => void,
 }
 
-const Header = ({handleDrawerOpen}: HeaderProps) => {
-  const classes = useStyles()
+const Header = ({setIsAnimantionPreviewOpen}: HeaderProps) => {
+  const theme = useTheme()
 
   return (
-    <AppBar
-      position="fixed"
-      className={clsx(classes.appBar, {
-        [classes.appBarShift]: open,
-      })}
-    >
-      <Toolbar>
-        <IconButton
-          color="inherit"
-          aria-label="open drawer"
-          onClick={handleDrawerOpen}
-          edge="start"
-          className={clsx(classes.menuButton, {
-            [classes.hide]: open,
-          })}
-        >
-          <MenuIcon />
-        </IconButton>
-        <Typography variant="h6" noWrap>
-          Mini variant drawer
+    <AppBar position="static" style={{zIndex: 25}}>
+      <Toolbar style={{paddingLeft: theme.spacing(7), paddingRight: theme.spacing(7)}}>
+        <Typography variant="h6" style={{flexGrow: 1}}>
+          Draw Cells
         </Typography>
+        <Button color="inherit">Export</Button>
+        <Button color="inherit" onClick={() => setIsAnimantionPreviewOpen(true)}>Preview</Button>
       </Toolbar>
     </AppBar>
   )

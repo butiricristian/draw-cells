@@ -1,12 +1,12 @@
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import React, { useState } from 'react';
+import React from 'react';
 import { useDrag } from 'react-dnd';
-import BaseSidebar from './BaseSidebar';
-import SidebarInterface from '../interfaces/SidebarInterface';
 import { useDispatch, useSelector } from 'react-redux';
 import State from '../../stateInterface';
 import { toggleSprites } from '../actions';
+import SidebarInterface from '../interfaces/SidebarInterface';
+import BaseSidebar from './BaseSidebar';
 
 export default function SpritesSidebar({width}: SidebarInterface) {
   const [{isDragging: isSquareDragging}, squareDrag] = useDrag(() => ({

@@ -1,8 +1,6 @@
 import { IconButton, useTheme } from '@material-ui/core';
 import React from 'react';
-
-const drawerWidth = 240;
-const bottomDrawerHeight = 240;
+import { bottomDrawerHeight, drawerWidth } from '../../constants';
 
 interface BaseSidebarProps {
   isOpen: boolean,
@@ -25,34 +23,37 @@ export default function BaseSidebar({isOpen, toggleOpen, children, iconRenderer,
   }
 
   let styles = {}
+  const smallDrawerWidth = theme.spacing(6)
   if (anchor === 'left') {
     styles = {
       top: 0,
       left: 0,
-      height: '100vh',
-      width: isOpen ? drawerWidth : theme.spacing(9),
+      height: `calc(100vh - ${theme.spacing(8)}px`,
+      width: isOpen ? drawerWidth : smallDrawerWidth,
       borderRight: 'solid 1px #ddd',
       transition: 'width 0.3s ease-out',
       zIndex: 5,
+      marginTop: theme.spacing(8),
     }
   } else if (anchor === 'right') {
     styles = {
       top: 0,
       right: 0,
-      height: '100vh',
-      width: isOpen ? drawerWidth : theme.spacing(9),
+      height: `calc(100vh - ${theme.spacing(8)}px`,
+      width: isOpen ? drawerWidth : smallDrawerWidth,
       borderLeft: 'solid 1px #ddd',
       transition: 'width 0.3s ease-out',
       zIndex: 5,
+      marginTop: theme.spacing(8),
     }
   } else if (anchor === 'bottom') {
     styles = {
       bottom: 0,
       left: 0,
       right: 20,
-      height: isOpen ? bottomDrawerHeight : theme.spacing(9),
-      width: 'calc(100% - 144px)',
-      marginLeft: 73,
+      height: isOpen ? bottomDrawerHeight : smallDrawerWidth,
+      width: `calc(100% - ${2*smallDrawerWidth}px)`,
+      marginLeft: smallDrawerWidth - 1,
       borderTop: 'solid 1px #ddd',
       transition: 'height 0.3s ease-out',
       zIndex: 1,

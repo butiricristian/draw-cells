@@ -1,15 +1,7 @@
 import { Menu, MenuItem } from '@material-ui/core';
 import React from 'react';
 import Draggable from 'react-draggable';
-
-interface Position {
-  x: number,
-  y: number,
-}
-
-interface BaseSpriteProps {
-  position: Position
-}
+import { Sprite } from '../Frames/reducers/frames';
 
 interface StateProps {
   mouseX: number | null,
@@ -21,7 +13,7 @@ const initialState: StateProps = {
   mouseY: null,
 };
 
-export default function BaseSprite({position}: BaseSpriteProps) {
+export default function BaseSprite({position}: Sprite) {
   const [state, setState] = React.useState(initialState);
 
   const handleClick = (event: any) => {
