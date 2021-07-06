@@ -10,11 +10,12 @@ import State from '../stateInterface';
 function AnimationCanvas() {
   const dispatch = useDispatch()
   const sprites = useSelector((state: State) => state.frames.currentFrame.sprites)
+  console.log(sprites)  
   const theme = useTheme()
 
   function createSprite(pos: XYCoord | null){
     if (pos) {
-      dispatch(addSprite({id: 1, position: pos}))
+      dispatch(addSprite({id: sprites.length + 1, position: pos}))
     }
   }
 

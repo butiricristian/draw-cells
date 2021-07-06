@@ -1,7 +1,11 @@
-import { Menu, MenuItem } from '@material-ui/core';
+import { makeStyles, Menu, MenuItem } from '@material-ui/core';
+import clsx from 'clsx';
 import React from 'react';
-import Draggable from 'react-draggable';
-import { Sprite } from '../Frames/reducers/frames';
+import Draggable, { DraggableData } from 'react-draggable';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCurrentSprite, updateCurrentSpritePosition } from '../Frames/actions';
+import { Position, Sprite } from '../Frames/reducers/frames';
+import State from '../stateInterface';
 
 interface StateProps {
   mouseX: number | null,
@@ -13,8 +17,32 @@ const initialState: StateProps = {
   mouseY: null,
 };
 
-export default function BaseSprite({position}: Sprite) {
+const useStyles = makeStyles({
+  selected: {
+    border: 'dashed 2px red',
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    padding: 1
+  },
+  sprite: {
+    backgroundColor: '#252525',
+    width: '100%',
+    height: '100%',
+    margin: 3
+  },
+  spriteContainer: {
+    position: 'absolute',
+    cursor: 'pointer',
+    width: 50,
+    height: 50, 
+  }
+})
+
+export default function BaseSprite({position, id}: Sprite) {
   const [state, setState] = React.useState(initialState);
+  const currentSpriteId = useSelector((state: State) => state.frames.currentSprite?.id)
+  const classes = useStyles()
 
   const handleClick = (event: any) => {
     event.preventDefault();
@@ -28,10 +56,34 @@ export default function BaseSprite({position}: Sprite) {
     setState(initialState);
   };
 
+  const dispatch = useDispatch()
+  const handleSelectSprite = () => {
+    dispatch(setCurrentSprite(id))
+  }
+
+  const handleOnStop = (e: any, data: DraggableData) => {
+    console.log(e)
+    console.log(data)
+    const pos: Position = {x: position.x + e.offsetX, y: position.y + e.offsetY}
+    console.log(pos)
+    dispatch(updateCurrentSpritePosition(id, pos))
+  }
+
   return (
     <>
-      <Draggable bounds="parent">
-        <div onContextMenu={handleClick} style={{width: 50, height: 50, backgroundColor: '#252525', cursor: 'pointer', position: 'absolute', left: position.x, top: position.y}}>
+      <Draggable bounds="parent" onStop={handleOnStop}>
+        <div className={classes.spriteContainer} style={{left: position.x, top: position.y}}>
+          <div 
+            className={clsx({[classes.selected]: id === currentSpriteId})} 
+            style={{backgroundColor: 'transparent'}}
+          >
+          </div>
+          <div 
+            onContextMenu={handleClick}
+            className={classes.sprite}
+            onClick={handleSelectSprite}
+          >
+          </div>
         </div>
       </Draggable>
       <Menu
