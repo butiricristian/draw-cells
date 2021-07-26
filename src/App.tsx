@@ -23,7 +23,7 @@ function App() {
       <Header setIsAnimantionPreviewOpen={setIsAnimantionPreviewOpen} />
       <div className="App" style={{display: 'flex', flexDirection: 'row', zIndex: 1}}>
         <AnimationCanvas />
-        <SpritesSidebar width={300} />
+        <SpritesSidebar />
         <FramesSidebar width={300} />
         <PropertiesSidebar width={300}/>
       </div>

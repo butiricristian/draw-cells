@@ -1,32 +1,24 @@
+import { makeStyles } from '@material-ui/core';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import React from 'react';
-import { useDrag } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
+import SidebarSprite from '../../Sprites/SidebarSprite';
 import State from '../../stateInterface';
 import { toggleSprites } from '../actions';
-import SidebarInterface from '../interfaces/SidebarInterface';
 import BaseSidebar from './BaseSidebar';
 
-export default function SpritesSidebar({width}: SidebarInterface) {
-  const [{isDragging: isSquareDragging}, squareDrag] = useDrag(() => ({
-    type: 'SPRITE',
-    item: { type: 'SQUARE' },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging()
-    })
-  }))
+const useStyles = makeStyles({
+  container: {paddingTop: 50, height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center'},
+  sprite: {width: 50, height: 50, cursor: 'pointer'}
+})
 
-  const [{isDragging: isCircleDragging}, circleDrag] = useDrag(() => ({
-    type: 'SPRITE',
-    item: { type: 'CIRCLE' },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging()
-    })
-  }))
+const SPRITES_LIST = ["b_cell_1", "dendritic_cell_1", "dendritic_cell_2", "t_cell_1", "t_cell_2"]
 
+export default function SpritesSidebar() {
   const dispatch = useDispatch()
   const isSpritesSidebarOpen = useSelector((state: State) => state.sidebars.isSpritesOpen)
+  const classes = useStyles()
 
   return (
     <>
@@ -36,9 +28,10 @@ export default function SpritesSidebar({width}: SidebarInterface) {
         iconRenderer={() => isSpritesSidebarOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
         anchor="left"
       >
-        <div style={{paddingTop: 50, height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-          <div ref={squareDrag} style={{width: 50, height: 50, backgroundColor: '#252525', opacity: isSquareDragging ? 0.5 : 1, cursor: 'pointer'}}></div>
-          <div ref={circleDrag} style={{width: 50, height: 50, backgroundColor: '#252525', borderRadius: '50%', opacity: isCircleDragging ? 0.5 : 1, cursor: 'pointer'}}></div>
+        <div className={classes.container}>
+          {SPRITES_LIST.map(s => (
+            <SidebarSprite backgroundUrl={s}/>
+          ))}
         </div>
       </BaseSidebar>
     </>
