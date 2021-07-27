@@ -29,8 +29,8 @@ export default function SpritesSidebar() {
         anchor="left"
       >
         <div className={classes.container}>
-          {SPRITES_LIST.map(s => (
-            <SidebarSprite backgroundUrl={s}/>
+          {SPRITES_LIST.map((s, i) => (
+            <SidebarSprite key={`sprite-${i}`} backgroundUrl={s}/>
           ))}
         </div>
       </BaseSidebar>

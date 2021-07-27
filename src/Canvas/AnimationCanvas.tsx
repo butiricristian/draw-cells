@@ -10,7 +10,6 @@ import State from '../stateInterface';
 function AnimationCanvas() {
   const dispatch = useDispatch()
   const sprites = useSelector((state: State) => state.frames.currentFrame.sprites)
-  console.log(sprites)  
   const theme = useTheme()
 
   function createSprite(pos: XYCoord | null){
@@ -28,7 +27,7 @@ function AnimationCanvas() {
   }))
 
   return (
-    <div style={{flexGrow: 1, height: `calc(100vh - ${theme.spacing(8)}px)`, display: 'flex', flexDirection: 'column'}}>
+    <div style={{flexGrow: 1, height: `calc(100vh - ${theme.spacing(8)}px)`, display: 'flex', flexDirection: 'column'}} id="main-canvas">
       <div ref={drop} style={{flexGrow: 1, backgroundColor: (isOver ? '#d7d7d7' : '#fff')}}>
         {sprites.map((s: Sprite) => (
           <BaseSprite key={`sprite-${s.id}`} id={s.id} position={s.position} />

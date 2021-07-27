@@ -3,8 +3,12 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
 import { TransitionProps } from '@material-ui/core/transitions';
-import Typography from '@material-ui/core/Typography';
 import React from 'react';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import State from '../../stateInterface';
+import { updateCurrentSpritePosition } from '../actions';
+import AnimationContainer from './AnimationContainer';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & { children?: React.ReactElement },
@@ -22,12 +26,13 @@ export default function AnimationPreviewModal({open, setOpen}: AnimationPreviewM
   const handleClose = () => {
     setOpen(false);
   };
+  const framesList = useSelector((state: State)  => state.frames.frames)
 
   return (
     <div>
       <Dialog fullWidth={true} maxWidth="lg" open={open} onClose={handleClose} TransitionComponent={Transition}>
         <DialogContent style={{height: `calc(90vh - 50px)`}}>
-          <Typography variant="h5">This is the preview</Typography>
+          <AnimationContainer/>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} variant="outlined" color="primary">Close</Button>

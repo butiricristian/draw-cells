@@ -82,12 +82,14 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
         id: id,
         position: position
       }
+      const newCurrentFrame = {
+        ...state.currentFrame,
+        sprites: state.currentFrame.sprites.map(s => s.id === id ? newCurrentSprite : s)
+      }
       return {
         ...state,
-        currentFrame: {
-          ...state.currentFrame,
-          sprites: state.currentFrame.sprites.map(s => s.id === id ? newCurrentSprite : s)
-        },
+        frames: state.frames.map(f => f.id === state.currentFrame.id ? newCurrentFrame : f),
+        currentFrame: newCurrentFrame,
         currentSprite: newCurrentSprite
       }
     }

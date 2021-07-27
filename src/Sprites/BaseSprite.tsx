@@ -62,10 +62,7 @@ export default function BaseSprite({position, id}: Sprite) {
   }
 
   const handleOnStop = (e: any, data: DraggableData) => {
-    console.log(e)
-    console.log(data)
     const pos: Position = {x: position.x + e.offsetX, y: position.y + e.offsetY}
-    console.log(pos)
     dispatch(updateCurrentSpritePosition(id, pos))
   }
 

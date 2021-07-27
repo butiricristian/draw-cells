@@ -13,8 +13,9 @@ import PropertiesSidebar from './Sidebars/components/PropertiesSidebar';
 import SpritesSidebar from './Sidebars/components/SpritesSidebar';
 import { sidebars } from './Sidebars/reducers/sidebars';
 
+const store = createStore(combineReducers({sidebars, frames}))
+
 function App() {
-  const store = createStore(combineReducers({sidebars, frames}))
   const [isAnimationPreviewOpen, setIsAnimantionPreviewOpen] = useState(false)
 
   return (
