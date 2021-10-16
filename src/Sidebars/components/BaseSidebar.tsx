@@ -1,6 +1,8 @@
-import { IconButton, useTheme } from '@material-ui/core';
+import { IconButton, Typography, useTheme } from '@material-ui/core';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { bottomDrawerHeight, drawerWidth } from '../../constants';
+import State from '../../stateInterface';
 
 interface BaseSidebarProps {
   isOpen: boolean,
@@ -12,6 +14,8 @@ interface BaseSidebarProps {
 
 export default function BaseSidebar({isOpen, toggleOpen, children, iconRenderer, anchor}: BaseSidebarProps) {
   const theme = useTheme()
+  const isSpritesSidebarOpen = useSelector((state: State) => state.sidebars.isSpritesOpen)
+  const isPropertiesSidebarOpen = useSelector((state: State) => state.sidebars.isPropertiesOpen)
 
   const leftIconStyle = {
     right: 0,
@@ -52,13 +56,15 @@ export default function BaseSidebar({isOpen, toggleOpen, children, iconRenderer,
       left: 0,
       right: 20,
       height: isOpen ? bottomDrawerHeight : smallDrawerWidth,
-      width: `calc(100% - ${2*smallDrawerWidth}px)`,
-      marginLeft: smallDrawerWidth - 1,
+      width: `calc(100% - ${(isPropertiesSidebarOpen ? drawerWidth : smallDrawerWidth) + (isSpritesSidebarOpen ? drawerWidth : smallDrawerWidth)}px)`,
+      marginLeft: (isSpritesSidebarOpen ? drawerWidth : smallDrawerWidth),
       borderTop: 'solid 1px #ddd',
-      transition: 'height 0.3s ease-out',
+      transition: 'height 0.3s ease-out, margin 0.3s ease-out, width 0.3s ease-out',
       zIndex: 1,
     }
   }
+
+  const marginStyle = anchor === 'left' ? {marginRight: 24} : (anchor === 'right' ? {marginLeft: 40} : {marginTop: 24})
 
   return (
     <>
@@ -73,8 +79,13 @@ export default function BaseSidebar({isOpen, toggleOpen, children, iconRenderer,
           <IconButton onClick={toggleOpen}>
             {iconRenderer()}
           </IconButton>
+          {anchor === 'right' && (<Typography variant="subtitle1" style={{transform: 'rotate(-90deg)', position: 'absolute', top: 70, left: -14}}>Properties</Typography>)}
+          {anchor === 'left' && (<Typography variant="subtitle1" style={{transform: 'rotate(-90deg)', position: 'absolute', top: 60, left: -1}}>Sprites</Typography>)}
+          {anchor === 'bottom' && (<Typography component="span" variant="subtitle1" style={{position: 'absolute', top: 10, right: 50}}>Frames</Typography>)}
         </div>
-        {isOpen && children}
+        <div style={{...marginStyle, height: '100%'}}>
+          {isOpen && children}
+        </div>
       </div>
     </>
   );

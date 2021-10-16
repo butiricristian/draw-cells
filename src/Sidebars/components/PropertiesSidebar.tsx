@@ -20,7 +20,7 @@ export default function PropertiesSidebar({width}: SidebarInterface) {
       iconRenderer={() => isPropertiesSidebarOpen ? <ChevronRightIcon /> : <ChevronLeftIcon />}
       anchor="right"
     >
-      <div style={{width: width, height: '100vh'}}>
+      <div style={{height: '100vh'}}>
         <Typography variant="subtitle1">Properties</Typography>
         <Table>
           <TableHead>

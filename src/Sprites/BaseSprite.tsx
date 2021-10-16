@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import React from 'react';
 import { useDrag } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
-import { animated, useSpring } from 'react-spring';
+import { SPRITE_TO_SVG_ELEMENT_MAP } from '../constants';
 import { setCurrentSprite } from '../Frames/actions';
 import { Sprite } from '../Frames/reducers/frames';
 import State from '../stateInterface';
@@ -69,25 +69,21 @@ export default function BaseSprite({position, id, backgroundUrl}: Sprite) {
     })
   }), [position])
 
-  const props = useSpring({to: {left: position.x, top: position.y}})
-
   if (isDragging) {
     return (<div ref={canvasSpriteDrag} style={{position: 'absolute'}}/>)
   }
+
+  const spriteToSvgMap: any = SPRITE_TO_SVG_ELEMENT_MAP
   
   return (
     <div ref={canvasSpriteDrag} className={classes.spriteContainer} style={{left: position.x, top: position.y}}>
       <div 
-        className={clsx({[classes.selected]: id === currentSpriteId})}
-        style={{backgroundColor: 'transparent', backgroundImage: `url('/assets/${backgroundUrl}.svg')`, height: '100%', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'}}
-      >
-      </div>
-      <div 
+        className={clsx(classes.sprite, {[classes.selected]: id === currentSpriteId})}
+        style={{backgroundColor: 'transparent'}}
         onContextMenu={handleClick}
-        className={classes.sprite}
         onClick={handleSelectSprite}
-        style={{width: '100%', height: '100%'}}
       >
+        {backgroundUrl && spriteToSvgMap[backgroundUrl]}
       </div>
       <Menu
         id="simple-menu"

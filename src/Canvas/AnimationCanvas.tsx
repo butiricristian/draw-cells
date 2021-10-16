@@ -2,6 +2,7 @@ import { useTheme } from '@material-ui/core';
 import React from 'react';
 import { useDrop, XYCoord } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
+import { drawerWidth } from '../constants';
 import { addSprite, updateCurrentSpritePosition } from '../Frames/actions';
 import { Position, Sprite } from '../Frames/reducers/frames';
 import BaseSprite from '../Sprites/BaseSprite';
@@ -11,6 +12,22 @@ function AnimationCanvas() {
   const dispatch = useDispatch()
   const sprites = useSelector((state: State) => state.frames.currentFrame.sprites)
   const theme = useTheme()
+  const isFramesSidebarOpen = useSelector((state: State) => state.sidebars.isFramesOpen)
+  const isSpritesSidebarOpen = useSelector((state: State) => state.sidebars.isSpritesOpen)
+  const isPropertiesSidebarOpen = useSelector((state: State) => state.sidebars.isPropertiesOpen)
+
+  const smallDrawerWidth = theme.spacing(6)
+  const headerHeight = theme.spacing(8)
+
+  const containerStyle: any = {
+    flexGrow: 1, 
+    height: `calc(100vh - ${headerHeight + (isFramesSidebarOpen ? drawerWidth : smallDrawerWidth)}px)`,
+    display: 'flex', 
+    flexDirection: 'column',
+    marginLeft: (isSpritesSidebarOpen ? drawerWidth : smallDrawerWidth),
+    marginRight: (isPropertiesSidebarOpen ? drawerWidth : smallDrawerWidth),
+    width: `calc(100vw - ${(isPropertiesSidebarOpen ? drawerWidth : smallDrawerWidth) + (isSpritesSidebarOpen ? drawerWidth : smallDrawerWidth)}px)`,
+  }
 
   function createSprite(pos: XYCoord | null, backgroundUrl: string){
     if (pos) {
@@ -26,11 +43,14 @@ function AnimationCanvas() {
     accept: 'SPRITE',
     drop: (item: any, monitor) => {
       if (item.type === 'SIDEBAR_SPRITE'){
-        createSprite(monitor.getSourceClientOffset(), item.backgroundUrl)
+        createSprite({
+          x: (monitor.getSourceClientOffset()?.x || 0) - drawerWidth,
+          y: (monitor.getSourceClientOffset()?.y || 0) - headerHeight
+        }, item.backgroundUrl)
       } else {
         const pos: Position = {
-          x: item.x + monitor.getDifferenceFromInitialOffset()?.x || 0, 
-          y: item.y + monitor.getDifferenceFromInitialOffset()?.y || 0
+          x: Math.round(item.x + monitor.getDifferenceFromInitialOffset()?.x || 0),
+          y: Math.round(item.y + monitor.getDifferenceFromInitialOffset()?.y || 0)
         }
         updateSpritePosition(item.id, pos)
         return undefined
@@ -42,8 +62,8 @@ function AnimationCanvas() {
   }))
 
   return (
-    <div style={{flexGrow: 1, height: `calc(100vh - ${theme.spacing(8)}px)`, display: 'flex', flexDirection: 'column'}} id="main-canvas">
-      <div ref={drop} style={{flexGrow: 1, backgroundColor: (isOver ? '#d7d7d7' : '#fff')}}>
+    <div style={{...containerStyle, transition: 'all 0.3s ease-out'}} id="main-canvas">
+      <div ref={drop} style={{flexGrow: 1, backgroundColor: (isOver ? '#d7d7d7' : '#fff'), position: 'relative'}}>
         {sprites.map((s: Sprite) => (
           <BaseSprite key={`sprite-${s.id}`} id={s.id} position={s.position} backgroundUrl={s.backgroundUrl} />
         ))}
