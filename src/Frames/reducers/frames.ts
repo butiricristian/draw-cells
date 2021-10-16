@@ -24,6 +24,7 @@ export interface Position {
 export interface Sprite {
   id: number | string | null,
   position: Position,
+  backgroundUrl?: string | undefined,
 }
 
 export interface Frame {
@@ -75,12 +76,12 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
       }
     }
     case Actions.UPDATE_CURRENT_SPRITE_POSITION: {
-      const {id, position}: Sprite = payload
+      const {id, position} = payload
       const crtSprite = state.currentFrame.sprites.find(s => s.id === id) || null
-      const newCurrentSprite = {
+      const newCurrentSprite: Sprite = {
         ...crtSprite,
         id: id,
-        position: position
+        position: position,
       }
       const newCurrentFrame = {
         ...state.currentFrame,

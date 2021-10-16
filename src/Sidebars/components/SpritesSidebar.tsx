@@ -30,7 +30,7 @@ export default function SpritesSidebar() {
       >
         <div className={classes.container}>
           {SPRITES_LIST.map((s, i) => (
-            <SidebarSprite key={`sprite-${i}`} backgroundUrl={s}/>
+            <SidebarSprite key={`sprite-${i}`} backgroundUrl={s} name={s}/>
           ))}
         </div>
       </BaseSidebar>

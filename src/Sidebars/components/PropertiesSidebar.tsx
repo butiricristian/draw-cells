@@ -11,7 +11,6 @@ import BaseSidebar from './BaseSidebar';
 export default function PropertiesSidebar({width}: SidebarInterface) {
   const dispatch = useDispatch()
   const isPropertiesSidebarOpen = useSelector((state: State) => state.sidebars.isPropertiesOpen)
-  const currentFrame = useSelector((state: State) => state.frames.currentFrame)
   const currentSprite = useSelector((state: State) => state.frames.currentSprite)
   
   return (

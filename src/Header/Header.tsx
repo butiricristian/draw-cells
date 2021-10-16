@@ -1,11 +1,10 @@
 import { AppBar, Button, Toolbar, Typography, useTheme } from '@material-ui/core';
 import React from 'react';
 
-interface HeaderProps {
-  setIsAnimantionPreviewOpen: (value: boolean) => void,
-}
+// interface HeaderProps {
+// }
 
-const Header = ({setIsAnimantionPreviewOpen}: HeaderProps) => {
+const Header = () => {
   const theme = useTheme()
 
   return (
@@ -14,8 +13,7 @@ const Header = ({setIsAnimantionPreviewOpen}: HeaderProps) => {
         <Typography variant="h6" style={{flexGrow: 1}}>
           Draw Cells
         </Typography>
-        <Button color="inherit">Export</Button>
-        <Button color="inherit" onClick={() => setIsAnimantionPreviewOpen(true)}>Preview</Button>
+        <Button color="inherit" onClick={() => console.log('GET PRESENTATION LINK')}>Get presentation link</Button>
       </Toolbar>
     </AppBar>
   )
