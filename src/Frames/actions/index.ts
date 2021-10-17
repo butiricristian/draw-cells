@@ -6,6 +6,9 @@ export const Actions = {
   UPDATE_CURRENT_SPRITE_POSITION: 'UPDATE_CURRENT_SPRITE_POSITION',
   ADD_SPRITE: 'ADD_SPRITE',
   ADD_FRAME: 'ADD_FRAME',
+  REMOVE_FRAME: 'REMOVE_FRAME',
+  NEXT_FRAME: 'NEXT_FRAME',
+  PREV_FRAME: 'PREV_FRAME',
 }
 
 export const addSprite = (sprite: Sprite) => ({
@@ -16,6 +19,19 @@ export const addSprite = (sprite: Sprite) => ({
 export const addFrame = (frame: Frame) => ({
   type: Actions.ADD_FRAME,
   payload: frame,
+})
+
+export const nextAnimationFrame = () => ({
+  type: Actions.NEXT_FRAME,
+})
+
+export const prevAnimationFrame = () => ({
+  type: Actions.PREV_FRAME,
+})
+
+export const removeFrameById = ({id}: any) => ({
+  type: Actions.REMOVE_FRAME,
+  payload: {id},
 })
 
 export const setCurrentFrame = (frameId: number | string | null) => ({

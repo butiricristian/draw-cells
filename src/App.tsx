@@ -11,8 +11,10 @@ import FramesSidebar from './Sidebars/components/FramesSidebar';
 import PropertiesSidebar from './Sidebars/components/PropertiesSidebar';
 import SpritesSidebar from './Sidebars/components/SpritesSidebar';
 import { sidebars } from './Sidebars/reducers/sidebars';
+import { presentations } from './Presentation/reducers/presentations';
+import PresentationModal from './Presentation/components/PresentationModal';
 
-const store = createStore(combineReducers({sidebars, frames}))
+const store = createStore(combineReducers({sidebars, frames, presentations}))
 
 function App() {
   return (
@@ -25,6 +27,7 @@ function App() {
           <FramesSidebar width={300} />
           <PropertiesSidebar width={300}/>
         </div>
+        <PresentationModal />
       </DndProvider>
     </Provider>
   );

@@ -19,17 +19,22 @@ const initialState: StateProps = {
 };
 
 const useStyles = makeStyles({
+  sprite: {
+    border: 'dashed 2px transparent',
+    borderWidth: 2,
+    width: '100%',
+    height: '100%',
+    margin: 3,
+    '& svg': {
+      height: '100%',
+      width: '100%'
+    }
+  },
   selected: {
     border: 'dashed 2px red',
     width: '100%',
     height: '100%',
     position: 'absolute',
-    padding: 1
-  },
-  sprite: {
-    width: '100%',
-    height: '100%',
-    margin: 3
   },
   spriteContainer: {
     position: 'absolute',

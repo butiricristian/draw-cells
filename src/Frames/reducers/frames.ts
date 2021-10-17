@@ -61,6 +61,12 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
         ...state,
         frames: [...state.frames, payload]
       }
+    case Actions.REMOVE_FRAME:
+      return {
+        ...state,
+        frames: state.frames.filter(f => f.id !== payload.id),
+        currentFrame: payload.id === state.currentFrame.id ? state.frames[0] : state.currentFrame
+      }
     case Actions.SET_CURRENT_FRAME: {
       const crtFrame = state.frames.find(f => f.id === payload) || initialState.frames[0]
       return {
@@ -92,6 +98,24 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
         frames: state.frames.map(f => f.id === state.currentFrame.id ? newCurrentFrame : f),
         currentFrame: newCurrentFrame,
         currentSprite: newCurrentSprite
+      }
+    }
+    case Actions.NEXT_FRAME: {
+      let newCrtFrame = state.currentFrame
+      const crtFrameIndex = state.frames.findIndex(f => f.id === state.currentFrame.id)
+      if(crtFrameIndex < state.frames.length - 1) newCrtFrame=state.frames[crtFrameIndex + 1]
+      return {
+        ...state,
+        currentFrame: newCrtFrame
+      }
+    }
+    case Actions.PREV_FRAME: {
+      let newCrtFrame = state.currentFrame
+      const crtFrameIndex = state.frames.findIndex(f => f.id === state.currentFrame.id)
+      if(crtFrameIndex > 0) newCrtFrame=state.frames[crtFrameIndex - 1]
+      return {
+        ...state,
+        currentFrame: newCrtFrame
       }
     }
     default:

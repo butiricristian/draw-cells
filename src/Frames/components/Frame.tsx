@@ -1,9 +1,10 @@
-import { makeStyles, Typography } from '@material-ui/core'
+import { IconButton, makeStyles, Typography, useTheme } from '@material-ui/core'
+import CancelIcon from '@material-ui/icons/Cancel'
 import clsx from 'clsx'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import State from '../../stateInterface'
-import { setCurrentFrame } from '../actions'
+import { removeFrameById, setCurrentFrame } from '../actions'
 
 interface FrameProps {
   title: string,
@@ -27,6 +28,12 @@ const Frame = ({title, id}: FrameProps) => {
   const dispatch = useDispatch()
   const currentFrameId = useSelector((state: State) => state.frames.currentFrame.id)
   const classes = useStyles()
+  const theme = useTheme()
+
+  const removeFrame = () => {
+    console.log('remove Frame')
+    dispatch(removeFrameById({id}))
+  }
 
   return (
     <div 
@@ -34,6 +41,12 @@ const Frame = ({title, id}: FrameProps) => {
       onClick={() => dispatch(setCurrentFrame(id))}
     >
       <Typography variant="body2" color="textSecondary"> {title} </Typography>
+      <IconButton
+        onClick={removeFrame}
+        style={{position: 'absolute', top: -12, right: -3, color: theme.palette.error.main, backgroundColor: 'white', padding: 6}}
+      >
+        <CancelIcon />
+      </IconButton>
     </div>
   )
 }
