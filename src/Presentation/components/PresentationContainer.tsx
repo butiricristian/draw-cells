@@ -12,9 +12,15 @@ const PresentationContainer = () => {
 
   return (
     <div style={{padding: '10px 50px 20px', borderTopRightRadius: 20, borderTopLeftRadius: 20, display: 'flex', flexDirection: 'column', height: '100%'}}>
-      <div style={{flexGrow: 1, border: 'solid 1px #ddd', marginBottom: 20}}>
+      <div style={{flexGrow: 1, border: 'solid 1px #ddd', marginBottom: 20, overflow: 'hidden'}}>
         {currentFrame.sprites.map((s: Sprite) => (
-          <AnimationSprite backgroundUrl={s.backgroundUrl} id={s.id} position={s.position} key={`animation-${s.id}`} />
+          <AnimationSprite
+            backgroundUrl={s.backgroundUrl}
+            id={s.id}
+            position={s.position}
+            key={`animation-${s.id}`}
+            animationType={s.animationType}
+          />
         ))}
       </div>
       <div style={{display: 'flex', justifyContent: 'space-around'}}>

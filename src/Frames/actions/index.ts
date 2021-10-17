@@ -9,11 +9,23 @@ export const Actions = {
   REMOVE_FRAME: 'REMOVE_FRAME',
   NEXT_FRAME: 'NEXT_FRAME',
   PREV_FRAME: 'PREV_FRAME',
+  UPDATE_SPRITE: 'UPDATE_SPRITE',
+  REMOVE_SPRITE: 'REMOVE_SPRITE',
 }
 
 export const addSprite = (sprite: Sprite) => ({
   type: Actions.ADD_SPRITE,
   payload: sprite,
+})
+
+export const updateSprite = ({id, field, value}: any) => ({
+  type: Actions.UPDATE_SPRITE,
+  payload: {id, field, value},
+})
+
+export const removeSprite = (id: number | string) => ({
+  type: Actions.REMOVE_SPRITE,
+  payload: {id},
 })
 
 export const addFrame = (frame: Frame) => ({

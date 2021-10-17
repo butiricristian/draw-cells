@@ -1,8 +1,9 @@
-import { Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@material-ui/core';
+import { Input, MenuItem, Select, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@material-ui/core';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { updateSprite } from '../../Frames/actions';
 import State from '../../stateInterface';
 import { toggleProperties } from '../actions';
 import SidebarInterface from '../interfaces/SidebarInterface';
@@ -12,6 +13,7 @@ export default function PropertiesSidebar({width}: SidebarInterface) {
   const dispatch = useDispatch()
   const isPropertiesSidebarOpen = useSelector((state: State) => state.sidebars.isPropertiesOpen)
   const currentSprite = useSelector((state: State) => state.frames.currentSprite)
+  console.log(currentSprite)
   
   return (
     <BaseSidebar 
@@ -32,15 +34,51 @@ export default function PropertiesSidebar({width}: SidebarInterface) {
           <TableBody>
             <TableRow key="id">
               <TableCell>id</TableCell>
-              <TableCell>{currentSprite?.id}</TableCell>
+              <TableCell>
+                <Input 
+                  value={currentSprite?.id || ''} 
+                  onChange={(e) => dispatch(updateSprite({id: currentSprite?.id, field: 'id', value: e.target.value}))}
+                />
+              </TableCell>
             </TableRow>
             <TableRow key="positionX">
               <TableCell>Position X</TableCell>
-              <TableCell>{currentSprite?.position.x}</TableCell>
+              <TableCell>
+                <Input 
+                  value={currentSprite?.position.x || ''}
+                  onChange={(e) => dispatch(updateSprite({id: currentSprite?.id, field: 'positionX', value: e.target.value}))}
+                />
+              </TableCell>
             </TableRow>
             <TableRow key="positionY">
               <TableCell>Position Y</TableCell>
-              <TableCell>{currentSprite?.position.y}</TableCell>
+              <TableCell>
+                <Input 
+                  value={currentSprite?.position.y || ''}
+                  onChange={(e) => dispatch(updateSprite({id: currentSprite?.id, field: 'positionY', value: e.target.value}))}
+                />
+              </TableCell>
+            </TableRow>
+            <TableRow key="animationType">
+              <TableCell>Animation Type</TableCell>
+              <TableCell>
+                <Select 
+                  value={currentSprite?.animationType || ''}
+                  onChange={(e) => dispatch(updateSprite({id: currentSprite?.id, field: 'animationType', value: e.target.value}))}
+                >
+                  <MenuItem value="LINEAR">Linear</MenuItem>
+                  <MenuItem value="CHAOTIC">Chaotic</MenuItem>
+                </Select>
+              </TableCell>
+            </TableRow>
+            <TableRow key="scale">
+              <TableCell>Scale</TableCell>
+              <TableCell>
+                <Input 
+                  value={currentSprite?.scale || 1}
+                  onChange={(e) => dispatch(updateSprite({id: currentSprite?.id, field: 'scale', value: e.target.value}))}
+                />
+              </TableCell>
             </TableRow>
           </TableBody>
         </Table>

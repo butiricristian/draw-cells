@@ -44,8 +44,8 @@ function AnimationCanvas() {
     drop: (item: any, monitor) => {
       if (item.type === 'SIDEBAR_SPRITE'){
         createSprite({
-          x: (monitor.getSourceClientOffset()?.x || 0) - drawerWidth,
-          y: (monitor.getSourceClientOffset()?.y || 0) - headerHeight
+          x: Math.round((monitor.getSourceClientOffset()?.x || 0) - drawerWidth),
+          y: Math.round((monitor.getSourceClientOffset()?.y || 0) - headerHeight)
         }, item.backgroundUrl)
       } else {
         const pos: Position = {
