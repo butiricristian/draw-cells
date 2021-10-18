@@ -65,7 +65,7 @@ function AnimationCanvas() {
     <div style={{...containerStyle, transition: 'all 0.3s ease-out'}} id="main-canvas">
       <div ref={drop} style={{flexGrow: 1, backgroundColor: (isOver ? '#d7d7d7' : '#fff'), position: 'relative'}}>
         {sprites.map((s: Sprite) => (
-          <BaseSprite key={`sprite-${s.id}`} id={s.id} position={s.position} backgroundUrl={s.backgroundUrl} />
+          <BaseSprite key={`sprite-${s.id}`} id={s.id} position={s.position} backgroundUrl={s.backgroundUrl} scale={s.scale} />
         ))}
       </div>
     </div>

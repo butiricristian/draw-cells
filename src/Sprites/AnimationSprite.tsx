@@ -1,10 +1,10 @@
 import { makeStyles } from '@material-ui/core';
 import clsx from 'clsx';
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { animated, useSpring } from 'react-spring';
 import { SPRITE_TO_SVG_ELEMENT_MAP } from '../constants';
 import { Sprite } from '../Frames/reducers/frames';
-import {animated, useSpring} from 'react-spring'
-import { useSelector } from 'react-redux';
 import State from '../stateInterface';
 
 const useStyles = makeStyles({
@@ -27,12 +27,15 @@ const useStyles = makeStyles({
   }
 })
 
-export default function AnimationSprite({position, id, backgroundUrl, animationType}: Sprite) {
+export default function AnimationSprite({position, id, backgroundUrl, animationType, scale}: Sprite) {
   const classes = useStyles()
   const spriteToSvgMap: any = SPRITE_TO_SVG_ELEMENT_MAP
   const currentFrame = useSelector((state: State) => state.frames.currentFrame)
   const prevFrame = useSelector((state: State) => state.frames.prevFrame)
   const prevSprite = prevFrame?.sprites.find(s => s.id === id)
+
+  //SCALE PROPS
+  const scaleProps: any = useSpring({to: {transform: `scale(${scale})`}})
 
   // OPACITY PROPS
   const opacityProps: any = useSpring({from: {opacity: 0}, to: {opacity: 1}})
@@ -57,17 +60,17 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
   const currentAnimationType = (currentFrame.id || '') >= (prevFrame?.id || '') ? prevSprite?.animationType : animationType
 
   // CHOOSE THE PROPS
-  let props = {}
+  let props = scaleProps
   if (prevSprite) {
     if (currentAnimationType === 'LINEAR') {
-      props = linearProps
+      props = {...props, ...linearProps}
     } else if (currentAnimationType === 'CHAOTIC') {
-      props = chaoticProps
+      props = {...props, ...chaoticProps}
     } else {
-      props = {left: position.x, top: position.y}
+      props = {...props, left: position.x, top: position.y}
     }
   } else {
-    props = {...opacityProps, ...linearProps}
+    props = {...opacityProps, ...linearProps, ...scaleProps}
   }
   
   return (

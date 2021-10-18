@@ -44,7 +44,7 @@ const useStyles = makeStyles({
   }
 })
 
-export default function BaseSprite({position, id, backgroundUrl}: Sprite) {
+export default function BaseSprite({position, id, backgroundUrl, scale}: Sprite) {
   const [state, setState] = React.useState(initialState);
   const currentSpriteId = useSelector((state: State) => state.frames.currentSprite?.id)
   const classes = useStyles()
@@ -84,7 +84,7 @@ export default function BaseSprite({position, id, backgroundUrl}: Sprite) {
     <div ref={canvasSpriteDrag} className={classes.spriteContainer} style={{left: position.x, top: position.y}}>
       <div 
         className={clsx(classes.sprite, {[classes.selected]: id === currentSpriteId})}
-        style={{backgroundColor: 'transparent'}}
+        style={{backgroundColor: 'transparent', transform: `scale(${scale})`}}
         onContextMenu={handleClick}
         onClick={handleSelectSprite}
       >

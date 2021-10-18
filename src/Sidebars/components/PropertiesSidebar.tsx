@@ -75,7 +75,8 @@ export default function PropertiesSidebar({width}: SidebarInterface) {
               <TableCell>Scale</TableCell>
               <TableCell>
                 <Input 
-                  value={currentSprite?.scale || 1}
+                  type="number"
+                  value={currentSprite?.scale || ''}
                   onChange={(e) => dispatch(updateSprite({id: currentSprite?.id, field: 'scale', value: e.target.value}))}
                 />
               </TableCell>

@@ -12,7 +12,7 @@ const PresentationContainer = () => {
 
   return (
     <div style={{padding: '10px 50px 20px', borderTopRightRadius: 20, borderTopLeftRadius: 20, display: 'flex', flexDirection: 'column', height: '100%'}}>
-      <div style={{flexGrow: 1, border: 'solid 1px #ddd', marginBottom: 20, overflow: 'hidden'}}>
+      <div style={{flexGrow: 1, border: 'solid 1px #ddd', marginBottom: 20, overflow: 'hidden', position: 'relative'}}>
         {currentFrame.sprites.map((s: Sprite) => (
           <AnimationSprite
             backgroundUrl={s.backgroundUrl}
@@ -20,6 +20,7 @@ const PresentationContainer = () => {
             position={s.position}
             key={`animation-${s.id}`}
             animationType={s.animationType}
+            scale={s.scale}
           />
         ))}
       </div>
