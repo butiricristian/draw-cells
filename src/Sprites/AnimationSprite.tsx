@@ -27,7 +27,15 @@ const useStyles = makeStyles({
   }
 })
 
-export default function AnimationSprite({position, id, backgroundUrl, animationType, scale}: Sprite) {
+function getRndInteger(min: number, max: number): number {
+  return (Math.floor(Math.random() * (max - min) ) + min);
+}
+
+interface AnimationSpriteProps extends Sprite {
+  canvas: HTMLElement | null,
+}
+
+export default function AnimationSprite({position, id, backgroundUrl, animationType, scale, canvas}: AnimationSpriteProps) {
   const classes = useStyles()
   const spriteToSvgMap: any = SPRITE_TO_SVG_ELEMENT_MAP
   const currentFrame = useSelector((state: State) => state.frames.currentFrame)
@@ -47,15 +55,30 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
   const chaoticArray = []
   let newLeft = prevSprite?.position.x || 0
   let newTop = prevSprite?.position.y || 0
-  const direction = (prevSprite?.position.x || 0) < position.x ? 1 : -1
-  const distance = Math.abs((prevSprite?.position.x || 0) - position.x)
-  for(let i=0;i<10;i+=1){
+
+  for(let i=0;i<6;i+=1){
     chaoticArray.push({left: newLeft, top: newTop})
-    newLeft += Math.round(distance/10)*direction
-    newTop += 200*(i%2 === 0 ? -1 : 1)
+    if (canvas) {
+      let newRandLeft, newRandDist
+      do {
+        newRandLeft = getRndInteger(0, canvas.clientWidth)
+        newRandDist = Math.abs(newLeft - newRandLeft)
+      } while(newRandDist < 400 && newRandDist > 1000)
+      newLeft = newRandLeft
+
+      let newRandTop
+      do {
+        newRandTop = getRndInteger(0, canvas.clientHeight)
+        newRandDist = Math.abs(newTop - newRandTop)
+      } while(newRandDist < 200 && newRandDist > 600)
+      newTop = newRandTop
+    } else {
+      newLeft = 0
+      newTop = 0
+    }
   }
   chaoticArray.push({left: position.x, top: position.y})
-  const chaoticProps: any = useSpring({to: chaoticArray, config: {duration: 200}})
+  const chaoticProps: any = useSpring({to: chaoticArray, config: {duration: 300}})
 
   const currentAnimationType = (currentFrame.id || '') >= (prevFrame?.id || '') ? prevSprite?.animationType : animationType
 

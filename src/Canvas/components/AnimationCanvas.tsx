@@ -2,11 +2,12 @@ import { useTheme } from '@material-ui/core';
 import React from 'react';
 import { useDrop, XYCoord } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
-import { drawerWidth } from '../constants';
-import { addSprite, updateCurrentSpritePosition } from '../Frames/actions';
-import { Position, Sprite } from '../Frames/reducers/frames';
-import BaseSprite from '../Sprites/BaseSprite';
-import State from '../stateInterface';
+import { drawerWidth } from '../../constants';
+import { addSprite, updateCurrentSpritePosition } from '../../Frames/actions';
+import { Position, Sprite } from '../../Frames/reducers/frames';
+import BaseSprite from '../../Sprites/BaseSprite';
+import State from '../../stateInterface';
+import { zoomIn, zoomOut } from '../actions';
 
 function AnimationCanvas() {
   const dispatch = useDispatch()
@@ -15,9 +16,13 @@ function AnimationCanvas() {
   const isFramesSidebarOpen = useSelector((state: State) => state.sidebars.isFramesOpen)
   const isSpritesSidebarOpen = useSelector((state: State) => state.sidebars.isSpritesOpen)
   const isPropertiesSidebarOpen = useSelector((state: State) => state.sidebars.isPropertiesOpen)
+  const scale = useSelector((state: State) => state.canvas.scale)
+  console.log(scale)
 
   const smallDrawerWidth = theme.spacing(6)
   const headerHeight = theme.spacing(8)
+
+  const canvasWidth = `calc(100vw - ${(isPropertiesSidebarOpen ? drawerWidth : smallDrawerWidth) + (isSpritesSidebarOpen ? drawerWidth : smallDrawerWidth)}px)`
 
   const containerStyle: any = {
     flexGrow: 1, 
@@ -26,7 +31,17 @@ function AnimationCanvas() {
     flexDirection: 'column',
     marginLeft: (isSpritesSidebarOpen ? drawerWidth : smallDrawerWidth),
     marginRight: (isPropertiesSidebarOpen ? drawerWidth : smallDrawerWidth),
-    width: `calc(100vw - ${(isPropertiesSidebarOpen ? drawerWidth : smallDrawerWidth) + (isSpritesSidebarOpen ? drawerWidth : smallDrawerWidth)}px)`,
+    width: canvasWidth,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  }
+
+  const canvasStyle: any = {
+    height: '90%',
+    width: '90%',
+    border: 'solid 1px #ddd',
+    position: 'relative',
   }
 
   function createSprite(pos: XYCoord | null, backgroundUrl: string){
@@ -56,14 +71,28 @@ function AnimationCanvas() {
         return undefined
       }
     },
-    collect: (monitor) => ({
-      isOver: !!monitor.isOver(),
-    })
+    collect: (monitor) => {
+      const item: any = monitor.getItem()
+      return {
+        isOver: (item?.type || '') === 'SIDEBAR_SPRITE' && !!monitor.isOver(),
+      }
+    }
   }))
 
+  window.addEventListener("wheel", function(event){
+    if(event.metaKey){
+      event.preventDefault()
+      if(event.deltaY < 0) {
+        dispatch(zoomIn())
+      } else {
+        dispatch(zoomOut())
+      }
+    }
+  });
+
   return (
-    <div style={{...containerStyle, transition: 'all 0.3s ease-out'}} id="main-canvas">
-      <div ref={drop} style={{flexGrow: 1, backgroundColor: (isOver ? '#d7d7d7' : '#fff'), position: 'relative'}}>
+    <div ref={drop} style={{...containerStyle, transition: 'all 0.3s ease-out', overflow: 'scroll'}} id="main-canvas">
+      <div style={{...canvasStyle, backgroundColor: (isOver ? '#eee' : '#fff'), transform: `scale(${scale})`}}>
         {sprites.map((s: Sprite) => (
           <BaseSprite key={`sprite-${s.id}`} id={s.id} position={s.position} backgroundUrl={s.backgroundUrl} scale={s.scale} />
         ))}

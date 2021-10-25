@@ -1,5 +1,5 @@
 import { Button } from '@material-ui/core'
-import React from 'react'
+import React, { useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { nextAnimationFrame, prevAnimationFrame } from '../../Frames/actions'
 import { Sprite } from '../../Frames/reducers/frames'
@@ -9,10 +9,11 @@ import State from '../../stateInterface'
 const PresentationContainer = () => {
   const currentFrame = useSelector((state: State) => state.frames.currentFrame)
   const dispatch = useDispatch()
+  const canvasRef = useRef<HTMLDivElement>(null)
 
   return (
     <div style={{padding: '10px 50px 20px', borderTopRightRadius: 20, borderTopLeftRadius: 20, display: 'flex', flexDirection: 'column', height: '100%'}}>
-      <div style={{flexGrow: 1, border: 'solid 1px #ddd', marginBottom: 20, overflow: 'hidden', position: 'relative'}}>
+      <div ref={canvasRef} style={{flexGrow: 1, border: 'solid 1px #ddd', marginBottom: 20, overflow: 'hidden', position: 'relative'}}>
         {currentFrame.sprites.map((s: Sprite) => (
           <AnimationSprite
             backgroundUrl={s.backgroundUrl}
@@ -21,6 +22,7 @@ const PresentationContainer = () => {
             key={`animation-${s.id}`}
             animationType={s.animationType}
             scale={s.scale}
+            canvas={canvasRef.current}
           />
         ))}
       </div>
