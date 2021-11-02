@@ -54,23 +54,35 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
   // CHAOTIC PROPS
   const chaoticArray = []
   let newLeft = prevSprite?.position.x || 0
+  const leftDistance = position?.x - newLeft
   let newTop = prevSprite?.position.y || 0
+  const topDistance = position?.y - newTop
+  const minRangeOfMovement = 15
+  const rangeOfMotion = 40
+  const nrOfIterations = 30
+  const duration = 3000
+  const leftStep = leftDistance / nrOfIterations
+  const topStep = topDistance / nrOfIterations
 
-  for(let i=0;i<6;i+=1){
+  for(let i=0;i<nrOfIterations;i+=1){
     chaoticArray.push({left: newLeft, top: newTop})
     if (canvas) {
-      let newRandLeft, newRandDist
+      let newRandLeft
+      const fromIntermediaryLeftPoint = Math.round((prevSprite?.position.x || 0) + leftStep*i)
+      const toIntermediaryLeftPoint = Math.round((prevSprite?.position.x || 0) + leftStep*(i+1))
+      console.log("From: ", fromIntermediaryLeftPoint, " To: ", toIntermediaryLeftPoint)
       do {
-        newRandLeft = getRndInteger(0, canvas.clientWidth)
-        newRandDist = Math.abs(newLeft - newRandLeft)
-      } while(newRandDist < 400 && newRandDist > 1000)
+        newRandLeft = getRndInteger(Math.max(fromIntermediaryLeftPoint-rangeOfMotion, 0), Math.min(toIntermediaryLeftPoint+rangeOfMotion, canvas.clientWidth))
+      } while(Math.abs(newLeft - newRandLeft) < minRangeOfMovement)
       newLeft = newRandLeft
 
       let newRandTop
+      const fromIntermediaryTopPoint = Math.round((prevSprite?.position.y || 0) + topStep*i)
+      const toIntermediaryTopPoint = Math.round((prevSprite?.position.y || 0) + topStep*(i+1))
+      console.log("From: ", fromIntermediaryTopPoint, " To: ", toIntermediaryTopPoint)
       do {
-        newRandTop = getRndInteger(0, canvas.clientHeight)
-        newRandDist = Math.abs(newTop - newRandTop)
-      } while(newRandDist < 200 && newRandDist > 600)
+        newRandTop = getRndInteger(Math.max(fromIntermediaryTopPoint-rangeOfMotion, 0), Math.min(toIntermediaryTopPoint+rangeOfMotion, canvas.clientHeight))
+      } while(Math.abs(newTop - newRandTop) < minRangeOfMovement)
       newTop = newRandTop
     } else {
       newLeft = 0
@@ -78,7 +90,7 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
     }
   }
   chaoticArray.push({left: position.x, top: position.y})
-  const chaoticProps: any = useSpring({to: chaoticArray, config: {duration: 300}})
+  const chaoticProps: any = useSpring({to: chaoticArray, config: {duration: duration/nrOfIterations}})
 
   const currentAnimationType = (currentFrame.id || '') >= (prevFrame?.id || '') ? prevSprite?.animationType : animationType
 
