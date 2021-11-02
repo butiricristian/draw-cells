@@ -82,19 +82,19 @@ function AnimationCanvas() {
   const [prevDelta, setPrevDelta] = useState(0)
 
   window.addEventListener("wheel", function(event){
-    event.preventDefault()
-    if (event.deltaY !== prevDelta) {
-      setPrevDelta((currentPrevDelta) => {
-        if (event.deltaY < 0 && event.deltaY !== currentPrevDelta && event.metaKey) {
-          console.log('Should zoom in now')
-          dispatch(zoomIn())
-        } 
-        if (event.deltaY > 0 && event.deltaY !== currentPrevDelta && event.metaKey) {
-          console.log('Should zoom out now')
-          dispatch(zoomOut())
-        }
-        return event.deltaY
-      })
+    if (event.metaKey) {
+      event.preventDefault()
+      if (event.deltaY !== prevDelta) {
+        setPrevDelta((currentPrevDelta) => {
+          if (event.deltaY < 0 && event.deltaY !== currentPrevDelta) {
+            dispatch(zoomIn())
+          } 
+          if (event.deltaY > 0 && event.deltaY !== currentPrevDelta) {
+            dispatch(zoomOut())
+          }
+          return event.deltaY
+        })
+      }
     }
   }, {passive: false});
 

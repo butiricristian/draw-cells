@@ -1,10 +1,10 @@
 import { makeStyles, Menu, MenuItem } from '@material-ui/core';
 import clsx from 'clsx';
-import React from 'react';
+import React, { MouseEvent } from 'react';
 import { useDrag } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import { SPRITE_TO_SVG_ELEMENT_MAP } from '../constants';
-import { setCurrentSprite } from '../Frames/actions';
+import { addCurrentSprite, setCurrentSprite } from '../Frames/actions';
 import { Sprite } from '../Frames/reducers/frames';
 import State from '../stateInterface';
 
@@ -46,7 +46,7 @@ const useStyles = makeStyles({
 
 export default function BaseSprite({position, id, backgroundUrl, scale}: Sprite) {
   const [state, setState] = React.useState(initialState);
-  const currentSpriteId = useSelector((state: State) => state.frames.currentSprite?.id)
+  const currentSpriteIds = useSelector((state: State) => state.frames.currentSprites.map(s => s.id))
   const classes = useStyles()
 
   const handleClick = (event: any) => {
@@ -62,8 +62,12 @@ export default function BaseSprite({position, id, backgroundUrl, scale}: Sprite)
   };
 
   const dispatch = useDispatch()
-  const handleSelectSprite = () => {
-    dispatch(setCurrentSprite(id))
+  const handleSelectSprite = (e: MouseEvent) => {
+    if (e.metaKey) {
+      dispatch(addCurrentSprite(id))
+    } else {
+      dispatch(setCurrentSprite(id))
+    }
   }
 
   const [{isDragging}, canvasSpriteDrag] = useDrag(() => ({
@@ -83,10 +87,10 @@ export default function BaseSprite({position, id, backgroundUrl, scale}: Sprite)
   return (
     <div ref={canvasSpriteDrag} className={classes.spriteContainer} style={{left: position.x, top: position.y}}>
       <div 
-        className={clsx(classes.sprite, {[classes.selected]: id === currentSpriteId})}
+        className={clsx(classes.sprite, {[classes.selected]: currentSpriteIds.find(sId => sId === id)})}
         style={{backgroundColor: 'transparent', transform: `scale(${scale})`}}
         onContextMenu={handleClick}
-        onClick={handleSelectSprite}
+        onClick={(e) => handleSelectSprite(e)}
       >
         {backgroundUrl && spriteToSvgMap[backgroundUrl]}
       </div>

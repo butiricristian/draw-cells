@@ -11,6 +11,7 @@ export const Actions = {
   PREV_FRAME: 'PREV_FRAME',
   UPDATE_SPRITE: 'UPDATE_SPRITE',
   REMOVE_SPRITE: 'REMOVE_SPRITE',
+  ADD_CURRENT_SPRITE: 'ADD_CURRENT_SPRITE',
 }
 
 export const addSprite = (sprite: Sprite) => ({
@@ -53,6 +54,11 @@ export const setCurrentFrame = (frameId: number | string | null) => ({
 
 export const setCurrentSprite = (spriteId: number | string | null) => ({
   type: Actions.SET_CURRENT_SPRITE,
+  payload: spriteId,
+})
+
+export const addCurrentSprite = (spriteId: number | string | null) => ({
+  type: Actions.ADD_CURRENT_SPRITE,
   payload: spriteId,
 })
 
