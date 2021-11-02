@@ -17,6 +17,8 @@ export const canvas = (state: CanvasState = initialState, action: Action): Canva
   const {type, payload} = action
   switch(type){
     case Actions.SET_CANVAS_SCALE: {
+      if (state.scale + payload.scaleIncrease < 0.5) return state
+      if (state.scale + payload.scaleIncrease > 1) return state
       return {
         ...state,
         scale: state.scale + payload.scaleIncrease

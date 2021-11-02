@@ -4,10 +4,10 @@ export const Actions = {
 
 export const zoomIn = () => ({
   type: Actions.SET_CANVAS_SCALE,
-  payload: {scaleIncrease: 0.001},
+  payload: {scaleIncrease: 0.01},
 })
 
 export const zoomOut = () => ({
   type: Actions.SET_CANVAS_SCALE,
-  payload: {scaleIncrease: -0.001},
+  payload: {scaleIncrease: -0.01},
 })

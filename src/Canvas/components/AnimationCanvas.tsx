@@ -1,5 +1,5 @@
 import { useTheme } from '@material-ui/core';
-import React from 'react';
+import React, { useState } from 'react';
 import { useDrop, XYCoord } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import { drawerWidth } from '../../constants';
@@ -79,16 +79,24 @@ function AnimationCanvas() {
     }
   }))
 
+  const [prevDelta, setPrevDelta] = useState(0)
+
   window.addEventListener("wheel", function(event){
-    if(event.metaKey){
-      event.preventDefault()
-      if(event.deltaY < 0) {
-        dispatch(zoomIn())
-      } else {
-        dispatch(zoomOut())
-      }
+    event.preventDefault()
+    if (event.deltaY !== prevDelta) {
+      setPrevDelta((currentPrevDelta) => {
+        if (event.deltaY < 0 && event.deltaY !== currentPrevDelta && event.metaKey) {
+          console.log('Should zoom in now')
+          dispatch(zoomIn())
+        } 
+        if (event.deltaY > 0 && event.deltaY !== currentPrevDelta && event.metaKey) {
+          console.log('Should zoom out now')
+          dispatch(zoomOut())
+        }
+        return event.deltaY
+      })
     }
-  });
+  }, {passive: false});
 
   return (
     <div ref={drop} style={{...containerStyle, transition: 'all 0.3s ease-out', overflow: 'scroll'}} id="main-canvas">
