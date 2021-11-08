@@ -13,7 +13,7 @@ export default function PropertiesSidebar({width}: SidebarInterface) {
   const dispatch = useDispatch()
   const isPropertiesSidebarOpen = useSelector((state: State) => state.sidebars.isPropertiesOpen)
   const currentSprites = useSelector((state: State) => state.frames.currentSprites)
-  const currentSprite = currentSprites.length === 1 ? null : currentSprites[0]
+  const currentSprite = currentSprites.length <= 0 ? null : currentSprites[0]
   
   return (
     <BaseSidebar 
@@ -71,6 +71,46 @@ export default function PropertiesSidebar({width}: SidebarInterface) {
                 </Select>
               </TableCell>
             </TableRow>
+            <TableRow key="duration">
+              <TableCell>Duration</TableCell>
+              <TableCell>
+                <Input 
+                  type="number"
+                  value={currentSprite?.duration || ''}
+                  onChange={(e) => dispatch(updateSprite({id: currentSprite?.id, field: 'duration', value: e.target.value}))}
+                />
+              </TableCell>
+            </TableRow>
+            {currentSprite?.animationType === 'CHAOTIC' && (<TableRow key="minTravelDistance">
+              <TableCell>Min. Travel Distance</TableCell>
+              <TableCell>
+                <Input 
+                  type="number"
+                  value={currentSprite?.minTravelDistance || ''}
+                  onChange={(e) => dispatch(updateSprite({id: currentSprite?.id, field: 'minTravelDistance', value: e.target.value}))}
+                />
+              </TableCell>
+            </TableRow>)}
+            {currentSprite?.animationType === 'CHAOTIC' && (<TableRow key="rangeOfMovement">
+              <TableCell>Range of Movement</TableCell>
+              <TableCell>
+                <Input 
+                  type="number"
+                  value={currentSprite?.rangeOfMovement || ''}
+                  onChange={(e) => dispatch(updateSprite({id: currentSprite?.id, field: 'rangeOfMovement', value: e.target.value}))}
+                />
+              </TableCell>
+            </TableRow>)}
+            {currentSprite?.animationType === 'CHAOTIC' && (<TableRow key="nrOfIterations">
+              <TableCell>Number of iterations</TableCell>
+              <TableCell>
+                <Input 
+                  type="number"
+                  value={currentSprite?.nrOfIterations || ''}
+                  onChange={(e) => dispatch(updateSprite({id: currentSprite?.id, field: 'nrOfIterations', value: e.target.value}))}
+                />
+              </TableCell>
+            </TableRow>)}
             <TableRow key="scale">
               <TableCell>Scale</TableCell>
               <TableCell>

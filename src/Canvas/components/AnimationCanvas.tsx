@@ -1,5 +1,5 @@
 import { useTheme } from '@material-ui/core';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useDrop, XYCoord } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import { drawerWidth } from '../../constants';
@@ -17,7 +17,8 @@ function AnimationCanvas() {
   const isSpritesSidebarOpen = useSelector((state: State) => state.sidebars.isSpritesOpen)
   const isPropertiesSidebarOpen = useSelector((state: State) => state.sidebars.isPropertiesOpen)
   const scale = useSelector((state: State) => state.canvas.scale)
-  console.log(scale)
+  const canvasContainer = useRef<any>(null)
+  const innerCanvas = useRef<any>(null)
 
   const smallDrawerWidth = theme.spacing(6)
   const headerHeight = theme.spacing(8)
@@ -58,14 +59,16 @@ function AnimationCanvas() {
     accept: 'SPRITE',
     drop: (item: any, monitor) => {
       if (item.type === 'SIDEBAR_SPRITE'){
+        const containersWidthSpacing = Math.round((canvasContainer.current?.clientWidth - innerCanvas.current?.clientWidth * scale) / 2)
+        const containersHeightSpacing = Math.round((canvasContainer.current?.clientHeight - innerCanvas.current?.clientHeight * scale) / 2)
         createSprite({
-          x: Math.round((monitor.getSourceClientOffset()?.x || 0) - drawerWidth),
-          y: Math.round((monitor.getSourceClientOffset()?.y || 0) - headerHeight)
+          x: Math.round(Math.round((monitor.getSourceClientOffset()?.x || 0) - containersWidthSpacing - drawerWidth) / scale),
+          y: Math.round(Math.round((monitor.getSourceClientOffset()?.y || 0) - containersHeightSpacing - headerHeight) / scale)
         }, item.backgroundUrl)
       } else {
         const pos: Position = {
-          x: Math.round(item.x + monitor.getDifferenceFromInitialOffset()?.x || 0),
-          y: Math.round(item.y + monitor.getDifferenceFromInitialOffset()?.y || 0)
+          x: Math.round(item.x + (monitor.getDifferenceFromInitialOffset()?.x || 0) / scale),
+          y: Math.round(item.y + (monitor.getDifferenceFromInitialOffset()?.y || 0) / scale)
         }
         updateSpritePosition(item.id, pos)
         return undefined
@@ -99,11 +102,16 @@ function AnimationCanvas() {
   }, {passive: false});
 
   return (
-    <div ref={drop} style={{...containerStyle, transition: 'all 0.3s ease-out', overflow: 'scroll'}} id="main-canvas">
-      <div style={{...canvasStyle, backgroundColor: (isOver ? '#eee' : '#fff'), transform: `scale(${scale})`}}>
-        {sprites.map((s: Sprite) => (
-          <BaseSprite key={`sprite-${s.id}`} id={s.id} position={s.position} backgroundUrl={s.backgroundUrl} scale={s.scale} />
-        ))}
+    <div ref={canvasContainer} style={{...containerStyle, transition: 'all 0.3s ease-out'}} id="main-canvas">
+      <div ref={drop} style={{width: '100%', height: '100%', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'scroll'}}>
+        <div ref={innerCanvas} style={{...canvasStyle, backgroundColor: (isOver ? '#eee' : '#fff'), transform: `scale(${scale})`}}>
+          {sprites.map((s: Sprite) => (
+            <BaseSprite key={`sprite-${s.id}`} id={s.id} position={s.position} backgroundUrl={s.backgroundUrl} 
+              scale={s.scale} duration={s.duration} 
+              minTravelDistance={s.minTravelDistance} rangeOfMovement={s.rangeOfMovement} nrOfIterations={s.nrOfIterations} 
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

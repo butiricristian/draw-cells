@@ -28,6 +28,10 @@ export interface Sprite {
   backgroundUrl?: string | undefined,
   animationType?: string | undefined,
   scale?: number | undefined,
+  duration?: number | undefined,
+  minTravelDistance?: number | undefined,
+  rangeOfMovement?: number | undefined,
+  nrOfIterations?: number | undefined,
 }
 
 export interface Frame {
@@ -52,6 +56,10 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
         sprites: [
           ...state.currentFrame.sprites,
           {
+            duration: 1,
+            minTravelDistance: 15,
+            rangeOfMovement: 40,
+            nrOfIterations: 30,
             animationType: 'CHAOTIC',
             scale: 1,
             ...payload

@@ -41,7 +41,7 @@ export default function FramesSidebar({width}: SidebarInterface) {
 
   const handleAddFrame = () => {
     const newFrame = {
-      id: framesList.length + 1,
+      id: parseInt(framesList[-1]?.id?.toString() || '0') + 1,
       title: `Frame ${framesList.length + 1}`,
       sprites: []
     }

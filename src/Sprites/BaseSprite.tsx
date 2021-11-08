@@ -85,10 +85,10 @@ export default function BaseSprite({position, id, backgroundUrl, scale}: Sprite)
   const spriteToSvgMap: any = SPRITE_TO_SVG_ELEMENT_MAP
   
   return (
-    <div ref={canvasSpriteDrag} className={classes.spriteContainer} style={{left: position.x, top: position.y}}>
+    <div ref={canvasSpriteDrag} className={classes.spriteContainer} style={{left: position.x, top: position.y, transform: `scale(${scale})`}}>
       <div 
         className={clsx(classes.sprite, {[classes.selected]: currentSpriteIds.find(sId => sId === id)})}
-        style={{backgroundColor: 'transparent', transform: `scale(${scale})`}}
+        style={{backgroundColor: 'transparent'}}
         onContextMenu={handleClick}
         onClick={(e) => handleSelectSprite(e)}
       >

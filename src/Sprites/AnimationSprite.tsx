@@ -35,12 +35,14 @@ interface AnimationSpriteProps extends Sprite {
   canvas: HTMLElement | null,
 }
 
-export default function AnimationSprite({position, id, backgroundUrl, animationType, scale, canvas}: AnimationSpriteProps) {
+export default function AnimationSprite({position, id, backgroundUrl, animationType, scale, canvas, 
+  minTravelDistance = 15, rangeOfMovement = 40, nrOfIterations = 30, duration = 1}: AnimationSpriteProps) {
   const classes = useStyles()
   const spriteToSvgMap: any = SPRITE_TO_SVG_ELEMENT_MAP
   const currentFrame = useSelector((state: State) => state.frames.currentFrame)
   const prevFrame = useSelector((state: State) => state.frames.prevFrame)
   const prevSprite = prevFrame?.sprites.find(s => s.id === id)
+  const animationDuration = (((currentFrame.id || '') >= (prevFrame?.id || '') ? prevSprite?.duration : duration) || 1) * 1000
 
   //SCALE PROPS
   const scaleProps: any = useSpring({to: {transform: `scale(${scale})`}})
@@ -49,7 +51,7 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
   const opacityProps: any = useSpring({from: {opacity: 0}, to: {opacity: 1}})
   
   // LINEAR PROPS
-  const linearProps: any = useSpring({to: {left: position.x, top: position.y}, config: {duration: 1000}})
+  const linearProps: any = useSpring({to: {left: position.x, top: position.y}, config: {duration: animationDuration}})
 
   // CHAOTIC PROPS
   const chaoticArray = []
@@ -57,14 +59,18 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
   const leftDistance = position?.x - newLeft
   let newTop = prevSprite?.position.y || 0
   const topDistance = position?.y - newTop
-  const minRangeOfMovement = 15
-  const rangeOfMotion = 40
-  const nrOfIterations = 30
-  const duration = 3000
-  const leftStep = leftDistance / nrOfIterations
-  const topStep = topDistance / nrOfIterations
 
-  for(let i=0;i<nrOfIterations;i+=1){
+  const minRangeOfMovement = ((currentFrame.id || '') >= (prevFrame?.id || '') ? prevSprite?.minTravelDistance : minTravelDistance) || 15
+  const rangeOfMotion = ((currentFrame.id || '') >= (prevFrame?.id || '') ? prevSprite?.rangeOfMovement : rangeOfMovement) || 40
+  const numberOfIterations = ((currentFrame.id || '') >= (prevFrame?.id || '') ? prevSprite?.nrOfIterations : nrOfIterations) || 10
+  
+  console.log("Duration: ", animationDuration)
+  console.log("Travel distance:", prevSprite?.minTravelDistance, ", Range of Motion: ", prevSprite?.rangeOfMovement, ", Nr Iterations: ", prevSprite?.nrOfIterations)
+
+  const leftStep = leftDistance / numberOfIterations
+  const topStep = topDistance / numberOfIterations
+
+  for(let i=0;i<numberOfIterations;i+=1){
     chaoticArray.push({left: newLeft, top: newTop})
     if (canvas) {
       let newRandLeft
@@ -90,7 +96,7 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
     }
   }
   chaoticArray.push({left: position.x, top: position.y})
-  const chaoticProps: any = useSpring({to: chaoticArray, config: {duration: duration/nrOfIterations}})
+  const chaoticProps: any = useSpring({to: chaoticArray, config: {duration: animationDuration/nrOfIterations}})
 
   const currentAnimationType = (currentFrame.id || '') >= (prevFrame?.id || '') ? prevSprite?.animationType : animationType
 
