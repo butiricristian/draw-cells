@@ -11,6 +11,11 @@ export const Actions = {
   PREV_FRAME: 'PREV_FRAME',
   UPDATE_SPRITE: 'UPDATE_SPRITE',
   REMOVE_SPRITE: 'REMOVE_SPRITE',
+  REMOVE_CURRENT_SPRITES: 'REMOVE_CURRENT_SPRITES',
+  REMOVE_SPRITE_FROM_ALL_FRAMES: 'REMOVE_SPRITE_FROM_ALL_FRAMES',
+  REMOVE_CURRENT_SPRITES_FROM_ALL_FRAMES: 'REMOVE_CURRENT_SPRITES_FROM_ALL_FRAMES',
+  COPY_SPRITE_INTO_FRAME: 'COPY_SPRITE_INTO_FRAME',
+  COPY_SELECTED_SPRITES_INTO_FRAME: 'COPY_SELECTED_SPRITES_INTO_FRAME',
   ADD_CURRENT_SPRITE: 'ADD_CURRENT_SPRITE',
 }
 
@@ -27,6 +32,29 @@ export const updateSprite = ({field, value}: any) => ({
 export const removeSprite = (id: number | string) => ({
   type: Actions.REMOVE_SPRITE,
   payload: {id},
+})
+
+export const removeCurrentSprites = () => ({
+  type: Actions.REMOVE_CURRENT_SPRITES,
+})
+
+export const removeSpriteFromAllFrames = (id: number | string) => ({
+  type: Actions.REMOVE_SPRITE_FROM_ALL_FRAMES,
+  payload: {id},
+})
+
+export const removeCurrentSpritesFromAllFrames = () => ({
+  type: Actions.REMOVE_CURRENT_SPRITES_FROM_ALL_FRAMES,
+})
+
+export const copySpriteIntoFrame = (spriteId: number | string, frameId: number | string) => ({
+  type: Actions.COPY_SPRITE_INTO_FRAME,
+  payload: {spriteId, frameId},
+})
+
+export const copySelectedSpriteSIntoFrame = (frameId: number | string) => ({
+  type: Actions.COPY_SELECTED_SPRITES_INTO_FRAME,
+  payload: {frameId},
 })
 
 export const addFrame = (frame: Frame) => ({

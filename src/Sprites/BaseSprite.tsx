@@ -1,10 +1,11 @@
 import { makeStyles, Menu, MenuItem } from '@material-ui/core';
 import clsx from 'clsx';
+import NestedMenuItem from 'material-ui-nested-menu-item';
 import React, { MouseEvent } from 'react';
 import { useDrag } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import { SPRITE_TO_SVG_ELEMENT_MAP } from '../constants';
-import { addCurrentSprite, setCurrentSprite } from '../Frames/actions';
+import { addCurrentSprite, copySelectedSpriteSIntoFrame, copySpriteIntoFrame, removeCurrentSprites, removeCurrentSpritesFromAllFrames, removeSprite, removeSpriteFromAllFrames, setCurrentSprite } from '../Frames/actions';
 import { Sprite } from '../Frames/reducers/frames';
 import State from '../stateInterface';
 
@@ -46,6 +47,8 @@ const useStyles = makeStyles({
 
 export default function BaseSprite({position, id, backgroundUrl, scale}: Sprite) {
   const [state, setState] = React.useState(initialState);
+  const frames = useSelector((state: State) => state.frames.frames)
+  const framesForSelect = frames.filter(f => f.sprites.map(s => s.id).indexOf(id) < 0)
   const currentSpriteIds = useSelector((state: State) => state.frames.currentSprites.map(s => s.id))
   const classes = useStyles()
 
@@ -96,7 +99,6 @@ export default function BaseSprite({position, id, backgroundUrl, scale}: Sprite)
       </div>
       <Menu
         id="simple-menu"
-        keepMounted
         open={state.mouseY !== null}
         onClose={handleClose}
         anchorReference="anchorPosition"
@@ -106,9 +108,26 @@ export default function BaseSprite({position, id, backgroundUrl, scale}: Sprite)
             : undefined
         }
       >
-        <MenuItem onClick={() => console.log("Item 1")}>Profile</MenuItem>
-        <MenuItem onClick={() => console.log("Item 1")}>My account</MenuItem>
-        <MenuItem onClick={() => console.log("Item 1")}>Logout</MenuItem>
+        <MenuItem onClick={() => dispatch(removeSprite(id || ''))}>Remove from crt. frame</MenuItem>
+        <MenuItem onClick={() => dispatch(removeCurrentSprites())}>Remove selected from crt. frame</MenuItem>
+        <MenuItem onClick={() => dispatch(removeSpriteFromAllFrames(id || ''))}>Remove from all frames</MenuItem>
+        <MenuItem onClick={() => dispatch(removeCurrentSpritesFromAllFrames())}>Remove selected from all frames</MenuItem>
+        <NestedMenuItem 
+          label="Copy sprite into"
+          parentMenuOpen={state.mouseY !== null}
+        >
+          {framesForSelect.map(f => (
+            <MenuItem onClick={() => dispatch(copySpriteIntoFrame(id || '', f.id || ''))}>Frame {f.id}</MenuItem>
+          ))}
+        </NestedMenuItem>
+        <NestedMenuItem 
+          label="Copy selected sprites into"
+          parentMenuOpen={state.mouseY !== null}
+        >
+          {framesForSelect.map(f => (
+            <MenuItem onClick={() => dispatch(copySelectedSpriteSIntoFrame(f.id || ''))}>Frame {f.id}</MenuItem>
+          ))}
+        </NestedMenuItem>
       </Menu>
     </div>
   );

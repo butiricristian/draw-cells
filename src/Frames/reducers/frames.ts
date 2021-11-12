@@ -116,6 +116,73 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
         currentFrame: crtFrame,
       }
     }
+    case Actions.REMOVE_SPRITE_FROM_ALL_FRAMES: {
+      const crtFrame = {
+        ...state.currentFrame,
+        sprites: state.currentFrame.sprites.filter(s => s.id !== payload.id)
+      }
+      const newFrames = state.frames.map(f => ({
+        ...f,
+        sprites: f.sprites.filter(s => s.id !== payload.id)
+      }))
+      return {
+        ...state,
+        frames: newFrames,
+        currentFrame: crtFrame,
+      }
+    }
+    case Actions.REMOVE_CURRENT_SPRITES: {
+      const currentSpritesIds = state.currentSprites.map(x => x.id)
+      const crtFrame = {
+        ...state.currentFrame,
+        sprites: state.currentFrame.sprites.filter(s => currentSpritesIds.indexOf(s.id) < 0)
+      }
+      return {
+        ...state,
+        frames: state.frames.map(f => f.id === crtFrame.id ? crtFrame : f),
+        currentFrame: crtFrame,
+      }
+    }
+    case Actions.REMOVE_CURRENT_SPRITES_FROM_ALL_FRAMES: {
+      const currentSpritesIds = state.currentSprites.map(x => x.id)
+      const crtFrame = {
+        ...state.currentFrame,
+        sprites: state.currentFrame.sprites.filter(s => currentSpritesIds.indexOf(s.id) < 0)
+      }
+      const newFrames = state.frames.map(f => ({
+        ...f,
+        sprites: f.sprites.filter(s => currentSpritesIds.indexOf(s.id) < 0)
+      }))
+      return {
+        ...state,
+        frames: newFrames,
+        currentFrame: crtFrame,
+      }
+    }
+    case Actions.COPY_SPRITE_INTO_FRAME: {
+      const spriteToCopy = state.currentFrame.sprites.find(s => s.id === payload.spriteId)
+      if (spriteToCopy) {
+        const newFrames = state.frames.map(f => f.id === payload.frameId ? {...f, sprites: [...f.sprites, spriteToCopy]} : f)
+        return {
+          ...state,
+          frames: newFrames,
+        }
+      }
+      return {...state}
+    }
+    case Actions.COPY_SELECTED_SPRITES_INTO_FRAME: {
+      const currentSpritesIds = state.currentSprites.map(x => x.id)
+      const spritesToCopy = state.currentFrame.sprites.filter(s => currentSpritesIds.indexOf(s.id) > -1)
+      console.log(spritesToCopy)
+      if (spritesToCopy) {
+        const newFrames = state.frames.map(f => f.id === payload.frameId ? {...f, sprites: [...f.sprites, ...spritesToCopy]} : f)
+        return {
+          ...state,
+          frames: newFrames,
+        }
+      }
+      return {...state}
+    }
     case Actions.ADD_FRAME:
       return {
         ...state,

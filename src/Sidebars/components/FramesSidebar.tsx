@@ -8,7 +8,6 @@ import { addFrame } from '../../Frames/actions';
 import Frame from '../../Frames/components/Frame';
 import State from '../../stateInterface';
 import { toggleFrames } from '../actions';
-import SidebarInterface from '../interfaces/SidebarInterface';
 import BaseSidebar from './BaseSidebar';
 
 const useStyles = makeStyles({
@@ -40,9 +39,10 @@ export default function FramesSidebar() {
   const classes = useStyles()
 
   const handleAddFrame = () => {
+    const newFrameId = parseInt(framesList[framesList.length - 1]?.id?.toString() || '0') + 1
     const newFrame = {
-      id: parseInt(framesList[-1]?.id?.toString() || '0') + 1,
-      title: `Frame ${framesList.length + 1}`,
+      id: newFrameId,
+      title: `Frame ${newFrameId}`,
       sprites: []
     }
     dispatch(addFrame(newFrame))
@@ -50,9 +50,10 @@ export default function FramesSidebar() {
   }
 
   const handleCloneSelected = () => {
+    const newFrameId = parseInt(framesList[framesList.length - 1]?.id?.toString() || '0') + 1
     const newFrame = {
-      id: framesList.length + 1,
-      title: `Frame ${framesList.length + 1}`,
+      id: newFrameId,
+      title: `Frame ${newFrameId}`,
       sprites: [...currentFrame.sprites]
     }
     dispatch(addFrame(newFrame))
@@ -76,6 +77,7 @@ export default function FramesSidebar() {
       toggleOpen={() => dispatch(toggleFrames())}
       iconRenderer={() => isFramesSidebarOpen ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
       anchor="bottom"
+      additionalTitle={(<>| <b>Frame {currentFrame.id}</b></>)}
     >
       <div className={classes.container}>
         <List style={{height: 'calc(100% - 50px)', display: 'inline-flex', overflowX: 'auto'}}>

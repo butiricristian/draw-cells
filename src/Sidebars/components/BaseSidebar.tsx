@@ -1,5 +1,5 @@
 import { IconButton, Typography, useTheme } from '@material-ui/core';
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import { bottomDrawerHeight, drawerWidth } from '../../constants';
 import State from '../../stateInterface';
@@ -10,9 +10,10 @@ interface BaseSidebarProps {
   children: any,
   iconRenderer: () => any,
   anchor: 'bottom' | 'right' | 'left',
-}
+  additionalTitle?: string | ReactElement | undefined
+} 
 
-export default function BaseSidebar({isOpen, toggleOpen, children, iconRenderer, anchor}: BaseSidebarProps) {
+export default function BaseSidebar({isOpen, toggleOpen, children, iconRenderer, anchor, additionalTitle}: BaseSidebarProps) {
   const theme = useTheme()
   const isSpritesSidebarOpen = useSelector((state: State) => state.sidebars.isSpritesOpen)
   const isPropertiesSidebarOpen = useSelector((state: State) => state.sidebars.isPropertiesOpen)
@@ -81,7 +82,7 @@ export default function BaseSidebar({isOpen, toggleOpen, children, iconRenderer,
           </IconButton>
           {anchor === 'right' && (<Typography variant="subtitle1" style={{transform: 'rotate(-90deg)', position: 'absolute', top: 70, left: -14}}>Properties</Typography>)}
           {anchor === 'left' && (<Typography variant="subtitle1" style={{transform: 'rotate(-90deg)', position: 'absolute', top: 60, left: -1}}>Sprites</Typography>)}
-          {anchor === 'bottom' && (<Typography component="span" variant="subtitle1" style={{position: 'absolute', top: 10, right: 50}}>Frames</Typography>)}
+          {anchor === 'bottom' && (<Typography variant="subtitle1" style={{position: 'absolute', top: 10, right: 60, whiteSpace: 'nowrap'}}>Frames {additionalTitle}</Typography>)}
         </div>
         <div style={{...marginStyle, height: '100%'}}>
           {isOpen && children}
