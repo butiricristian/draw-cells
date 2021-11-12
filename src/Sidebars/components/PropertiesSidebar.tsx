@@ -37,7 +37,7 @@ export default function PropertiesSidebar({width}: SidebarInterface) {
               <TableCell>
                 <Input 
                   value={currentSprite?.id || ''} 
-                  onChange={(e) => dispatch(updateSprite({id: currentSprite?.id, field: 'id', value: e.target.value}))}
+                  onChange={(e) => dispatch(updateSprite({field: 'id', value: e.target.value}))}
                 />
               </TableCell>
             </TableRow>
@@ -46,7 +46,7 @@ export default function PropertiesSidebar({width}: SidebarInterface) {
               <TableCell>
                 <Input 
                   value={currentSprite?.position.x || ''}
-                  onChange={(e) => dispatch(updateSprite({id: currentSprite?.id, field: 'positionX', value: e.target.value}))}
+                  onChange={(e) => dispatch(updateSprite({field: 'positionX', value: e.target.value}))}
                 />
               </TableCell>
             </TableRow>
@@ -55,7 +55,7 @@ export default function PropertiesSidebar({width}: SidebarInterface) {
               <TableCell>
                 <Input 
                   value={currentSprite?.position.y || ''}
-                  onChange={(e) => dispatch(updateSprite({id: currentSprite?.id, field: 'positionY', value: e.target.value}))}
+                  onChange={(e) => dispatch(updateSprite({field: 'positionY', value: e.target.value}))}
                 />
               </TableCell>
             </TableRow>
@@ -64,7 +64,7 @@ export default function PropertiesSidebar({width}: SidebarInterface) {
               <TableCell>
                 <Select 
                   value={currentSprite?.animationType || ''}
-                  onChange={(e) => dispatch(updateSprite({id: currentSprite?.id, field: 'animationType', value: e.target.value}))}
+                  onChange={(e) => dispatch(updateSprite({field: 'animationType', value: e.target.value}))}
                 >
                   <MenuItem value="LINEAR">Linear</MenuItem>
                   <MenuItem value="CHAOTIC">Chaotic</MenuItem>
@@ -77,7 +77,7 @@ export default function PropertiesSidebar({width}: SidebarInterface) {
                 <Input 
                   type="number"
                   value={currentSprite?.duration || ''}
-                  onChange={(e) => dispatch(updateSprite({id: currentSprite?.id, field: 'duration', value: e.target.value}))}
+                  onChange={(e) => dispatch(updateSprite({field: 'duration', value: e.target.value}))}
                 />
               </TableCell>
             </TableRow>
@@ -87,7 +87,7 @@ export default function PropertiesSidebar({width}: SidebarInterface) {
                 <Input 
                   type="number"
                   value={currentSprite?.minTravelDistance || ''}
-                  onChange={(e) => dispatch(updateSprite({id: currentSprite?.id, field: 'minTravelDistance', value: e.target.value}))}
+                  onChange={(e) => dispatch(updateSprite({field: 'minTravelDistance', value: e.target.value}))}
                 />
               </TableCell>
             </TableRow>)}
@@ -97,7 +97,7 @@ export default function PropertiesSidebar({width}: SidebarInterface) {
                 <Input 
                   type="number"
                   value={currentSprite?.rangeOfMovement || ''}
-                  onChange={(e) => dispatch(updateSprite({id: currentSprite?.id, field: 'rangeOfMovement', value: e.target.value}))}
+                  onChange={(e) => dispatch(updateSprite({field: 'rangeOfMovement', value: e.target.value}))}
                 />
               </TableCell>
             </TableRow>)}
@@ -107,7 +107,7 @@ export default function PropertiesSidebar({width}: SidebarInterface) {
                 <Input 
                   type="number"
                   value={currentSprite?.nrOfIterations || ''}
-                  onChange={(e) => dispatch(updateSprite({id: currentSprite?.id, field: 'nrOfIterations', value: e.target.value}))}
+                  onChange={(e) => dispatch(updateSprite({field: 'nrOfIterations', value: e.target.value}))}
                 />
               </TableCell>
             </TableRow>)}
@@ -117,7 +117,7 @@ export default function PropertiesSidebar({width}: SidebarInterface) {
                 <Input 
                   type="number"
                   value={currentSprite?.scale || ''}
-                  onChange={(e) => dispatch(updateSprite({id: currentSprite?.id, field: 'scale', value: e.target.value}))}
+                  onChange={(e) => dispatch(updateSprite({field: 'scale', value: e.target.value}))}
                 />
               </TableCell>
             </TableRow>

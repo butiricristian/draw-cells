@@ -19,9 +19,9 @@ export const addSprite = (sprite: Sprite) => ({
   payload: sprite,
 })
 
-export const updateSprite = ({id, field, value}: any) => ({
+export const updateSprite = ({field, value}: any) => ({
   type: Actions.UPDATE_SPRITE,
-  payload: {id, field, value},
+  payload: {field, value},
 })
 
 export const removeSprite = (id: number | string) => ({

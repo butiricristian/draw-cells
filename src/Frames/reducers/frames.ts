@@ -73,7 +73,7 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
       }
     }
     case Actions.UPDATE_SPRITE: {
-      if (!state.currentSprites) return {...state}
+      if (!state.currentSprites || state.currentSprites.length <= 0) return {...state}
 
       const newCurrentSprites = []
       const newCurrentSpritesMap = new Map<string | number, Sprite>()
@@ -93,7 +93,7 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
         sprites: state.currentFrame.sprites
           .map(s => {
             let newS = null
-            if (s.id && s.id === payload.id) newS = newCurrentSpritesMap.get(s.id)
+            if (s.id && newCurrentSpritesMap.get(s.id)) newS = newCurrentSpritesMap.get(s.id)
             if (newS) return newS
             return s
           })
@@ -119,6 +119,7 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
     case Actions.ADD_FRAME:
       return {
         ...state,
+        currentFrame: payload,
         frames: [...state.frames, payload]
       }
     case Actions.REMOVE_FRAME:
