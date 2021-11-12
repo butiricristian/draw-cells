@@ -36,7 +36,7 @@ interface AnimationSpriteProps extends Sprite {
 }
 
 export default function AnimationSprite({position, id, backgroundUrl, animationType, scale, canvas, 
-  minTravelDistance = 15, rangeOfMovement = 40, nrOfIterations = 30, duration = 1}: AnimationSpriteProps) {
+  minTravelDistance = 15, rangeOfMovement = 40, nrOfIterations = 10, duration = 1}: AnimationSpriteProps) {
   const classes = useStyles()
   const spriteToSvgMap: any = SPRITE_TO_SVG_ELEMENT_MAP
   const currentFrame = useSelector((state: State) => state.frames.currentFrame)
@@ -60,7 +60,9 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
   let newTop = prevSprite?.position.y || 0
   const topDistance = position?.y - newTop
 
-  const minRangeOfMovement = ((currentFrame.id || '') >= (prevFrame?.id || '') ? prevSprite?.minTravelDistance : minTravelDistance) || 15
+  console.log("newLeft: ", newLeft, "leftDistance: ", leftDistance)
+
+  const finalMinTravelDistance = ((currentFrame.id || '') >= (prevFrame?.id || '') ? prevSprite?.minTravelDistance : minTravelDistance) || 15
   const rangeOfMotion = ((currentFrame.id || '') >= (prevFrame?.id || '') ? prevSprite?.rangeOfMovement : rangeOfMovement) || 40
   const numberOfIterations = ((currentFrame.id || '') >= (prevFrame?.id || '') ? prevSprite?.nrOfIterations : nrOfIterations) || 10
   
@@ -78,8 +80,11 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
       const toIntermediaryLeftPoint = Math.round((prevSprite?.position.x || 0) + leftStep*(i+1))
       console.log("From: ", fromIntermediaryLeftPoint, " To: ", toIntermediaryLeftPoint)
       do {
-        newRandLeft = getRndInteger(Math.max(fromIntermediaryLeftPoint-rangeOfMotion, 0), Math.min(toIntermediaryLeftPoint+rangeOfMotion, canvas.clientWidth))
-      } while(Math.abs(newLeft - newRandLeft) < minRangeOfMovement)
+        const fromLeft = fromIntermediaryLeftPoint-rangeOfMotion
+        const toLeft = toIntermediaryLeftPoint+rangeOfMotion
+        newRandLeft = getRndInteger(fromLeft, toLeft)
+        console.log("newLeft: ", newLeft, " newRandLeft: ", newRandLeft, "finalMinTravelDistance: ", finalMinTravelDistance)
+      } while(Math.abs(newLeft - newRandLeft) < finalMinTravelDistance)
       newLeft = newRandLeft
 
       let newRandTop
@@ -87,8 +92,11 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
       const toIntermediaryTopPoint = Math.round((prevSprite?.position.y || 0) + topStep*(i+1))
       console.log("From: ", fromIntermediaryTopPoint, " To: ", toIntermediaryTopPoint)
       do {
-        newRandTop = getRndInteger(Math.max(fromIntermediaryTopPoint-rangeOfMotion, 0), Math.min(toIntermediaryTopPoint+rangeOfMotion, canvas.clientHeight))
-      } while(Math.abs(newTop - newRandTop) < minRangeOfMovement)
+        const fromTop = fromIntermediaryTopPoint-rangeOfMotion
+        const toTop = toIntermediaryTopPoint+rangeOfMotion
+        newRandTop = getRndInteger(fromTop, toTop)
+        console.log("newLeft: ", newTop, " newRandLeft: ", newRandTop, "finalMinTravelDistance: ", finalMinTravelDistance)
+      } while(Math.abs(newTop - newRandTop) < finalMinTravelDistance)
       newTop = newRandTop
     } else {
       newLeft = 0

@@ -31,7 +31,7 @@ const initialState: StateProps = {
   mouseY: null,
 };
 
-export default function FramesSidebar({width}: SidebarInterface) {
+export default function FramesSidebar() {
   const dispatch = useDispatch()
   const isFramesSidebarOpen = useSelector((state: State) => state.sidebars.isFramesOpen)
   const currentFrame = useSelector((state: State) => state.frames.currentFrame)

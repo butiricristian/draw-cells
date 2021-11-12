@@ -25,7 +25,7 @@ function App() {
         <div className="App">
           <AnimationCanvas />
           <SpritesSidebar />
-          <FramesSidebar width={300} />
+          <FramesSidebar />
           <PropertiesSidebar width={300}/>
         </div>
         <PresentationModal />
