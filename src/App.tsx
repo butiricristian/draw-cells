@@ -14,6 +14,7 @@ import { sidebars } from './Sidebars/reducers/sidebars';
 import { presentations } from './Presentation/reducers/presentations';
 import { canvas } from './Canvas/reducers/canvas';
 import PresentationModal from './Presentation/components/PresentationModal';
+import { CustomDragLayer } from './Canvas/components/CustomDragLayer';
 
 const store = createStore(combineReducers({sidebars, frames, presentations, canvas}))
 
@@ -23,6 +24,7 @@ function App() {
       <DndProvider backend={HTML5Backend}>
         <Header />
         <div className="App">
+          <CustomDragLayer/>
           <AnimationCanvas />
           <SpritesSidebar />
           <FramesSidebar />

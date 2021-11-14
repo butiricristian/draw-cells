@@ -236,7 +236,8 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
     }
     case Actions.UPDATE_CURRENT_SPRITE_POSITION: {
       const {id, deltaX, deltaY} = payload
-      if (state.currentSprites.length > 0) {
+      const currentSpritesIds = state.currentSprites.map(x => x.id)
+      if (state.currentSprites.length > 0 && currentSpritesIds.indexOf(id) > -1) {
         const newCurrentSpritesById = new Map<string | number, Sprite>()
         for(let crtSprite of state.currentSprites) {
           if (!crtSprite.id) continue

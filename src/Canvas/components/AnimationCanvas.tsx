@@ -27,7 +27,7 @@ function AnimationCanvas() {
 
   const containerStyle: any = {
     flexGrow: 1, 
-    height: `calc(100vh - ${headerHeight + (isFramesSidebarOpen ? drawerWidth : smallDrawerWidth)}px)`,
+    height: `calc(100vh - ${headerHeight + smallDrawerWidth}px)`,
     display: 'flex', 
     flexDirection: 'column',
     marginLeft: (isSpritesSidebarOpen ? drawerWidth : smallDrawerWidth),

@@ -1,6 +1,7 @@
 import { makeStyles, Typography } from '@material-ui/core';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDrag } from 'react-dnd';
+import { getEmptyImage } from 'react-dnd-html5-backend';
 import { SPRITE_TO_SVG_ELEMENT_MAP } from '../constants';
 
 interface SidebarSpriteProps {
@@ -25,13 +26,17 @@ const useStyles = makeStyles({
 export default function SidebarSprite({backgroundUrl, name}: SidebarSpriteProps) {
   const classes = useStyles()
   
-  const [{isDragging: isSquareDragging}, squareDrag] = useDrag(() => ({
+  const [{isDragging: isSquareDragging}, squareDrag, preview] = useDrag(() => ({
     type: 'SPRITE',
     item: { type: 'SIDEBAR_SPRITE', backgroundUrl },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging()
     })
   }))
+
+  useEffect(() => {
+    preview(getEmptyImage(), { captureDraggingState: true });
+  }, [preview]);
 
   const spriteToSvgMap: any = SPRITE_TO_SVG_ELEMENT_MAP
 

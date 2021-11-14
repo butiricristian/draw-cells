@@ -1,8 +1,9 @@
 import { makeStyles, Menu, MenuItem } from '@material-ui/core';
 import clsx from 'clsx';
 import NestedMenuItem from 'material-ui-nested-menu-item';
-import React, { MouseEvent } from 'react';
+import React, { MouseEvent, useEffect } from 'react';
 import { useDrag } from 'react-dnd';
+import { getEmptyImage } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import { SPRITE_TO_SVG_ELEMENT_MAP } from '../constants';
 import { addCurrentSprite, copySelectedSpriteSIntoFrame, copySpriteIntoFrame, removeCurrentSprites, removeCurrentSpritesFromAllFrames, removeSprite, removeSpriteFromAllFrames, setCurrentSprite } from '../Frames/actions';
@@ -73,22 +74,22 @@ export default function BaseSprite({position, id, backgroundUrl, scale}: Sprite)
     }
   }
 
-  const [{isDragging}, canvasSpriteDrag] = useDrag(() => ({
+  const [{isDragging}, canvasSpriteDrag, preview] = useDrag(() => ({
     type: 'SPRITE',
-    item: { type: 'CANVAS_SPRITE', id, x: position.x, y: position.y },
+    item: { type: 'CANVAS_SPRITE', id, x: position.x, y: position.y, backgroundUrl, scale },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging()
     })
-  }), [position])
+  }), [position, scale])
 
-  if (isDragging) {
-    return (<div ref={canvasSpriteDrag} style={{position: 'absolute'}}/>)
-  }
+  useEffect(() => {
+    preview(getEmptyImage(), {captureDraggingState: true});
+  }, [preview]);
 
   const spriteToSvgMap: any = SPRITE_TO_SVG_ELEMENT_MAP
   
   return (
-    <div ref={canvasSpriteDrag} className={classes.spriteContainer} style={{left: position.x, top: position.y, transform: `scale(${scale})`}}>
+    <div ref={canvasSpriteDrag} className={classes.spriteContainer} style={{left: position.x, top: position.y, transform: `scale(${scale})`, opacity: isDragging ? 0 : 1}}>
       <div 
         className={clsx(classes.sprite, {[classes.selected]: currentSpriteIds.find(sId => sId === id)})}
         style={{backgroundColor: 'transparent'}}
