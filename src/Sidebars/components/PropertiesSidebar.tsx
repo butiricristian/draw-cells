@@ -6,10 +6,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateSprite } from '../../Frames/actions';
 import State from '../../stateInterface';
 import { toggleProperties } from '../actions';
-import SidebarInterface from '../interfaces/SidebarInterface';
 import BaseSidebar from './BaseSidebar';
 
-export default function PropertiesSidebar({width}: SidebarInterface) {
+export default function PropertiesSidebar() {
   const dispatch = useDispatch()
   const isPropertiesSidebarOpen = useSelector((state: State) => state.sidebars.isPropertiesOpen)
   const currentSprites = useSelector((state: State) => state.frames.currentSprites)
@@ -24,7 +23,7 @@ export default function PropertiesSidebar({width}: SidebarInterface) {
     >
       <div style={{height: '100vh'}}>
         <Typography variant="subtitle1">Properties</Typography>
-        <Table>
+        <Table size="small">
           <TableHead>
             <TableRow>
               <TableCell>Propety</TableCell>

@@ -1,7 +1,7 @@
 import { IconButton, Typography, useTheme } from '@material-ui/core';
 import React, { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
-import { bottomDrawerHeight, drawerWidth } from '../../constants';
+import { bottomDrawerHeight, leftDrawerWidth, rightDrawerWidth } from '../../constants';
 import State from '../../stateInterface';
 
 interface BaseSidebarProps {
@@ -34,7 +34,7 @@ export default function BaseSidebar({isOpen, toggleOpen, children, iconRenderer,
       top: 0,
       left: 0,
       height: `calc(100vh - ${theme.spacing(8)}px`,
-      width: isOpen ? drawerWidth : smallDrawerWidth,
+      width: isOpen ? leftDrawerWidth : smallDrawerWidth,
       borderRight: 'solid 1px #ddd',
       transition: 'width 0.3s ease-out',
       zIndex: 5,
@@ -45,7 +45,7 @@ export default function BaseSidebar({isOpen, toggleOpen, children, iconRenderer,
       top: 0,
       right: 0,
       height: `calc(100vh - ${theme.spacing(8)}px`,
-      width: isOpen ? drawerWidth : smallDrawerWidth,
+      width: isOpen ? rightDrawerWidth : smallDrawerWidth,
       borderLeft: 'solid 1px #ddd',
       transition: 'width 0.3s ease-out',
       zIndex: 5,
@@ -57,8 +57,8 @@ export default function BaseSidebar({isOpen, toggleOpen, children, iconRenderer,
       left: 0,
       right: 20,
       height: isOpen ? bottomDrawerHeight : smallDrawerWidth,
-      width: `calc(100% - ${(isPropertiesSidebarOpen ? drawerWidth : smallDrawerWidth) + (isSpritesSidebarOpen ? drawerWidth : smallDrawerWidth)}px)`,
-      marginLeft: (isSpritesSidebarOpen ? drawerWidth : smallDrawerWidth),
+      width: `calc(100% - ${(isPropertiesSidebarOpen ? rightDrawerWidth : smallDrawerWidth) + (isSpritesSidebarOpen ? leftDrawerWidth : smallDrawerWidth)}px)`,
+      marginLeft: (isSpritesSidebarOpen ? leftDrawerWidth : smallDrawerWidth),
       borderTop: 'solid 1px #ddd',
       transition: 'height 0.3s ease-out, margin 0.3s ease-out, width 0.3s ease-out',
       zIndex: 1,

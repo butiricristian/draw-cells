@@ -2,7 +2,7 @@ import { useTheme } from '@material-ui/core';
 import React, { useRef, useState } from 'react';
 import { useDrop, XYCoord } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
-import { drawerWidth } from '../../constants';
+import { leftDrawerWidth, rightDrawerWidth } from '../../constants';
 import { addSprite, updateCurrentSpritePosition } from '../../Frames/actions';
 import { Sprite } from '../../Frames/reducers/frames';
 import BaseSprite from '../../Sprites/BaseSprite';
@@ -13,9 +13,7 @@ function AnimationCanvas() {
   const dispatch = useDispatch()
   const sprites = useSelector((state: State) => state.frames.currentFrame.sprites)
   const theme = useTheme()
-  const isFramesSidebarOpen = useSelector((state: State) => state.sidebars.isFramesOpen)
   const isSpritesSidebarOpen = useSelector((state: State) => state.sidebars.isSpritesOpen)
-  const isPropertiesSidebarOpen = useSelector((state: State) => state.sidebars.isPropertiesOpen)
   const scale = useSelector((state: State) => state.canvas.scale)
   const canvasContainer = useRef<any>(null)
   const innerCanvas = useRef<any>(null)
@@ -23,15 +21,15 @@ function AnimationCanvas() {
   const smallDrawerWidth = theme.spacing(6)
   const headerHeight = theme.spacing(8)
 
-  const canvasWidth = `calc(100vw - ${(isPropertiesSidebarOpen ? drawerWidth : smallDrawerWidth) + (isSpritesSidebarOpen ? drawerWidth : smallDrawerWidth)}px)`
+  const canvasWidth = `calc(100vw - ${smallDrawerWidth + (isSpritesSidebarOpen ? leftDrawerWidth : smallDrawerWidth)}px)`
 
   const containerStyle: any = {
     flexGrow: 1, 
     height: `calc(100vh - ${headerHeight + smallDrawerWidth}px)`,
     display: 'flex', 
     flexDirection: 'column',
-    marginLeft: (isSpritesSidebarOpen ? drawerWidth : smallDrawerWidth),
-    marginRight: (isPropertiesSidebarOpen ? drawerWidth : smallDrawerWidth),
+    marginLeft: (isSpritesSidebarOpen ? leftDrawerWidth : smallDrawerWidth),
+    marginRight: smallDrawerWidth,
     width: canvasWidth,
     alignItems: 'center',
     justifyContent: 'center',
@@ -62,7 +60,7 @@ function AnimationCanvas() {
         const containersWidthSpacing = Math.round((canvasContainer.current?.clientWidth - innerCanvas.current?.clientWidth * scale) / 2)
         const containersHeightSpacing = Math.round((canvasContainer.current?.clientHeight - innerCanvas.current?.clientHeight * scale) / 2)
         createSprite({
-          x: Math.round(Math.round((monitor.getSourceClientOffset()?.x || 0) - containersWidthSpacing - drawerWidth) / scale),
+          x: Math.round(Math.round((monitor.getSourceClientOffset()?.x || 0) - containersWidthSpacing - leftDrawerWidth) / scale),
           y: Math.round(Math.round((monitor.getSourceClientOffset()?.y || 0) - containersHeightSpacing - headerHeight) / scale)
         }, item.backgroundUrl)
       } else {

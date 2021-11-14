@@ -285,20 +285,24 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
       let newCrtFrame = state.currentFrame
       const crtFrameIndex = state.frames.findIndex(f => f.id === state.currentFrame.id)
       if(crtFrameIndex < state.frames.length - 1) newCrtFrame=state.frames[crtFrameIndex + 1]
+      const newCurrentSprites = newCrtFrame.sprites.filter(s => state.currentSprites.find(crtSprite => crtSprite.id === s.id)) || []
       return {
         ...state,
         currentFrame: newCrtFrame,
-        prevFrame: state.currentFrame
+        prevFrame: state.currentFrame,
+        currentSprites: newCurrentSprites,
       }
     }
     case Actions.PREV_FRAME: {
       let newCrtFrame = state.currentFrame
       const crtFrameIndex = state.frames.findIndex(f => f.id === state.currentFrame.id)
       if(crtFrameIndex > 0) newCrtFrame=state.frames[crtFrameIndex - 1]
+      const newCurrentSprites = newCrtFrame.sprites.filter(s => state.currentSprites.find(crtSprite => crtSprite.id === s.id)) || []
       return {
         ...state,
         currentFrame: newCrtFrame,
-        prevFrame: state.currentFrame
+        prevFrame: state.currentFrame,
+        currentSprites: newCurrentSprites,
       }
     }
     case 'TOGGLE_MODAL': {

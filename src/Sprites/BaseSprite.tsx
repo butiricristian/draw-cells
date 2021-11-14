@@ -116,17 +116,20 @@ export default function BaseSprite({position, id, backgroundUrl, scale}: Sprite)
         <NestedMenuItem 
           label="Copy sprite into"
           parentMenuOpen={state.mouseY !== null}
+          disabled={framesForSelect.length < 1}
         >
           {framesForSelect.map(f => (
-            <MenuItem onClick={() => dispatch(copySpriteIntoFrame(id || '', f.id || ''))}>Frame {f.id}</MenuItem>
+            <MenuItem key={`copy-into-${f.id}`} onClick={() => dispatch(copySpriteIntoFrame(id || '', f.id || ''))}>Frame {f.id}</MenuItem>
           ))}
         </NestedMenuItem>
         <NestedMenuItem 
           label="Copy selected sprites into"
           parentMenuOpen={state.mouseY !== null}
+          disabled={framesForSelect.length < 1}
+
         >
           {framesForSelect.map(f => (
-            <MenuItem onClick={() => dispatch(copySelectedSpriteSIntoFrame(f.id || ''))}>Frame {f.id}</MenuItem>
+            <MenuItem key={`copy-selected-into-${f.id}`} onClick={() => dispatch(copySelectedSpriteSIntoFrame(f.id || ''))}>Frame {f.id}</MenuItem>
           ))}
         </NestedMenuItem>
       </Menu>

@@ -28,7 +28,7 @@ function App() {
           <AnimationCanvas />
           <SpritesSidebar />
           <FramesSidebar />
-          <PropertiesSidebar width={300}/>
+          <PropertiesSidebar/>
         </div>
         <PresentationModal />
       </DndProvider>

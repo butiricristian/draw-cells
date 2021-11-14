@@ -5,8 +5,9 @@ import {ReactComponent as DendriticCell2} from './assets/dendritic_cell_2.svg'
 import {ReactComponent as TCell1} from './assets/t_cell_1.svg'
 import {ReactComponent as TCell2} from './assets/t_cell_2.svg'
 
-export const drawerWidth = 240;
+export const rightDrawerWidth = 260;
 export const bottomDrawerHeight = 240;
+export const leftDrawerWidth = 150
 
 export const SPRITE_TO_SVG_ELEMENT_MAP = {
   b_cell_1: (<BCell1 />),
