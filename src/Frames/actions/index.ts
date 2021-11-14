@@ -1,4 +1,4 @@
-import { Frame, Position, Sprite } from '../reducers/frames'
+import { Frame, Sprite } from '../reducers/frames'
 
 export const Actions = {
   SET_CURRENT_FRAME: 'SET_CURRENT_FRAME',
@@ -90,10 +90,11 @@ export const addCurrentSprite = (spriteId: number | string | null) => ({
   payload: spriteId,
 })
 
-export const updateCurrentSpritePosition = (spriteId: number | string | null, position: Position) => ({
+export const updateCurrentSpritePosition = (spriteId: number | string | null, deltaX: number | undefined, deltaY: number | undefined) => ({
   type: Actions.UPDATE_CURRENT_SPRITE_POSITION,
   payload: {
     id: spriteId,
-    position,
+    deltaX,
+    deltaY,
   }
 })

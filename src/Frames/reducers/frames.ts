@@ -1,4 +1,4 @@
-import { Actions } from '../actions'
+import { Actions } from '../actions';
 
 const initialFrame = {
   id: 1,
@@ -45,6 +45,20 @@ export interface FramesState {
   currentFrame: Frame,
   prevFrame: Frame | null,
   currentSprites: Array<Sprite>,
+}
+
+const computeSpritePosition = (sprite: Sprite, deltaX: number | undefined, deltaY: number | undefined): Sprite => {
+  const newX = (sprite?.position.x || 0) + (deltaX || 0)
+  const newY = (sprite?.position.y || 0) + (deltaY || 0)
+  return {
+    ...sprite,
+    id: sprite.id,
+    position: {
+      ...sprite?.position,
+      x: newX,
+      y: newY,
+    },
+  }
 }
 
 export const frames = (state: FramesState = initialState, action: Action): FramesState => {
@@ -221,22 +235,49 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
       }
     }
     case Actions.UPDATE_CURRENT_SPRITE_POSITION: {
-      const {id, position} = payload
-      const crtSprite = state.currentFrame.sprites.find(s => s.id === id) || null
-      const newCurrentSprite: Sprite = {
-        ...crtSprite,
-        id: id,
-        position: position,
-      }
-      const newCurrentFrame = {
-        ...state.currentFrame,
-        sprites: state.currentFrame.sprites.map(s => s.id === id ? newCurrentSprite : s)
-      }
-      return {
-        ...state,
-        frames: state.frames.map(f => f.id === state.currentFrame.id ? newCurrentFrame : f),
-        currentFrame: newCurrentFrame,
-        currentSprites: state.currentSprites.map(s => s.id === id ? newCurrentSprite : s)
+      const {id, deltaX, deltaY} = payload
+      if (state.currentSprites.length > 0) {
+        const newCurrentSpritesById = new Map<string | number, Sprite>()
+        for(let crtSprite of state.currentSprites) {
+          if (!crtSprite.id) continue
+          const newCurrentSprite: Sprite = computeSpritePosition(crtSprite, deltaX, deltaY)
+          newCurrentSpritesById.set(crtSprite.id, newCurrentSprite)
+        }
+        const newCurrentFrame = {
+          ...state.currentFrame,
+          sprites: state.currentFrame.sprites.map(s => {
+            let newS = null
+            if (s.id && newCurrentSpritesById.get(s.id)) newS = newCurrentSpritesById.get(s.id)
+            if (newS) return newS
+            return s
+          })
+        }
+        return {
+          ...state,
+          frames: state.frames.map(f => f.id === state.currentFrame.id ? newCurrentFrame : f),
+          currentFrame: newCurrentFrame,
+          currentSprites: state.currentSprites.map(s => {
+            let newS = null
+            if (s.id && newCurrentSpritesById.get(s.id)) newS = newCurrentSpritesById.get(s.id)
+            if (newS) return newS
+            return s
+          })
+        }
+      } else {
+        const crtSprite = state.currentFrame.sprites.find(s => s.id === id)
+        if (!crtSprite) return {...state}
+
+        const newCurrentSprite = computeSpritePosition(crtSprite, deltaX, deltaY)
+        const newCurrentFrame = {
+          ...state.currentFrame,
+          sprites: state.currentFrame.sprites.map(s => s.id === id ? newCurrentSprite : s)
+        }
+        return {
+          ...state,
+          frames: state.frames.map(f => f.id === state.currentFrame.id ? newCurrentFrame : f),
+          currentFrame: newCurrentFrame,
+          currentSprites: state.currentSprites.map(s => s.id === id ? newCurrentSprite : s)
+        }
       }
     }
     case Actions.NEXT_FRAME: {

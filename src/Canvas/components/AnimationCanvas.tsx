@@ -4,7 +4,7 @@ import { useDrop, XYCoord } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import { drawerWidth } from '../../constants';
 import { addSprite, updateCurrentSpritePosition } from '../../Frames/actions';
-import { Position, Sprite } from '../../Frames/reducers/frames';
+import { Sprite } from '../../Frames/reducers/frames';
 import BaseSprite from '../../Sprites/BaseSprite';
 import State from '../../stateInterface';
 import { zoomIn, zoomOut } from '../actions';
@@ -51,8 +51,8 @@ function AnimationCanvas() {
     }
   }
 
-  function updateSpritePosition(id: string, pos: Position) {
-    dispatch(updateCurrentSpritePosition(id, pos))
+  function updateSpritePosition(id: string, deltaX: number | undefined, deltaY: number | undefined) {
+    dispatch(updateCurrentSpritePosition(id, deltaX, deltaY))
   }
 
   const [{isOver}, drop] = useDrop(({
@@ -66,11 +66,9 @@ function AnimationCanvas() {
           y: Math.round(Math.round((monitor.getSourceClientOffset()?.y || 0) - containersHeightSpacing - headerHeight) / scale)
         }, item.backgroundUrl)
       } else {
-        const pos: Position = {
-          x: Math.round(item.x + (monitor.getDifferenceFromInitialOffset()?.x || 0) / scale),
-          y: Math.round(item.y + (monitor.getDifferenceFromInitialOffset()?.y || 0) / scale)
-        }
-        updateSpritePosition(item.id, pos)
+        const deltaX = Math.round((monitor.getDifferenceFromInitialOffset()?.x || 0) / scale)
+        const deltaY = Math.round((monitor.getDifferenceFromInitialOffset()?.y || 0) / scale)
+        updateSpritePosition(item.id, deltaX, deltaY)
         return undefined
       }
     },
