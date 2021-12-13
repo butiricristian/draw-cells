@@ -13,10 +13,10 @@ export default function PropertiesSidebar() {
   const isPropertiesSidebarOpen = useSelector((state: State) => state.sidebars.isPropertiesOpen)
   const currentSprites = useSelector((state: State) => state.frames.currentSprites)
   const currentSprite = currentSprites.length <= 0 ? null : currentSprites[0]
-  
+
   return (
-    <BaseSidebar 
-      isOpen={isPropertiesSidebarOpen} 
+    <BaseSidebar
+      isOpen={isPropertiesSidebarOpen}
       toggleOpen={() => dispatch(toggleProperties())}
       iconRenderer={() => isPropertiesSidebarOpen ? <ChevronRightIcon /> : <ChevronLeftIcon />}
       anchor="right"
@@ -34,8 +34,8 @@ export default function PropertiesSidebar() {
             <TableRow key="id">
               <TableCell>id</TableCell>
               <TableCell>
-                <Input 
-                  value={currentSprite?.id || ''} 
+                <Input
+                  value={currentSprite?.id || ''}
                   onChange={(e) => dispatch(updateSprite({field: 'id', value: e.target.value}))}
                 />
               </TableCell>
@@ -43,7 +43,7 @@ export default function PropertiesSidebar() {
             <TableRow key="positionX">
               <TableCell>Position X</TableCell>
               <TableCell>
-                <Input 
+                <Input
                   value={currentSprite?.position.x || ''}
                   onChange={(e) => dispatch(updateSprite({field: 'positionX', value: e.target.value}))}
                 />
@@ -52,7 +52,7 @@ export default function PropertiesSidebar() {
             <TableRow key="positionY">
               <TableCell>Position Y</TableCell>
               <TableCell>
-                <Input 
+                <Input
                   value={currentSprite?.position.y || ''}
                   onChange={(e) => dispatch(updateSprite({field: 'positionY', value: e.target.value}))}
                 />
@@ -61,19 +61,20 @@ export default function PropertiesSidebar() {
             <TableRow key="animationType">
               <TableCell>Animation Type</TableCell>
               <TableCell>
-                <Select 
+                <Select
                   value={currentSprite?.animationType || ''}
                   onChange={(e) => dispatch(updateSprite({field: 'animationType', value: e.target.value}))}
                 >
                   <MenuItem value="LINEAR">Linear</MenuItem>
                   <MenuItem value="CHAOTIC">Chaotic</MenuItem>
+                  <MenuItem value="CIRCULAR">Circular</MenuItem>
                 </Select>
               </TableCell>
             </TableRow>
             <TableRow key="duration">
               <TableCell>Duration</TableCell>
               <TableCell>
-                <Input 
+                <Input
                   type="number"
                   value={currentSprite?.duration || ''}
                   onChange={(e) => dispatch(updateSprite({field: 'duration', value: e.target.value}))}
@@ -83,7 +84,7 @@ export default function PropertiesSidebar() {
             {currentSprite?.animationType === 'CHAOTIC' && (<TableRow key="minTravelDistance">
               <TableCell>Min. Travel Distance</TableCell>
               <TableCell>
-                <Input 
+                <Input
                   type="number"
                   value={currentSprite?.minTravelDistance || ''}
                   onChange={(e) => dispatch(updateSprite({field: 'minTravelDistance', value: e.target.value}))}
@@ -93,7 +94,7 @@ export default function PropertiesSidebar() {
             {currentSprite?.animationType === 'CHAOTIC' && (<TableRow key="rangeOfMovement">
               <TableCell>Range of Movement</TableCell>
               <TableCell>
-                <Input 
+                <Input
                   type="number"
                   value={currentSprite?.rangeOfMovement || ''}
                   onChange={(e) => dispatch(updateSprite({field: 'rangeOfMovement', value: e.target.value}))}
@@ -103,7 +104,7 @@ export default function PropertiesSidebar() {
             {currentSprite?.animationType === 'CHAOTIC' && (<TableRow key="nrOfIterations">
               <TableCell>Number of iterations</TableCell>
               <TableCell>
-                <Input 
+                <Input
                   type="number"
                   value={currentSprite?.nrOfIterations || ''}
                   onChange={(e) => dispatch(updateSprite({field: 'nrOfIterations', value: e.target.value}))}
@@ -113,7 +114,7 @@ export default function PropertiesSidebar() {
             <TableRow key="scale">
               <TableCell>Scale</TableCell>
               <TableCell>
-                <Input 
+                <Input
                   type="number"
                   value={currentSprite?.scale || ''}
                   onChange={(e) => dispatch(updateSprite({field: 'scale', value: e.target.value}))}

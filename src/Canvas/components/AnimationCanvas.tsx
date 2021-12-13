@@ -2,7 +2,7 @@ import { useTheme } from '@material-ui/core';
 import React, { useRef, useState } from 'react';
 import { useDrop, XYCoord } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
-import { leftDrawerWidth, rightDrawerWidth } from '../../constants';
+import { leftDrawerWidth } from '../../constants';
 import { addSprite, updateCurrentSpritePosition } from '../../Frames/actions';
 import { Sprite } from '../../Frames/reducers/frames';
 import BaseSprite from '../../Sprites/BaseSprite';

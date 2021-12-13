@@ -23,7 +23,7 @@ const useStyles = makeStyles({
     position: 'absolute',
     cursor: 'pointer',
     width: 50,
-    height: 50, 
+    height: 50,
   }
 })
 
@@ -35,7 +35,7 @@ interface AnimationSpriteProps extends Sprite {
   canvas: HTMLElement | null,
 }
 
-export default function AnimationSprite({position, id, backgroundUrl, animationType, scale, canvas, 
+export default function AnimationSprite({position, id, backgroundUrl, animationType, scale, canvas,
   minTravelDistance = 15, rangeOfMovement = 40, nrOfIterations = 10, duration = 1}: AnimationSpriteProps) {
   const classes = useStyles()
   const spriteToSvgMap: any = SPRITE_TO_SVG_ELEMENT_MAP
@@ -43,13 +43,14 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
   const prevFrame = useSelector((state: State) => state.frames.prevFrame)
   const prevSprite = prevFrame?.sprites.find(s => s.id === id)
   const animationDuration = (((currentFrame.id || '') >= (prevFrame?.id || '') ? prevSprite?.duration : duration) || 1) * 1000
+  const isGoingBackwards = (currentFrame.id || 0) >= (prevFrame?.id || 0)
 
   //SCALE PROPS
   const scaleProps: any = useSpring({to: {transform: `scale(${scale})`}})
 
   // OPACITY PROPS
   const opacityProps: any = useSpring({from: {opacity: 0}, to: {opacity: 1}})
-  
+
   // LINEAR PROPS
   const linearProps: any = useSpring({to: {left: position.x, top: position.y}, config: {duration: animationDuration}})
 
@@ -60,14 +61,9 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
   let newTop = prevSprite?.position.y || 0
   const topDistance = position?.y - newTop
 
-  console.log("newLeft: ", newLeft, "leftDistance: ", leftDistance)
-
-  const finalMinTravelDistance = ((currentFrame.id || '') >= (prevFrame?.id || '') ? prevSprite?.minTravelDistance : minTravelDistance) || 15
-  const rangeOfMotion = ((currentFrame.id || '') >= (prevFrame?.id || '') ? prevSprite?.rangeOfMovement : rangeOfMovement) || 40
-  const numberOfIterations = ((currentFrame.id || '') >= (prevFrame?.id || '') ? prevSprite?.nrOfIterations : nrOfIterations) || 10
-  
-  console.log("Duration: ", animationDuration)
-  console.log("Travel distance:", prevSprite?.minTravelDistance, ", Range of Motion: ", prevSprite?.rangeOfMovement, ", Nr Iterations: ", prevSprite?.nrOfIterations)
+  const finalMinTravelDistance = (isGoingBackwards ? prevSprite?.minTravelDistance : minTravelDistance) || 15
+  const rangeOfMotion = (isGoingBackwards ? prevSprite?.rangeOfMovement : rangeOfMovement) || 40
+  const numberOfIterations = (isGoingBackwards ? prevSprite?.nrOfIterations : nrOfIterations) || 10
 
   const leftStep = leftDistance / numberOfIterations
   const topStep = topDistance / numberOfIterations
@@ -78,24 +74,20 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
       let newRandLeft
       const fromIntermediaryLeftPoint = Math.round((prevSprite?.position.x || 0) + leftStep*i)
       const toIntermediaryLeftPoint = Math.round((prevSprite?.position.x || 0) + leftStep*(i+1))
-      console.log("From: ", fromIntermediaryLeftPoint, " To: ", toIntermediaryLeftPoint)
       do {
         const fromLeft = fromIntermediaryLeftPoint-rangeOfMotion
         const toLeft = toIntermediaryLeftPoint+rangeOfMotion
         newRandLeft = getRndInteger(fromLeft, toLeft)
-        console.log("newLeft: ", newLeft, " newRandLeft: ", newRandLeft, "finalMinTravelDistance: ", finalMinTravelDistance)
       } while(Math.abs(newLeft - newRandLeft) < finalMinTravelDistance)
       newLeft = newRandLeft
 
       let newRandTop
       const fromIntermediaryTopPoint = Math.round((prevSprite?.position.y || 0) + topStep*i)
       const toIntermediaryTopPoint = Math.round((prevSprite?.position.y || 0) + topStep*(i+1))
-      console.log("From: ", fromIntermediaryTopPoint, " To: ", toIntermediaryTopPoint)
       do {
         const fromTop = fromIntermediaryTopPoint-rangeOfMotion
         const toTop = toIntermediaryTopPoint+rangeOfMotion
         newRandTop = getRndInteger(fromTop, toTop)
-        console.log("newLeft: ", newTop, " newRandLeft: ", newRandTop, "finalMinTravelDistance: ", finalMinTravelDistance)
       } while(Math.abs(newTop - newRandTop) < finalMinTravelDistance)
       newTop = newRandTop
     } else {
@@ -106,27 +98,67 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
   chaoticArray.push({left: position.x, top: position.y})
   const chaoticProps: any = useSpring({to: chaoticArray, config: {duration: animationDuration/nrOfIterations}})
 
-  const currentAnimationType = (currentFrame.id || '') >= (prevFrame?.id || '') ? prevSprite?.animationType : animationType
+
+  // CIRCULAR PROPS
+  const [x1, y1, x2, y2] = [prevSprite?.position.x || 0, prevSprite?.position.y || 0, position.x, position.y]
+  const angle = 90
+  const pointsDistance = Math.round(Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1)))
+  console.log("pointsDistance=", pointsDistance)
+  const radius = Math.round((pointsDistance / 2) / (Math.sin((angle/2) * (Math.PI/180))))
+  // const radius = Math.sqrt(50000)
+  console.log("radius=", radius)
+  const circleDirection = -1 // can be -1 for the other direction
+
+  const m = Math.round((x1 - x2) / (y2 - y1) * 100)/100
+  const x3 = (x1+x2)/2
+  const y3 = (y1+y2)/2
+  console.log("m=",m,"y3=",y3,"x3=",x3)
+  const a = Math.round(m*m + 1)
+  const b = Math.round((-2 * (x1 + y1*m - y3*m + m*m*x3)) * 100)/100
+  const c = Math.round((x1*x1 + y1*y1 + 2*y1*(m*x3-y3) + m*m*x3*x3 + y3*y3 - 2*m*x3*y3 - radius*radius)*100)/100
+  console.log("a=",a,"b=",b,"c=",c)
+  const delta = Math.round(b*b - 4*a*c)
+  console.log("delta=", delta)
+  const circleX = Math.round((-b + circleDirection * Math.sqrt(delta)) / (2*a))
+  const circleY = Math.round(m*circleX - m*x3 + y3)
+  console.log(circleX, circleY)
+
+  const distX = (x1 - circleX)
+  const distY = (y1 - circleY)
+  const angleDirection = (y1 > y2) ? -1 : 1
+  const circularProps: any = useSpring({
+    from: {transform: `rotate(${0}deg)`, left: circleX, top: circleY},
+    to: [
+      {transform: `rotate(${angleDirection * angle}deg)`, left: circleX, top: circleY},
+    ],
+    config: {duration: animationDuration}
+  })
+
+  const currentAnimationType = isGoingBackwards ? prevSprite?.animationType : animationType
 
   // CHOOSE THE PROPS
   let props = scaleProps
+  let svgProps = {}
   if (prevSprite) {
     if (currentAnimationType === 'LINEAR') {
       props = {...props, ...linearProps}
     } else if (currentAnimationType === 'CHAOTIC') {
       props = {...props, ...chaoticProps}
+    } else if (currentAnimationType === 'CIRCULAR') {
+      props = {...props, ...circularProps}
+      svgProps = {transform: `translate(${distX}px, ${distY}px)`}
     } else {
       props = {...props, left: position.x, top: position.y}
     }
   } else {
     props = {...opacityProps, ...linearProps, ...scaleProps}
   }
-  
+
   return (
-    <animated.div className={classes.spriteContainer} style={props}>
-      <div 
+    <animated.div className={classes.spriteContainer} style={{...props, backgroundColor: 'blue'}}>
+      <div
         className={clsx(classes.sprite)}
-        style={{backgroundColor: 'transparent'}}
+        style={{backgroundColor: 'transparent', ...svgProps}}
       >
         {backgroundUrl && spriteToSvgMap[backgroundUrl]}
       </div>

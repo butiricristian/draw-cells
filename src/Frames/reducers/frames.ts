@@ -74,7 +74,7 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
             minTravelDistance: 15,
             rangeOfMovement: 40,
             nrOfIterations: 30,
-            animationType: 'CHAOTIC',
+            animationType: 'LINEAR',
             scale: 1,
             ...payload
           }
@@ -93,12 +93,14 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
       const newCurrentSpritesMap = new Map<string | number, Sprite>()
       for(let newCurrentSprite of state.currentSprites){
         if (payload.field === 'positionX') {
-          newCurrentSprite = {...newCurrentSprite, position: {x: payload.value, y: newCurrentSprite?.position?.y || 0}}
+          newCurrentSprite = {...newCurrentSprite, position: {x: parseInt(payload.value), y: newCurrentSprite?.position?.y || 0}}
         } else if (payload.field === 'positionY') {
-          newCurrentSprite = {...newCurrentSprite, position: {x: newCurrentSprite?.position?.x || 0, y: payload.value}}
+          newCurrentSprite = {...newCurrentSprite, position: {x: newCurrentSprite?.position?.x || 0, y: parseInt(payload.value)}}
         } else {
           newCurrentSprite = {...newCurrentSprite, [payload.field]: payload.value}
         }
+        console.log(payload)
+        console.log(newCurrentSprite)
         newCurrentSprites.push(newCurrentSprite)
         newCurrentSprite.id && newCurrentSpritesMap.set(newCurrentSprite.id, newCurrentSprite)
       }
