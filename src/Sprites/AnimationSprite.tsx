@@ -1,8 +1,8 @@
 import { makeStyles } from '@material-ui/core';
 import clsx from 'clsx';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { animated, useSpring } from 'react-spring';
+import { animated, useChain, useSpring, useSpringRef } from 'react-spring';
 import { SPRITE_TO_SVG_ELEMENT_MAP } from '../constants';
 import { Sprite } from '../Frames/reducers/frames';
 import State from '../stateInterface';
@@ -100,38 +100,54 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
 
 
   // CIRCULAR PROPS
-  const [x1, y1, x2, y2] = [prevSprite?.position.x || 0, prevSprite?.position.y || 0, position.x, position.y]
-  const angle = 90
-  const pointsDistance = Math.round(Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1)))
+  const [x1, y1, x2, y2] = isGoingBackwards ? [position.x, position.y, prevSprite?.position.x || 0, prevSprite?.position.y || 0] : [prevSprite?.position.x || 0, prevSprite?.position.y || 0, position.x, position.y]
+  const angle = prevSprite ? 90 : 0
+  const pointsDistance = Math.round(Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1))*100)/100
   console.log("pointsDistance=", pointsDistance)
-  const radius = Math.round((pointsDistance / 2) / (Math.sin((angle/2) * (Math.PI/180))))
-  // const radius = Math.sqrt(50000)
+  const radius = Math.round((pointsDistance / 2) / (Math.sin((angle/2) * (Math.PI/180)))*100)/100
   console.log("radius=", radius)
   const circleDirection = -1 // can be -1 for the other direction
 
   const m = Math.round((x1 - x2) / (y2 - y1) * 100)/100
   const x3 = (x1+x2)/2
   const y3 = (y1+y2)/2
-  console.log("m=",m,"y3=",y3,"x3=",x3)
-  const a = Math.round(m*m + 1)
+  const a = Math.round((m*m + 1)*100)/100
   const b = Math.round((-2 * (x1 + y1*m - y3*m + m*m*x3)) * 100)/100
   const c = Math.round((x1*x1 + y1*y1 + 2*y1*(m*x3-y3) + m*m*x3*x3 + y3*y3 - 2*m*x3*y3 - radius*radius)*100)/100
-  console.log("a=",a,"b=",b,"c=",c)
-  const delta = Math.round(b*b - 4*a*c)
+  const delta = Math.round((b*b - 4*a*c)*100)/100
   console.log("delta=", delta)
   const circleX = Math.round((-b + circleDirection * Math.sqrt(delta)) / (2*a))
   const circleY = Math.round(m*circleX - m*x3 + y3)
-  console.log(circleX, circleY)
+  console.log("circleX= ", circleX, "circleY= ", circleY)
 
-  const distX = (x1 - circleX)
-  const distY = (y1 - circleY)
+  const backwardsDirection = isGoingBackwards ? -1 : 1
   const angleDirection = (y1 > y2) ? -1 : 1
+  console.log(currentFrame?.id)
+  console.log(angle)
+
+  const [newCircleX, setNewCircleX] = useState(circleX)
+  useEffect(() => { setNewCircleX(circleX) }, [circleX])
+  const [newCircleY, setNewCircleY] = useState(circleY)
+  useEffect(() => { setNewCircleY(circleY) }, [circleY])
+  console.log("newCircleX= ", newCircleX, "newCircleY= ", newCircleY)
+  const distX = (x1 - newCircleX)
+  const distY = (y1 - newCircleY)
+  const [currentAngle, setCurrentAngle] = useState(0)
+  useEffect(() => {
+    setCurrentAngle(angle * backwardsDirection * angleDirection)
+  }, [angle, backwardsDirection, angleDirection])
+
   const circularProps: any = useSpring({
-    from: {transform: `rotate(${0}deg)`, left: circleX, top: circleY},
-    to: [
-      {transform: `rotate(${angleDirection * angle}deg)`, left: circleX, top: circleY},
-    ],
-    config: {duration: animationDuration}
+    to: async (next, cancel) => {
+      await next({transform: `rotate(${currentAngle}deg)`})
+      setTimeout(() => {
+        // setCurrentAngle(0)
+        setNewCircleX(x1)
+        setNewCircleY(y1)
+      }, animationDuration)
+      cancel()
+    },
+    config: {duration: animationDuration},
   })
 
   const currentAnimationType = isGoingBackwards ? prevSprite?.animationType : animationType
@@ -145,7 +161,7 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
     } else if (currentAnimationType === 'CHAOTIC') {
       props = {...props, ...chaoticProps}
     } else if (currentAnimationType === 'CIRCULAR') {
-      props = {...props, ...circularProps}
+      props = {...props, ...circularProps, left: newCircleX, top: newCircleY}
       svgProps = {transform: `translate(${distX}px, ${distY}px)`}
     } else {
       props = {...props, left: position.x, top: position.y}
