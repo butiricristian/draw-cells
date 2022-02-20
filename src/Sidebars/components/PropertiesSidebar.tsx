@@ -22,7 +22,6 @@ export default function PropertiesSidebar() {
       anchor="right"
     >
       <div style={{height: '100vh'}}>
-        <Typography variant="subtitle1">Properties</Typography>
         <Table size="small">
           <TableHead>
             <TableRow>
@@ -31,6 +30,11 @@ export default function PropertiesSidebar() {
             </TableRow>
           </TableHead>
           <TableBody>
+            <TableRow>
+              <TableCell colSpan={2}>
+                <Typography align="center" variant="body2" style={{fontWeight: 'bold'}}>Display</Typography>
+              </TableCell>
+            </TableRow>
             <TableRow key="id">
               <TableCell>id</TableCell>
               <TableCell>
@@ -58,6 +62,31 @@ export default function PropertiesSidebar() {
                 />
               </TableCell>
             </TableRow>
+            <TableRow key="scale">
+              <TableCell>Scale</TableCell>
+              <TableCell>
+                <Input
+                  type="number"
+                  value={currentSprite?.scale || ''}
+                  onChange={(e) => dispatch(updateSprite({field: 'scale', value: e.target.value}))}
+                />
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell colSpan={2}>
+                <Typography align="center" variant="body2" style={{fontWeight: 'bold'}}>Animation</Typography>
+              </TableCell>
+            </TableRow>
+            <TableRow key="duration">
+              <TableCell>Duration</TableCell>
+              <TableCell>
+                <Input
+                  type="number"
+                  value={currentSprite?.duration || ''}
+                  onChange={(e) => dispatch(updateSprite({field: 'duration', value: e.target.value}))}
+                />
+              </TableCell>
+            </TableRow>
             <TableRow key="animationType">
               <TableCell>Animation Type</TableCell>
               <TableCell>
@@ -69,16 +98,6 @@ export default function PropertiesSidebar() {
                   <MenuItem value="CHAOTIC">Chaotic</MenuItem>
                   <MenuItem value="CIRCULAR">Circular</MenuItem>
                 </Select>
-              </TableCell>
-            </TableRow>
-            <TableRow key="duration">
-              <TableCell>Duration</TableCell>
-              <TableCell>
-                <Input
-                  type="number"
-                  value={currentSprite?.duration || ''}
-                  onChange={(e) => dispatch(updateSprite({field: 'duration', value: e.target.value}))}
-                />
               </TableCell>
             </TableRow>
             {currentSprite?.animationType === 'CHAOTIC' && (<TableRow key="minTravelDistance">
@@ -111,16 +130,28 @@ export default function PropertiesSidebar() {
                 />
               </TableCell>
             </TableRow>)}
-            <TableRow key="scale">
-              <TableCell>Scale</TableCell>
+            {currentSprite?.animationType === 'CIRCULAR' && (<TableRow key="circleDirection">
+              <TableCell>Circle Direction</TableCell>
+              <TableCell>
+                <Select
+                  value={currentSprite?.circleDirection || 1}
+                  onChange={(e) => dispatch(updateSprite({field: 'circleDirection', value: e.target.value}))}
+                >
+                  <MenuItem value={1}>Upwards</MenuItem>
+                  <MenuItem value={-1}>Downwards</MenuItem>
+                </Select>
+              </TableCell>
+            </TableRow>)}
+            {currentSprite?.animationType === 'CIRCULAR' && (<TableRow key="angle">
+              <TableCell>Angle</TableCell>
               <TableCell>
                 <Input
                   type="number"
-                  value={currentSprite?.scale || ''}
-                  onChange={(e) => dispatch(updateSprite({field: 'scale', value: e.target.value}))}
+                  value={currentSprite?.angle || ''}
+                  onChange={(e) => dispatch(updateSprite({field: 'angle', value: e.target.value}))}
                 />
               </TableCell>
-            </TableRow>
+            </TableRow>)}
           </TableBody>
         </Table>
       </div>

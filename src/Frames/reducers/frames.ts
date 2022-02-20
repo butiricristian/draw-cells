@@ -32,6 +32,8 @@ export interface Sprite {
   minTravelDistance?: number | undefined,
   rangeOfMovement?: number | undefined,
   nrOfIterations?: number | undefined,
+  circleDirection?: number | undefined,
+  angle?: number | undefined,
 }
 
 export interface Frame {
@@ -76,6 +78,8 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
             nrOfIterations: 30,
             animationType: 'LINEAR',
             scale: 1,
+            circleDirection: 1,
+            angle: 90,
             ...payload
           }
         ]

@@ -42,7 +42,7 @@ const useStyles = makeStyles({
     position: 'absolute',
     cursor: 'pointer',
     width: 50,
-    height: 50, 
+    height: 50,
   }
 })
 
@@ -87,10 +87,10 @@ export default function BaseSprite({position, id, backgroundUrl, scale}: Sprite)
   }, [preview]);
 
   const spriteToSvgMap: any = SPRITE_TO_SVG_ELEMENT_MAP
-  
+
   return (
     <div ref={canvasSpriteDrag} className={classes.spriteContainer} style={{left: position.x, top: position.y, transform: `scale(${scale})`, opacity: isDragging ? 0 : 1}}>
-      <div 
+      <div
         className={clsx(classes.sprite, {[classes.selected]: currentSpriteIds.find(sId => sId === id)})}
         style={{backgroundColor: 'transparent'}}
         onContextMenu={handleClick}
@@ -113,7 +113,7 @@ export default function BaseSprite({position, id, backgroundUrl, scale}: Sprite)
         <MenuItem onClick={() => dispatch(removeCurrentSprites())}>Remove selected from crt. frame</MenuItem>
         <MenuItem onClick={() => dispatch(removeSpriteFromAllFrames(id || ''))}>Remove from all frames</MenuItem>
         <MenuItem onClick={() => dispatch(removeCurrentSpritesFromAllFrames())}>Remove selected from all frames</MenuItem>
-        <NestedMenuItem 
+        <NestedMenuItem
           label="Copy sprite into"
           parentMenuOpen={state.mouseY !== null}
           disabled={framesForSelect.length < 1}
@@ -122,7 +122,7 @@ export default function BaseSprite({position, id, backgroundUrl, scale}: Sprite)
             <MenuItem key={`copy-into-${f.id}`} onClick={() => dispatch(copySpriteIntoFrame(id || '', f.id || ''))}>Frame {f.id}</MenuItem>
           ))}
         </NestedMenuItem>
-        <NestedMenuItem 
+        <NestedMenuItem
           label="Copy selected sprites into"
           parentMenuOpen={state.mouseY !== null}
           disabled={framesForSelect.length < 1}

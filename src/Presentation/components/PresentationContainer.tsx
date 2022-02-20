@@ -23,6 +23,8 @@ const PresentationContainer = () => {
             animationType={s.animationType}
             scale={s.scale}
             canvas={canvasRef.current}
+            circleDirection={s.circleDirection}
+            angle={s.angle}
           />
         ))}
       </div>

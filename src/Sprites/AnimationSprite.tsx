@@ -1,8 +1,8 @@
 import { makeStyles } from '@material-ui/core';
 import clsx from 'clsx';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
-import { animated, useChain, useSpring, useSpringRef } from 'react-spring';
+import { animated, useSpring } from 'react-spring';
 import { SPRITE_TO_SVG_ELEMENT_MAP } from '../constants';
 import { Sprite } from '../Frames/reducers/frames';
 import State from '../stateInterface';
@@ -36,7 +36,8 @@ interface AnimationSpriteProps extends Sprite {
 }
 
 export default function AnimationSprite({position, id, backgroundUrl, animationType, scale, canvas,
-  minTravelDistance = 15, rangeOfMovement = 40, nrOfIterations = 10, duration = 1}: AnimationSpriteProps) {
+  minTravelDistance = 15, rangeOfMovement = 40, nrOfIterations = 10, duration = 1, circleDirection = 1,
+  angle = 90}: AnimationSpriteProps) {
   const classes = useStyles()
   const spriteToSvgMap: any = SPRITE_TO_SVG_ELEMENT_MAP
   const currentFrame = useSelector((state: State) => state.frames.currentFrame)
@@ -100,13 +101,11 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
 
 
   // CIRCULAR PROPS
-  const [x1, y1, x2, y2] = isGoingBackwards ? [position.x, position.y, prevSprite?.position.x || 0, prevSprite?.position.y || 0] : [prevSprite?.position.x || 0, prevSprite?.position.y || 0, position.x, position.y]
-  const angle = prevSprite ? 90 : 0
+  const currentCircleDirection: number = isGoingBackwards ? prevSprite?.circleDirection || 1 : circleDirection
+  const currentAngle: number = isGoingBackwards ? prevSprite?.angle || 90 : angle
+  const [x1, y1, x2, y2] = [prevSprite?.position.x || 0, prevSprite?.position.y || 0, position.x, position.y]
   const pointsDistance = Math.round(Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1))*100)/100
-  console.log("pointsDistance=", pointsDistance)
-  const radius = Math.round((pointsDistance / 2) / (Math.sin((angle/2) * (Math.PI/180)))*100)/100
-  console.log("radius=", radius)
-  const circleDirection = -1 // can be -1 for the other direction
+  const radius = Math.round((pointsDistance / 2) / (Math.sin((currentAngle/2) * (Math.PI/180)))*100)/100
 
   const m = Math.round((x1 - x2) / (y2 - y1) * 100)/100
   const x3 = (x1+x2)/2
@@ -115,41 +114,27 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
   const b = Math.round((-2 * (x1 + y1*m - y3*m + m*m*x3)) * 100)/100
   const c = Math.round((x1*x1 + y1*y1 + 2*y1*(m*x3-y3) + m*m*x3*x3 + y3*y3 - 2*m*x3*y3 - radius*radius)*100)/100
   const delta = Math.round((b*b - 4*a*c)*100)/100
-  console.log("delta=", delta)
-  const circleX = Math.round((-b + circleDirection * Math.sqrt(delta)) / (2*a))
+  const circleX = Math.round((-b + currentCircleDirection * Math.sqrt(delta)) / (2*a))
   const circleY = Math.round(m*circleX - m*x3 + y3)
-  console.log("circleX= ", circleX, "circleY= ", circleY)
+  console.log("x=", x2, "circleX=", circleX, "y=", y2, "circleY=", circleY)
+  const distX = (circleX - x2)
+  const distY = (circleY - y2)
 
-  const backwardsDirection = isGoingBackwards ? -1 : 1
   const angleDirection = (y1 > y2) ? -1 : 1
-  console.log(currentFrame?.id)
-  console.log(angle)
+  const finalAngle = currentAngle * angleDirection * currentCircleDirection
 
-  const [newCircleX, setNewCircleX] = useState(circleX)
-  useEffect(() => { setNewCircleX(circleX) }, [circleX])
-  const [newCircleY, setNewCircleY] = useState(circleY)
-  useEffect(() => { setNewCircleY(circleY) }, [circleY])
-  console.log("newCircleX= ", newCircleX, "newCircleY= ", newCircleY)
-  const distX = (x1 - newCircleX)
-  const distY = (y1 - newCircleY)
-  const [currentAngle, setCurrentAngle] = useState(0)
-  useEffect(() => {
-    setCurrentAngle(angle * backwardsDirection * angleDirection)
-  }, [angle, backwardsDirection, angleDirection])
-
-  const circularProps: any = useSpring({
-    to: async (next, cancel) => {
-      await next({transform: `rotate(${currentAngle}deg)`})
-      setTimeout(() => {
-        // setCurrentAngle(0)
-        setNewCircleX(x1)
-        setNewCircleY(y1)
-      }, animationDuration)
-      cancel()
+  const crtFrameId = parseInt(String(currentFrame.id || '1'))
+  const { rotateSpring } = useSpring({
+    from: {
+      rotateSpring: crtFrameId - 1
     },
-    config: {duration: animationDuration},
+    to: {
+      rotateSpring: crtFrameId,
+    },
+    config: {
+      duration: animationDuration
+    }
   })
-
   const currentAnimationType = isGoingBackwards ? prevSprite?.animationType : animationType
 
   // CHOOSE THE PROPS
@@ -161,8 +146,8 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
     } else if (currentAnimationType === 'CHAOTIC') {
       props = {...props, ...chaoticProps}
     } else if (currentAnimationType === 'CIRCULAR') {
-      props = {...props, ...circularProps, left: newCircleX, top: newCircleY}
-      svgProps = {transform: `translate(${distX}px, ${distY}px)`}
+      props = {...props, left: circleX, top: circleY, transform: rotateSpring.to([crtFrameId - 1, crtFrameId], [finalAngle, 0]).to((x: any) => `rotate(${x}deg)`)}
+      svgProps = {transform: `translate(${-distX}px, ${-distY}px)`}
     } else {
       props = {...props, left: position.x, top: position.y}
     }
@@ -171,7 +156,7 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
   }
 
   return (
-    <animated.div className={classes.spriteContainer} style={{...props, backgroundColor: 'blue'}}>
+    <animated.div className={classes.spriteContainer} style={{...props}}>
       <div
         className={clsx(classes.sprite)}
         style={{backgroundColor: 'transparent', ...svgProps}}
