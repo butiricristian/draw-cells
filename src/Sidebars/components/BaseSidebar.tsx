@@ -1,4 +1,4 @@
-import { IconButton, Typography, useTheme } from '@material-ui/core';
+import { IconButton, Typography, useTheme } from '@mui/material';
 import React, { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import { bottomDrawerHeight, leftDrawerWidth, rightDrawerWidth } from '../../constants';
@@ -11,12 +11,12 @@ interface BaseSidebarProps {
   iconRenderer: () => any,
   anchor: 'bottom' | 'right' | 'left',
   additionalTitle?: string | ReactElement | undefined
-} 
+}
 
 export default function BaseSidebar({isOpen, toggleOpen, children, iconRenderer, anchor, additionalTitle}: BaseSidebarProps) {
   const theme = useTheme()
-  const isSpritesSidebarOpen = useSelector((state: State) => state.sidebars.isSpritesOpen)
-  const isPropertiesSidebarOpen = useSelector((state: State) => state.sidebars.isPropertiesOpen)
+  const isSpritesSidebarOpen: boolean = useSelector((state: State) => state.sidebars.isSpritesOpen)
+  const isPropertiesSidebarOpen: boolean = useSelector((state: State) => state.sidebars.isPropertiesOpen)
 
   const leftIconStyle = {
     right: 0,
@@ -28,12 +28,12 @@ export default function BaseSidebar({isOpen, toggleOpen, children, iconRenderer,
   }
 
   let styles = {}
-  const smallDrawerWidth = theme.spacing(6)
+  const smallDrawerWidth = parseInt(theme.spacing(6).replace("px", ""))
   if (anchor === 'left') {
     styles = {
       top: 0,
       left: 0,
-      height: `calc(100vh - ${theme.spacing(8)}px`,
+      height: `calc(100vh - ${theme.spacing(8)}`,
       width: isOpen ? leftDrawerWidth : smallDrawerWidth,
       borderRight: 'solid 1px #ddd',
       transition: 'width 0.3s ease-out',
@@ -44,7 +44,7 @@ export default function BaseSidebar({isOpen, toggleOpen, children, iconRenderer,
     styles = {
       top: 0,
       right: 0,
-      height: `calc(100vh - ${theme.spacing(8)}px`,
+      height: `calc(100vh - ${theme.spacing(8)}`,
       width: isOpen ? rightDrawerWidth : smallDrawerWidth,
       borderLeft: 'solid 1px #ddd',
       transition: 'width 0.3s ease-out',
@@ -67,27 +67,25 @@ export default function BaseSidebar({isOpen, toggleOpen, children, iconRenderer,
 
   const marginStyle = anchor === 'left' ? {marginRight: 24} : (anchor === 'right' ? {marginLeft: 40} : {marginTop: 24})
 
-  return (
-    <>
-      <div
-        style={{
-          position: 'absolute',
-          background: "#fff",
-          ...styles
-        }}
-      >
-        <div style={{position: 'absolute', ...(anchor === "left" || anchor === "bottom" ? leftIconStyle : rightIconStyle)}}>
-          <IconButton onClick={toggleOpen}>
-            {iconRenderer()}
-          </IconButton>
-          {anchor === 'right' && (<Typography variant="subtitle1" style={{transform: 'rotate(-90deg)', position: 'absolute', top: 70, left: -14}}>Properties</Typography>)}
-          {anchor === 'left' && (<Typography variant="subtitle1" style={{transform: 'rotate(-90deg)', position: 'absolute', top: 60, left: -1}}>Sprites</Typography>)}
-          {anchor === 'bottom' && (<Typography variant="subtitle1" style={{position: 'absolute', top: 10, right: 60, whiteSpace: 'nowrap'}}>Frames {additionalTitle}</Typography>)}
-        </div>
-        <div style={{...marginStyle, height: '100%'}}>
-          {isOpen && children}
-        </div>
+  return <>
+    <div
+      style={{
+        position: 'absolute',
+        background: "#fff",
+        ...styles
+      }}
+    >
+      <div style={{position: 'absolute', ...(anchor === "left" || anchor === "bottom" ? leftIconStyle : rightIconStyle)}}>
+        <IconButton onClick={toggleOpen} size="large">
+          {iconRenderer()}
+        </IconButton>
+        {anchor === 'right' && (<Typography variant="subtitle1" style={{transform: 'rotate(-90deg)', position: 'absolute', top: 70, left: -14}}>Properties</Typography>)}
+        {anchor === 'left' && (<Typography variant="subtitle1" style={{transform: 'rotate(-90deg)', position: 'absolute', top: 60, left: -1}}>Sprites</Typography>)}
+        {anchor === 'bottom' && (<Typography variant="subtitle1" style={{position: 'absolute', top: 10, right: 60, whiteSpace: 'nowrap'}}>Frames {additionalTitle}</Typography>)}
       </div>
-    </>
-  );
+      <div style={{...marginStyle, height: '100%'}}>
+        {isOpen && children}
+      </div>
+    </div>
+  </>;
 }

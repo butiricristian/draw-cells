@@ -1,6 +1,6 @@
-import { Input, MenuItem, Select, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@material-ui/core';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import { Input, MenuItem, Select, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateSprite } from '../../Frames/actions';

@@ -1,17 +1,18 @@
-import { IconButton, makeStyles, Typography, useTheme } from '@material-ui/core'
-import CancelIcon from '@material-ui/icons/Cancel'
-import clsx from 'clsx'
-import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import State from '../../stateInterface'
-import { removeFrameById, setCurrentFrame } from '../actions'
+import CancelIcon from '@mui/icons-material/Cancel';
+import { IconButton, Theme, Typography, useTheme } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import clsx from 'clsx';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import State from '../../stateInterface';
+import { removeFrameById, setCurrentFrame } from '../actions';
 
 interface FrameProps {
   title: string,
   id: string | number | null,
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   selected: {
     border: `solid 1px ${theme.palette.primary.main}`
   },
@@ -36,7 +37,7 @@ const Frame = ({title, id}: FrameProps) => {
   }
 
   return (
-    <div 
+    <div
       className={clsx(classes.frame, {[classes.selected]: (id === currentFrameId), [classes.unselected]: (id !== currentFrameId)})}
       onClick={() => dispatch(setCurrentFrame(id))}
     >
@@ -44,11 +45,11 @@ const Frame = ({title, id}: FrameProps) => {
       <IconButton
         onClick={removeFrame}
         style={{position: 'absolute', top: -12, right: -3, color: theme.palette.error.main, backgroundColor: 'white', padding: 6}}
-      >
+        size="large">
         <CancelIcon />
       </IconButton>
     </div>
-  )
+  );
 }
 
 export default Frame

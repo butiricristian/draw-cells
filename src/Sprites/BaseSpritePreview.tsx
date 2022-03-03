@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { memo, useEffect, useState } from 'react';
 import { SPRITE_TO_SVG_ELEMENT_MAP } from '../constants';
 import { Sprite } from '../Frames/reducers/frames';

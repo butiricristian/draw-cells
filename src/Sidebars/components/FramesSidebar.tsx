@@ -1,7 +1,8 @@
-import { IconButton, List, ListItem, makeStyles, Menu, MenuItem } from '@material-ui/core';
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import { IconButton, List, ListItem, Menu, MenuItem } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addFrame } from '../../Frames/actions';
@@ -87,7 +88,11 @@ export default function FramesSidebar() {
             </ListItem>
           ))}
           <ListItem style={{height: '100%'}}>
-            <IconButton color="primary" style={{display: 'flex', alignItems: 'center', fontSize: '4em'}} onClick={handleClick}>
+            <IconButton
+              color="primary"
+              style={{display: 'flex', alignItems: 'center', fontSize: '4em'}}
+              onClick={handleClick}
+              size="large">
               <AddCircleOutlineIcon fontSize="inherit"/>
             </IconButton>
             <Menu

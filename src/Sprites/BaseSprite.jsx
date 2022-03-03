@@ -1,6 +1,7 @@
-import { makeStyles, Menu, MenuItem } from '@material-ui/core';
+import { Menu, MenuItem } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
-import NestedMenuItem from 'material-ui-nested-menu-item';
+import { NestedMenuItem } from 'mui-nested-menu';
 import React, { MouseEvent, useEffect } from 'react';
 import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';

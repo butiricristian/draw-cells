@@ -1,6 +1,6 @@
-import { makeStyles } from '@material-ui/core';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import makeStyles from '@mui/styles/makeStyles';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SidebarSprite from '../../Sprites/SidebarSprite';

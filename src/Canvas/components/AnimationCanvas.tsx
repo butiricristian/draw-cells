@@ -1,4 +1,4 @@
-import { useTheme } from '@material-ui/core';
+import { useTheme } from '@mui/material';
 import React, { useRef, useState } from 'react';
 import { useDrop, XYCoord } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,8 +19,8 @@ function AnimationCanvas() {
   const canvasContainer = useRef<any>(null)
   const innerCanvas = useRef<any>(null)
 
-  const smallDrawerWidth = theme.spacing(6)
-  const headerHeight = theme.spacing(8)
+  const smallDrawerWidth: number = parseInt(theme.spacing(6).replace('px', ''))
+  const headerHeight: number = parseInt(theme.spacing(8).replace('px', ''))
 
   const canvasWidth = `calc(100vw - ${smallDrawerWidth + (isSpritesSidebarOpen ? leftDrawerWidth : smallDrawerWidth)}px)`
 

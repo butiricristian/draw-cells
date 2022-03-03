@@ -1,4 +1,4 @@
-import { AppBar, Button, Toolbar, Typography, useTheme } from '@material-ui/core';
+import { AppBar, Button, Toolbar, Typography, useTheme } from '@mui/material';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { toggleModal } from '../Presentation/actions';

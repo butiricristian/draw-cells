@@ -1,4 +1,4 @@
-import { Button } from '@material-ui/core'
+import { Button } from '@mui/material'
 import React, { useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { nextAnimationFrame, prevAnimationFrame } from '../../Frames/actions'

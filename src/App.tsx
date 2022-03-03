@@ -15,24 +15,29 @@ import { presentations } from './Presentation/reducers/presentations';
 import { canvas } from './Canvas/reducers/canvas';
 import PresentationModal from './Presentation/components/PresentationModal';
 import { CustomDragLayer } from './Canvas/components/CustomDragLayer';
+import { ThemeProvider } from '@mui/styles';
+import { createTheme } from '@mui/material';
 
 const store = createStore(combineReducers({sidebars, frames, presentations, canvas}))
 
 function App() {
+  const theme = createTheme({})
   return (
-    <Provider store={store}>
-      <DndProvider backend={HTML5Backend}>
-        <Header />
-        <div className="App">
-          <CustomDragLayer/>
-          <AnimationCanvas />
-          <SpritesSidebar />
-          <FramesSidebar />
-          <PropertiesSidebar/>
-        </div>
-        <PresentationModal />
-      </DndProvider>
-    </Provider>
+    <ThemeProvider theme={theme}>
+      <Provider store={store}>
+        <DndProvider backend={HTML5Backend}>
+          <Header />
+          <div className="App">
+            <CustomDragLayer/>
+            <AnimationCanvas />
+            <SpritesSidebar />
+            <FramesSidebar />
+            <PropertiesSidebar/>
+          </div>
+          <PresentationModal />
+        </DndProvider>
+      </Provider>
+    </ThemeProvider>
   );
 }
 
