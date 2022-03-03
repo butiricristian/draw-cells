@@ -8,13 +8,20 @@ import State from '../../stateInterface'
 
 const PresentationContainer = () => {
   const currentFrame = useSelector((state: State) => state.frames.currentFrame)
+  const prevFrame = useSelector((state: State) => state.frames.prevFrame)
+
+  const currentFrameSpriteIds = currentFrame.sprites.map(s => s.id)
+  const spritesToRemove = prevFrame?.sprites
+    .filter(s => currentFrameSpriteIds.indexOf(s.id) < 0)
+    .map(s => ({...s, opacity: 0})) || []
+
   const dispatch = useDispatch()
   const canvasRef = useRef<HTMLDivElement>(null)
 
   return (
     <div style={{padding: '10px 50px 20px', borderTopRightRadius: 20, borderTopLeftRadius: 20, display: 'flex', flexDirection: 'column', height: '100%'}}>
       <div ref={canvasRef} style={{flexGrow: 1, border: 'solid 1px #ddd', marginBottom: 20, overflow: 'hidden', position: 'relative'}}>
-        {currentFrame.sprites.map((s: Sprite) => (
+        {currentFrame.sprites.concat(...spritesToRemove).map((s: Sprite) => (
           <AnimationSprite
             backgroundUrl={s.backgroundUrl}
             id={s.id}
@@ -25,6 +32,8 @@ const PresentationContainer = () => {
             canvas={canvasRef.current}
             circleDirection={s.circleDirection}
             angle={s.angle}
+            opacity={s.opacity}
+            initialOpacity={s.opacity === 0 ? 1 : 0}
           />
         ))}
       </div>

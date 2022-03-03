@@ -17,13 +17,16 @@ const useStyles = makeStyles({
     '& svg': {
       height: '100%',
       width: '100%'
-    }
+    },
   },
   spriteContainer: {
     position: 'absolute',
     cursor: 'pointer',
     width: 50,
     height: 50,
+  },
+  spriteContainerHidden: {
+    opacity: 0,
   }
 })
 
@@ -33,11 +36,13 @@ function getRndInteger(min: number, max: number): number {
 
 interface AnimationSpriteProps extends Sprite {
   canvas: HTMLElement | null,
+  opacity?: number,
+  initialOpacity?: number
 }
 
 export default function AnimationSprite({position, id, backgroundUrl, animationType, scale, canvas,
   minTravelDistance = 15, rangeOfMovement = 40, nrOfIterations = 10, duration = 1, circleDirection = 1,
-  angle = 90}: AnimationSpriteProps) {
+  angle = 90, opacity, initialOpacity}: AnimationSpriteProps) {
   const classes = useStyles()
   const spriteToSvgMap: any = SPRITE_TO_SVG_ELEMENT_MAP
   const currentFrame = useSelector((state: State) => state.frames.currentFrame)
@@ -50,7 +55,7 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
   const scaleProps: any = useSpring({to: {transform: `scale(${scale})`}})
 
   // OPACITY PROPS
-  const opacityProps: any = useSpring({from: {opacity: 0}, to: {opacity: 1}})
+  const opacityProps: any = useSpring({from: {opacity: 0}, to: {opacity: opacity}})
 
   // LINEAR PROPS
   const linearProps: any = useSpring({to: {left: position.x, top: position.y}, config: {duration: animationDuration}})
@@ -116,7 +121,6 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
   const delta = Math.round((b*b - 4*a*c)*100)/100
   const circleX = Math.round((-b + currentCircleDirection * Math.sqrt(delta)) / (2*a))
   const circleY = Math.round(m*circleX - m*x3 + y3)
-  console.log("x=", x2, "circleX=", circleX, "y=", y2, "circleY=", circleY)
   const distX = (circleX - x2)
   const distY = (circleY - y2)
 
@@ -152,11 +156,11 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
       props = {...props, left: position.x, top: position.y}
     }
   } else {
-    props = {...opacityProps, ...linearProps, ...scaleProps}
+    props = {...linearProps, ...scaleProps}
   }
 
   return (
-    <animated.div className={classes.spriteContainer} style={{...props}}>
+    <animated.div className={clsx(classes.spriteContainer)} style={{...opacityProps, ...props}}>
       <div
         className={clsx(classes.sprite)}
         style={{backgroundColor: 'transparent', ...svgProps}}

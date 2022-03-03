@@ -12,6 +12,7 @@ import { zoomIn, zoomOut } from '../actions';
 function AnimationCanvas() {
   const dispatch = useDispatch()
   const sprites = useSelector((state: State) => state.frames.currentFrame.sprites)
+  const lastSpriteId = useSelector((state: State) => state.frames.lastSpriteId)
   const theme = useTheme()
   const isSpritesSidebarOpen = useSelector((state: State) => state.sidebars.isSpritesOpen)
   const scale = useSelector((state: State) => state.canvas.scale)
@@ -24,9 +25,9 @@ function AnimationCanvas() {
   const canvasWidth = `calc(100vw - ${smallDrawerWidth + (isSpritesSidebarOpen ? leftDrawerWidth : smallDrawerWidth)}px)`
 
   const containerStyle: any = {
-    flexGrow: 1, 
+    flexGrow: 1,
     height: `calc(100vh - ${headerHeight + smallDrawerWidth}px)`,
-    display: 'flex', 
+    display: 'flex',
     flexDirection: 'column',
     marginLeft: (isSpritesSidebarOpen ? leftDrawerWidth : smallDrawerWidth),
     marginRight: smallDrawerWidth,
@@ -45,7 +46,7 @@ function AnimationCanvas() {
 
   function createSprite(pos: XYCoord | null, backgroundUrl: string){
     if (pos) {
-      dispatch(addSprite({id: sprites.length + 1, position: pos, backgroundUrl}))
+      dispatch(addSprite({id: lastSpriteId, position: pos, backgroundUrl}))
     }
   }
 
@@ -87,7 +88,7 @@ function AnimationCanvas() {
         setPrevDelta((currentPrevDelta) => {
           if (event.deltaY < 0 && event.deltaY !== currentPrevDelta) {
             dispatch(zoomIn())
-          } 
+          }
           if (event.deltaY > 0 && event.deltaY !== currentPrevDelta) {
             dispatch(zoomOut())
           }
@@ -102,9 +103,9 @@ function AnimationCanvas() {
       <div ref={drop} style={{width: '100%', height: '100%', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'scroll'}}>
         <div ref={innerCanvas} style={{...canvasStyle, backgroundColor: (isOver ? '#eee' : '#fff'), transform: `scale(${scale})`}}>
           {sprites.map((s: Sprite) => (
-            <BaseSprite key={`sprite-${s.id}`} id={s.id} position={s.position} backgroundUrl={s.backgroundUrl} 
-              scale={s.scale} duration={s.duration} 
-              minTravelDistance={s.minTravelDistance} rangeOfMovement={s.rangeOfMovement} nrOfIterations={s.nrOfIterations} 
+            <BaseSprite key={`sprite-${s.id}`} id={s.id} position={s.position} backgroundUrl={s.backgroundUrl}
+              scale={s.scale} duration={s.duration}
+              minTravelDistance={s.minTravelDistance} rangeOfMovement={s.rangeOfMovement} nrOfIterations={s.nrOfIterations}
             />
           ))}
         </div>

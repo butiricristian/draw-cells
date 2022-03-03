@@ -11,6 +11,7 @@ const initialState: FramesState = {
   currentFrame: initialFrame,
   prevFrame: null,
   currentSprites: [],
+  lastSpriteId: 0
 }
 
 interface Action {
@@ -34,6 +35,7 @@ export interface Sprite {
   nrOfIterations?: number | undefined,
   circleDirection?: number | undefined,
   angle?: number | undefined,
+  opacity?: number
 }
 
 export interface Frame {
@@ -47,6 +49,7 @@ export interface FramesState {
   currentFrame: Frame,
   prevFrame: Frame | null,
   currentSprites: Array<Sprite>,
+  lastSpriteId: number
 }
 
 const computeSpritePosition = (sprite: Sprite, deltaX: number | undefined, deltaY: number | undefined): Sprite => {
@@ -80,6 +83,7 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
             scale: 1,
             circleDirection: 1,
             angle: 90,
+            opacity: 1,
             ...payload
           }
         ]
@@ -88,6 +92,7 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
         ...state,
         frames: state.frames.map(f => f.id === crtFrame.id ? crtFrame : f),
         currentFrame: crtFrame,
+        lastSpriteId: state.lastSpriteId + 1,
       }
     }
     case Actions.UPDATE_SPRITE: {
@@ -103,8 +108,6 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
         } else {
           newCurrentSprite = {...newCurrentSprite, [payload.field]: payload.value}
         }
-        console.log(payload)
-        console.log(newCurrentSprite)
         newCurrentSprites.push(newCurrentSprite)
         newCurrentSprite.id && newCurrentSpritesMap.set(newCurrentSprite.id, newCurrentSprite)
       }
