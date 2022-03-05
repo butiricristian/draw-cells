@@ -1,42 +1,45 @@
+import { createTheme } from '@mui/material';
+import { ThemeProvider } from '@mui/styles';
+import { onAuthStateChanged } from 'firebase/auth';
 import React from 'react';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Provider } from 'react-redux';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { combineReducers, createStore } from 'redux';
 import './App.css';
-import AnimationCanvas from './Canvas/components/AnimationCanvas';
-import { frames } from './Frames/reducers/frames';
-import Header from './Header/Header';
-import FramesSidebar from './Sidebars/components/FramesSidebar';
-import PropertiesSidebar from './Sidebars/components/PropertiesSidebar';
-import SpritesSidebar from './Sidebars/components/SpritesSidebar';
-import { sidebars } from './Sidebars/reducers/sidebars';
-import { presentations } from './Presentation/reducers/presentations';
+import AnimationCanvasContainer from './Canvas/components/AnimationCanvas';
 import { canvas } from './Canvas/reducers/canvas';
-import PresentationModal from './Presentation/components/PresentationModal';
-import { CustomDragLayer } from './Canvas/components/CustomDragLayer';
-import { ThemeProvider } from '@mui/styles';
-import { createTheme } from '@mui/material';
+import { auth } from './firebase-config';
+import { frames } from './Frames/reducers/frames';
+import Home from './Home/components/Home';
+import homeReducer, { setUser } from './Home/reducers';
+import { presentations } from './Presentation/reducers/presentations';
+import { sidebars } from './Sidebars/reducers/sidebars';
 
-const store = createStore(combineReducers({sidebars, frames, presentations, canvas}))
+const store = createStore(combineReducers({
+  sidebars,
+  frames,
+  presentations,
+  canvas,
+  home: homeReducer
+}))
 
 function App() {
   const theme = createTheme({})
+
+  onAuthStateChanged(auth, (user) => {
+    store.dispatch(setUser(user))
+  })
+
   return (
     <ThemeProvider theme={theme}>
-      <Provider store={store}>
-        <DndProvider backend={HTML5Backend}>
-          <Header />
-          <div className="App">
-            <CustomDragLayer/>
-            <AnimationCanvas />
-            <SpritesSidebar />
-            <FramesSidebar />
-            <PropertiesSidebar/>
-          </div>
-          <PresentationModal />
-        </DndProvider>
-      </Provider>
+      <Router>
+        <Provider store={store}>
+        <Routes>
+          <Route path='/' element={<Home />}/>
+          <Route path='/canvas' element={<AnimationCanvasContainer />}/>
+        </Routes>
+        </Provider>
+      </Router>
     </ThemeProvider>
   );
 }

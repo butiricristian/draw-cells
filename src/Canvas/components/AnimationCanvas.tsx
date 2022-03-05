@@ -1,13 +1,36 @@
 import { useTheme } from '@mui/material';
 import React, { useRef, useState } from 'react';
-import { useDrop, XYCoord } from 'react-dnd';
+import { DndProvider, useDrop, XYCoord } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import { leftDrawerWidth } from '../../constants';
 import { addSprite, updateCurrentSpritePosition } from '../../Frames/actions';
 import { Sprite } from '../../Frames/reducers/frames';
+import Header from '../../Header/components/CanvasHeader';
+import PresentationModal from '../../Presentation/components/PresentationModal';
+import FramesSidebar from '../../Sidebars/components/FramesSidebar';
+import PropertiesSidebar from '../../Sidebars/components/PropertiesSidebar';
+import SpritesSidebar from '../../Sidebars/components/SpritesSidebar';
 import BaseSprite from '../../Sprites/BaseSprite';
 import State from '../../stateInterface';
 import { zoomIn, zoomOut } from '../actions';
+import { CustomDragLayer } from './CustomDragLayer';
+
+export default function AnimationCanvasContainer() {
+  return (
+    <DndProvider backend={HTML5Backend}>
+      <Header />
+      <div className="App">
+        <CustomDragLayer/>
+        <AnimationCanvas />
+        <SpritesSidebar />
+        <FramesSidebar />
+        <PropertiesSidebar/>
+      </div>
+      <PresentationModal />
+    </DndProvider>
+  )
+}
 
 function AnimationCanvas() {
   const dispatch = useDispatch()
@@ -113,5 +136,3 @@ function AnimationCanvas() {
     </div>
   );
 }
-
-export default AnimationCanvas;
