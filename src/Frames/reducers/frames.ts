@@ -11,7 +11,7 @@ const initialState: FramesState = {
   currentFrame: initialFrame,
   prevFrame: null,
   currentSprites: [],
-  lastSpriteId: 0
+  lastSpriteId: 1
 }
 
 interface Action {
@@ -70,22 +70,23 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
   const {type, payload} = action
   switch(type){
     case Actions.ADD_SPRITE: {
+      const newSprite = {
+        duration: 1,
+        minTravelDistance: 15,
+        rangeOfMovement: 40,
+        nrOfIterations: 30,
+        animationType: 'LINEAR',
+        scale: 1,
+        circleDirection: 1,
+        angle: 90,
+        opacity: 1,
+        ...payload
+      }
       const crtFrame = {
         ...state.currentFrame,
         sprites: [
           ...state.currentFrame.sprites,
-          {
-            duration: 1,
-            minTravelDistance: 15,
-            rangeOfMovement: 40,
-            nrOfIterations: 30,
-            animationType: 'LINEAR',
-            scale: 1,
-            circleDirection: 1,
-            angle: 90,
-            opacity: 1,
-            ...payload
-          }
+          newSprite
         ]
       }
       return {

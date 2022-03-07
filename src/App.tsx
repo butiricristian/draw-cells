@@ -12,6 +12,7 @@ import { auth } from './firebase-config';
 import { frames } from './Frames/reducers/frames';
 import Home from './Home/components/Home';
 import homeReducer, { setUser } from './Home/reducers';
+import PresentationPage from './Presentation/components/PresentationPage';
 import { presentations } from './Presentation/reducers/presentations';
 import { sidebars } from './Sidebars/reducers/sidebars';
 
@@ -37,6 +38,7 @@ function App() {
         <Routes>
           <Route path='/' element={<Home />}/>
           <Route path='/canvas' element={<AnimationCanvasContainer />}/>
+          <Route path='/present' element={<PresentationPage />}/>
         </Routes>
         </Provider>
       </Router>
