@@ -33,7 +33,7 @@ const PresentationContainer = () => {
             circleDirection={s.circleDirection}
             angle={s.angle}
             opacity={s.opacity}
-            initialOpacity={s.opacity === 0 ? 1 : 0}
+            animationProps={s.animationProps}
           />
         ))}
       </div>

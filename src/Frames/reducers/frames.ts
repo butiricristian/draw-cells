@@ -1,3 +1,4 @@
+import { getRndInteger } from '../../helpers';
 import { Actions } from '../actions';
 
 const initialFrame = {
@@ -24,7 +25,7 @@ export interface Position {
   y: number,
 }
 export interface Sprite {
-  id: number | string | null,
+  id: number | string,
   position: Position,
   backgroundUrl?: string | undefined,
   animationType?: string | undefined,
@@ -35,7 +36,8 @@ export interface Sprite {
   nrOfIterations?: number | undefined,
   circleDirection?: number | undefined,
   angle?: number | undefined,
-  opacity?: number
+  opacity?: number,
+  animationProps?: any,
 }
 
 export interface Frame {
@@ -66,6 +68,119 @@ const computeSpritePosition = (sprite: Sprite, deltaX: number | undefined, delta
   }
 }
 
+const computeLinearAnimation = (currentSprite: Sprite, prevSprite: Sprite) => {
+  return {to: {left: currentSprite.position.x, top: currentSprite.position.y}}
+}
+
+const computeChaoticAnimation = (currentSprite: Sprite, prevSprite: Sprite) => {
+  if (!prevSprite) return {to: {left: currentSprite.position.x, top: currentSprite.position.y}}
+  const chaoticArray = []
+  let newLeft = prevSprite.position.x || 0
+  const leftDistance = currentSprite.position?.x - newLeft
+  let newTop = prevSprite.position.y || 0
+  const topDistance = currentSprite.position?.y - newTop
+
+  const finalMinTravelDistance = prevSprite.minTravelDistance || 15
+  const rangeOfMotion = prevSprite.rangeOfMovement || 40
+  const numberOfIterations = prevSprite.nrOfIterations || 10
+
+  const leftStep = leftDistance / numberOfIterations
+  const topStep = topDistance / numberOfIterations
+
+  for(let i=0;i<numberOfIterations;i+=1){
+    chaoticArray.push({left: newLeft, top: newTop})
+    let newRandLeft
+    const fromIntermediaryLeftPoint = Math.round((prevSprite?.position.x || 0) + leftStep*i)
+    const toIntermediaryLeftPoint = Math.round((prevSprite?.position.x || 0) + leftStep*(i+1))
+    do {
+      const fromLeft = fromIntermediaryLeftPoint-rangeOfMotion
+      const toLeft = toIntermediaryLeftPoint+rangeOfMotion
+      newRandLeft = getRndInteger(fromLeft, toLeft)
+    } while(Math.abs(newLeft - newRandLeft) < finalMinTravelDistance)
+    newLeft = newRandLeft
+
+    let newRandTop
+    const fromIntermediaryTopPoint = Math.round((prevSprite?.position.y || 0) + topStep*i)
+    const toIntermediaryTopPoint = Math.round((prevSprite?.position.y || 0) + topStep*(i+1))
+    do {
+      const fromTop = fromIntermediaryTopPoint-rangeOfMotion
+      const toTop = toIntermediaryTopPoint+rangeOfMotion
+      newRandTop = getRndInteger(fromTop, toTop)
+    } while(Math.abs(newTop - newRandTop) < finalMinTravelDistance)
+    newTop = newRandTop
+  }
+  chaoticArray.push({left: currentSprite.position.x, top: currentSprite.position.y})
+  return {to: chaoticArray}
+}
+
+const computeCircularAnimation = (currentSprite: Sprite, prevSprite: Sprite) => {
+  const currentCircleDirection: number = prevSprite?.circleDirection || 1
+  const currentAngle: number = prevSprite?.angle || 90
+  const [x1, y1, x2, y2] = [prevSprite?.position.x || 0, prevSprite?.position.y || 0, currentSprite.position.x, currentSprite.position.y]
+  const pointsDistance = Math.round(Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1))*100)/100
+  const radius = Math.round((pointsDistance / 2) / (Math.sin((currentAngle/2) * (Math.PI/180)))*100)/100
+
+  const m = Math.round((x1 - x2) / (y2 - y1) * 100)/100
+  const x3 = (x1+x2)/2
+  const y3 = (y1+y2)/2
+  const a = Math.round((m*m + 1)*100)/100
+  const b = Math.round((-2 * (x1 + y1*m - y3*m + m*m*x3)) * 100)/100
+  const c = Math.round((x1*x1 + y1*y1 + 2*y1*(m*x3-y3) + m*m*x3*x3 + y3*y3 - 2*m*x3*y3 - radius*radius)*100)/100
+  const delta = Math.round((b*b - 4*a*c)*100)/100
+  const circleX = Math.round((-b + currentCircleDirection * Math.sqrt(delta)) / (2*a))
+  const circleY = Math.round(m*circleX - m*x3 + y3)
+  const distX = (circleX - x2)
+  const distY = (circleY - y2)
+
+  const angleDirection = (y1 > y2) ? -1 : 1
+  const finalAngle = currentAngle * angleDirection * currentCircleDirection
+  return { distX, distY, finalAngle, circleX, circleY }
+}
+
+const getAnimationProps = (currentSprite: Sprite, prevSprite: Sprite) => {
+  if (!prevSprite) return computeLinearAnimation(currentSprite, prevSprite)
+  switch(prevSprite.animationType) {
+    case 'LINEAR': {
+      return computeLinearAnimation(currentSprite, prevSprite)
+    } case 'CHAOTIC': {
+      return computeChaoticAnimation(currentSprite, prevSprite)
+    } case 'CIRCULAR': {
+      return computeCircularAnimation(currentSprite, prevSprite)
+    }
+  }
+
+}
+
+const computeNewFrames = (frames: Array<Frame>, crtFrame: Frame): Array<Frame> => {
+  const crtFrameIndex = frames.map(f => f.id).indexOf(crtFrame.id)
+  const crtFrameSprites = crtFrame.sprites.reduce((r: any, s) => {
+    if (!s || !s.id) return r
+    r[s.id] = s
+    return r
+  }, {})
+  const prevFrameSprites = crtFrameIndex - 1 >= 0 && frames[crtFrameIndex - 1].sprites.reduce((r: any, s) => {
+    if (!s || !s.id) return r
+    r[s.id] = s
+    return r
+  }, {})
+  const nextFrame = crtFrameIndex + 1 < frames.length && frames[crtFrameIndex + 1]
+
+  for(let s of crtFrame.sprites) {
+    s.animationProps = getAnimationProps(s, prevFrameSprites[s.id])
+  }
+  if (nextFrame) {
+    for(let s of nextFrame.sprites) {
+      s.animationProps = getAnimationProps(s, crtFrameSprites[s.id])
+    }
+  }
+
+  console.log(crtFrame.sprites)
+  const newFrames = frames.map(f => f.id === crtFrame.id ? crtFrame : f)
+    .map(f => nextFrame && f.id === nextFrame.id ? nextFrame : f)
+
+  return newFrames
+}
+
 export const frames = (state: FramesState = initialState, action: Action): FramesState => {
   const {type, payload} = action
   switch(type){
@@ -89,9 +204,10 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
           newSprite
         ]
       }
+      const newFrames = computeNewFrames(state.frames, crtFrame)
       return {
         ...state,
-        frames: state.frames.map(f => f.id === crtFrame.id ? crtFrame : f),
+        frames: newFrames,
         currentFrame: crtFrame,
         lastSpriteId: state.lastSpriteId + 1,
       }
@@ -122,9 +238,10 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
             return s
           })
       }
+      const newFrames = computeNewFrames(state.frames, crtFrame)
       return {
         ...state,
-        frames: state.frames.map(f => f.id === crtFrame.id ? crtFrame : f),
+        frames: newFrames,
         currentFrame: crtFrame,
         currentSprites: newCurrentSprites
       }
@@ -134,9 +251,10 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
         ...state.currentFrame,
         sprites: state.currentFrame.sprites.filter(s => s.id !== payload.id)
       }
+      const newFrames = computeNewFrames(state.frames, crtFrame)
       return {
         ...state,
-        frames: state.frames.map(f => f.id === crtFrame.id ? crtFrame : f),
+        frames: newFrames,
         currentFrame: crtFrame,
       }
     }
@@ -161,9 +279,10 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
         ...state.currentFrame,
         sprites: state.currentFrame.sprites.filter(s => currentSpritesIds.indexOf(s.id) < 0)
       }
+      const newFrames = computeNewFrames(state.frames, crtFrame)
       return {
         ...state,
-        frames: state.frames.map(f => f.id === crtFrame.id ? crtFrame : f),
+        frames: newFrames,
         currentFrame: crtFrame,
       }
     }
@@ -197,7 +316,6 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
     case Actions.COPY_SELECTED_SPRITES_INTO_FRAME: {
       const currentSpritesIds = state.currentSprites.map(x => x.id)
       const spritesToCopy = state.currentFrame.sprites.filter(s => currentSpritesIds.indexOf(s.id) > -1)
-      console.log(spritesToCopy)
       if (spritesToCopy) {
         const newFrames = state.frames.map(f => f.id === payload.frameId ? {...f, sprites: [...f.sprites, ...spritesToCopy]} : f)
         return {
@@ -207,12 +325,15 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
       }
       return {...state}
     }
-    case Actions.ADD_FRAME:
+    case Actions.ADD_FRAME: {
+      console.log(state.frames)
+      const newFrames = computeNewFrames([...state.frames, payload], payload)
       return {
         ...state,
         currentFrame: payload,
-        frames: [...state.frames, payload]
+        frames: newFrames
       }
+    }
     case Actions.REMOVE_FRAME:
       return {
         ...state,
@@ -263,9 +384,10 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
             return s
           })
         }
+        const newFrames = computeNewFrames(state.frames, newCurrentFrame)
         return {
           ...state,
-          frames: state.frames.map(f => f.id === state.currentFrame.id ? newCurrentFrame : f),
+          frames: newFrames,
           currentFrame: newCurrentFrame,
           currentSprites: state.currentSprites.map(s => {
             let newS = null
@@ -283,9 +405,10 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
           ...state.currentFrame,
           sprites: state.currentFrame.sprites.map(s => s.id === id ? newCurrentSprite : s)
         }
+        const newFrames = computeNewFrames(state.frames, newCurrentFrame)
         return {
           ...state,
-          frames: state.frames.map(f => f.id === state.currentFrame.id ? newCurrentFrame : f),
+          frames: newFrames,
           currentFrame: newCurrentFrame,
           currentSprites: state.currentSprites.map(s => s.id === id ? newCurrentSprite : s)
         }
