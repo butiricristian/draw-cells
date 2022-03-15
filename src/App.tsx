@@ -37,8 +37,8 @@ function App() {
         <Provider store={store}>
         <Routes>
           <Route path='/' element={<Home />}/>
-          <Route path='/canvas' element={<AnimationCanvasContainer />}/>
-          <Route path='/present' element={<PresentationPage />}/>
+          <Route path='/presentations/:presentationId' element={<AnimationCanvasContainer />}/>
+          <Route path='/present/:presentationId' element={<PresentationPage />}/>
         </Routes>
         </Provider>
       </Router>

@@ -1,6 +1,7 @@
 import { Frame, Sprite } from '../reducers/frames'
 
 export const Actions = {
+  SET_INITIAL_DATA: 'SET_INITIAL_DATA',
   SET_CURRENT_FRAME: 'SET_CURRENT_FRAME',
   SET_CURRENT_SPRITE: 'SET_CURRENT_SPRITE',
   UPDATE_CURRENT_SPRITE_POSITION: 'UPDATE_CURRENT_SPRITE_POSITION',
@@ -18,6 +19,11 @@ export const Actions = {
   COPY_SELECTED_SPRITES_INTO_FRAME: 'COPY_SELECTED_SPRITES_INTO_FRAME',
   ADD_CURRENT_SPRITE: 'ADD_CURRENT_SPRITE',
 }
+
+export const loadInitialData = (payload: any) => ({
+  type: Actions.SET_INITIAL_DATA,
+  payload
+})
 
 export const addSprite = (sprite: Sprite) => ({
   type: Actions.ADD_SPRITE,

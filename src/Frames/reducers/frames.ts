@@ -192,6 +192,16 @@ const computeNewFrames = (frames: Array<Frame>, crtFrame: Frame): Array<Frame> =
 export const frames = (state: FramesState = initialState, action: Action): FramesState => {
   const {type, payload} = action
   switch(type){
+    case Actions.SET_INITIAL_DATA: {
+      if(!(payload.frames && payload.frames.length > 0)) {
+        return initialState
+      }
+      return {
+        ...initialState,
+        frames: payload.frames,
+        currentFrame: payload.frames[0]
+      }
+    }
     case Actions.ADD_SPRITE: {
       const newSprite = {
         duration: 1,
