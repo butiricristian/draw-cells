@@ -69,7 +69,7 @@ const computeSpritePosition = (sprite: Sprite, deltaX: number | undefined, delta
 }
 
 const computeLinearAnimation = (currentSprite: Sprite, prevSprite: Sprite) => {
-  return {to: {left: currentSprite.position.x, top: currentSprite.position.y}}
+  return {left: currentSprite.position.x, top: currentSprite.position.y}
 }
 
 const computeChaoticAnimation = (currentSprite: Sprite, prevSprite: Sprite) => {
@@ -110,7 +110,7 @@ const computeChaoticAnimation = (currentSprite: Sprite, prevSprite: Sprite) => {
     newTop = newRandTop
   }
   chaoticArray.push({left: currentSprite.position.x, top: currentSprite.position.y})
-  return {to: chaoticArray}
+  return chaoticArray
 }
 
 const computeCircularAnimation = (currentSprite: Sprite, prevSprite: Sprite) => {
@@ -174,12 +174,20 @@ const computeNewFrames = (frames: Array<Frame>, crtFrame: Frame): Array<Frame> =
     }
   }
 
-  console.log(crtFrame.sprites)
   const newFrames = frames.map(f => f.id === crtFrame.id ? crtFrame : f)
     .map(f => nextFrame && f.id === nextFrame.id ? nextFrame : f)
 
   return newFrames
 }
+
+// Possibly need in the future for Copy/Remove from all frames
+// const computeAllNewFrames = (frames: Array<Frame>) => {
+//   let newFrames = frames
+//   for (let i = 0; i < frames.length; i++) {
+//     newFrames = computeNewFrames(newFrames, newFrames[i])
+//   }
+//   return newFrames
+// }
 
 export const frames = (state: FramesState = initialState, action: Action): FramesState => {
   const {type, payload} = action

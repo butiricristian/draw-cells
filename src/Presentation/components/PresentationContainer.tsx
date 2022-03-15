@@ -30,10 +30,11 @@ const PresentationContainer = () => {
             animationType={s.animationType}
             scale={s.scale}
             canvas={canvasRef.current}
-            circleDirection={s.circleDirection}
             angle={s.angle}
             opacity={s.opacity}
             animationProps={s.animationProps}
+            duration={s.duration}
+            nrOfIterations={s.nrOfIterations}
           />
         ))}
       </div>

@@ -35,16 +35,15 @@ interface AnimationSpriteProps extends Sprite {
   opacity?: number,
 }
 
-export default function AnimationSprite({position, id, backgroundUrl, animationType, scale, canvas,
-  minTravelDistance = 15, rangeOfMovement = 40, nrOfIterations = 10, duration = 1, circleDirection = 1,
-  angle = 90, opacity, animationProps}: AnimationSpriteProps) {
+export default function AnimationSprite({position, id, backgroundUrl, animationType, scale,
+  nrOfIterations = 10, duration = 1, opacity, animationProps}: AnimationSpriteProps) {
   const classes = useStyles()
   const spriteToSvgMap: any = SPRITE_TO_SVG_ELEMENT_MAP
   const currentFrame = useSelector((state: State) => state.frames.currentFrame)
   const prevFrame = useSelector((state: State) => state.frames.prevFrame)
   const prevSprite = prevFrame?.sprites.find(s => s.id === id)
-  const animationDuration = (((currentFrame.id || '') >= (prevFrame?.id || '') ? prevSprite?.duration : duration) || 1) * 1000
-  const isGoingBackwards = (currentFrame.id || 0) >= (prevFrame?.id || 0)
+  const isGoingBackwards = (currentFrame.id || 0) < (prevFrame?.id || 0)
+  const animationDuration = ((isGoingBackwards ? duration : prevSprite?.duration) || 1) * 1000
 
   //SCALE PROPS
   const scaleProps: any = useSpring({to: {transform: `scale(${scale})`}})
@@ -53,11 +52,10 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
   const opacityProps: any = useSpring({from: {opacity: 0}, to: {opacity: opacity}})
 
   // LINEAR PROPS
-  const linearProps: any = useSpring({...animationProps, config: {duration: animationDuration}})
+  const linearProps: any = useSpring({to: animationProps, config: {duration: animationDuration}})
 
   // CHAOTIC PROPS
-  const chaoticProps: any = useSpring({...animationProps, config: {duration: animationDuration/nrOfIterations}})
-
+  const chaoticProps: any = useSpring({to: animationProps, config: {duration: animationDuration/nrOfIterations}})
 
   // CIRCULAR PROPS
   const {distX, distY, finalAngle, circleX, circleY} = animationProps
@@ -70,11 +68,9 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
   const circularProps = { left: circleX, top: circleY, transform: rotateSpring.to([crtFrameId - 1, crtFrameId], [finalAngle, 0]).to((x: any) => `rotate(${x}deg)`) }
   const circularSvgProps = {transform: `translate(${-distX}px, ${-distY}px)`}
 
-
-  const currentAnimationType = isGoingBackwards ? prevSprite?.animationType : animationType
-
   // CHOOSE THE PROPS
-  let props = scaleProps
+  const currentAnimationType = isGoingBackwards ? animationType : prevSprite?.animationType
+  let props = {...scaleProps, ...opacityProps}
   let svgProps = {}
   if (prevSprite) {
     if (currentAnimationType === 'LINEAR') {
@@ -88,11 +84,11 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
       props = {...props, left: position.x, top: position.y}
     }
   } else {
-    props = {...linearProps, ...scaleProps}
+    props = {...props, ...linearProps}
   }
 
   return (
-    <animated.div className={clsx(classes.spriteContainer)} style={{...opacityProps, ...props}}>
+    <animated.div className={clsx(classes.spriteContainer)} style={{...props}}>
       <div
         className={clsx(classes.sprite)}
         style={{backgroundColor: 'transparent', ...svgProps}}
