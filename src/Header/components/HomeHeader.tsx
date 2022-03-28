@@ -28,7 +28,8 @@ const HomeHeader = () => {
   const handleNewPresentation = async () => {
     if(!user) return
     const newPresKey = push(child(ref(db), 'presentations')).key
-    set(ref(db, `presentations/${newPresKey}`), {user_id: user.uid})
+    set(ref(db, `/presentations/${newPresKey}`), {user_id: user.uid, title: 'New Presentation'})
+    set(ref(db, `/user-presentations/${user.uid}/${newPresKey}`), {title: 'New Presentation'})
     navigate(`/presentations/${newPresKey}`)
   }
 
@@ -38,7 +39,7 @@ const HomeHeader = () => {
         <Typography variant="h6" style={{flexGrow: 1}}>
           Draw Cells
         </Typography>
-        <Button color="inherit" onClick={handleNewPresentation}>New Presentation</Button>
+        {user && (<Button color="inherit" onClick={handleNewPresentation}>New Presentation</Button>)}
         {!user && (<Button color="inherit" onClick={openLoginModal}>Log in</Button>)}
         {user && (<Button color="inherit" onClick={handleLogOut}>Log out</Button>)}
         {user && user.displayName}

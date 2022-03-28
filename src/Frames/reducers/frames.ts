@@ -12,7 +12,8 @@ const initialState: FramesState = {
   currentFrame: initialFrame,
   prevFrame: null,
   currentSprites: [],
-  lastSpriteId: 1
+  lastSpriteId: 1,
+  title: '',
 }
 
 interface Action {
@@ -51,7 +52,8 @@ export interface FramesState {
   currentFrame: Frame,
   prevFrame: Frame | null,
   currentSprites: Array<Sprite>,
-  lastSpriteId: number
+  lastSpriteId: number,
+  title: string,
 }
 
 const computeSpritePosition = (sprite: Sprite, deltaX: number | undefined, deltaY: number | undefined): Sprite => {
@@ -194,12 +196,19 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
   switch(type){
     case Actions.SET_INITIAL_DATA: {
       if(!(payload.frames && payload.frames.length > 0)) {
-        return initialState
+        return {
+          ...initialState,
+          title: payload.title,
+        }
       }
       return {
         ...initialState,
+        title: payload.title,
         frames: payload.frames,
-        currentFrame: payload.frames[0]
+        currentFrame: {
+          ...payload.frames[0],
+          sprites: payload.frames[0].sprites || []
+        }
       }
     }
     case Actions.ADD_SPRITE: {

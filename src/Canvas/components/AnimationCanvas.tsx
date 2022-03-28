@@ -1,4 +1,4 @@
-import { Snackbar, useTheme } from '@mui/material';
+import { CircularProgress, Snackbar, useTheme } from '@mui/material';
 import { get, ref, update } from 'firebase/database';
 import React, { useEffect, useRef, useState } from 'react';
 import { DndProvider, useDrop, XYCoord } from 'react-dnd';
@@ -163,7 +163,7 @@ function AnimationCanvas() {
   }, {passive: false});
 
   if(isLoading) {
-    return (<h1>Loading...</h1>)
+    return (<CircularProgress />)
   }
 
   return (
@@ -172,7 +172,8 @@ function AnimationCanvas() {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         open={isSaving}
         message="Saving..."
-        ContentProps={{sx: {bgcolor: 'blue', color: 'white'}}}
+        ContentProps={{sx: {bgcolor: 'blue', color: 'white', padding: '5px'}, style: { minWidth: '200px'}}}
+        style={{top: 64, right: 0}}
       />
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
@@ -180,7 +181,8 @@ function AnimationCanvas() {
         autoHideDuration={3000}
         message="Saved"
         onClose={handleSavedClose}
-        ContentProps={{sx: {bgcolor: 'green', color: 'white'}}}
+        ContentProps={{sx: {bgcolor: 'green', color: 'white', padding: '5px'}, style: { minWidth: '200px'}}}
+        style={{top: 64, right: 0}}
       />
       <div ref={canvasContainer} style={{...containerStyle, transition: 'all 0.3s ease-out'}} id="main-canvas">
         <div ref={drop} style={{width: '100%', height: '100%', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'scroll'}}>
