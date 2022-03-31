@@ -87,28 +87,32 @@ const computeChaoticAnimation = (currentSprite: Sprite, prevSprite: Sprite) => {
   const numberOfIterations = prevSprite.nrOfIterations || 10
 
   const leftStep = leftDistance / numberOfIterations
+  const leftDirection = leftStep < 0 ? -1 : 1
   const topStep = topDistance / numberOfIterations
+  const topDirection = topStep < 0 ? -1 : 1
 
   for(let i=0;i<numberOfIterations;i+=1){
     chaoticArray.push({left: newLeft, top: newTop})
     let newRandLeft
     const fromIntermediaryLeftPoint = Math.round((prevSprite?.position.x || 0) + leftStep*i)
     const toIntermediaryLeftPoint = Math.round((prevSprite?.position.x || 0) + leftStep*(i+1))
-    do {
-      const fromLeft = fromIntermediaryLeftPoint-rangeOfMotion
-      const toLeft = toIntermediaryLeftPoint+rangeOfMotion
-      newRandLeft = getRndInteger(fromLeft, toLeft)
-    } while(Math.abs(newLeft - newRandLeft) < finalMinTravelDistance)
+    const fromLeft = fromIntermediaryLeftPoint - rangeOfMotion * leftDirection
+    const toLeft = toIntermediaryLeftPoint + rangeOfMotion * leftDirection
+    newRandLeft = getRndInteger(fromLeft, toLeft)
+    if (Math.abs(newRandLeft - newLeft) < finalMinTravelDistance) {
+      newRandLeft += finalMinTravelDistance * leftDirection
+    }
     newLeft = newRandLeft
 
     let newRandTop
     const fromIntermediaryTopPoint = Math.round((prevSprite?.position.y || 0) + topStep*i)
     const toIntermediaryTopPoint = Math.round((prevSprite?.position.y || 0) + topStep*(i+1))
-    do {
-      const fromTop = fromIntermediaryTopPoint-rangeOfMotion
-      const toTop = toIntermediaryTopPoint+rangeOfMotion
-      newRandTop = getRndInteger(fromTop, toTop)
-    } while(Math.abs(newTop - newRandTop) < finalMinTravelDistance)
+    const fromTop = fromIntermediaryTopPoint - rangeOfMotion * topDirection
+    const toTop = toIntermediaryTopPoint + rangeOfMotion * topDirection
+    newRandTop = getRndInteger(fromTop, toTop)
+    if (Math.abs(newRandTop - newTop) < finalMinTravelDistance) {
+      newRandTop += finalMinTravelDistance * topDirection
+    }
     newTop = newRandTop
   }
   chaoticArray.push({left: currentSprite.position.x, top: currentSprite.position.y})

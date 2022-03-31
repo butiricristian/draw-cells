@@ -1,18 +1,29 @@
-import { Input, MenuItem, Select, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
+import { Input, InputAdornment, MenuItem, Select, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateSprite } from '../../Frames/actions';
 import State from '../../stateInterface';
 import { toggleProperties } from '../actions';
 import BaseSidebar from './BaseSidebar';
+import { Info } from '@mui/icons-material';
+
+const ROM_AND_MTD_ERRORS = {
+  minTravelDistance: 'Min travel distance must be lower than Range of movement',
+  rangeOfMovement: 'Range of movement must be greater than Min travel distance'
+}
 
 export default function PropertiesSidebar() {
   const dispatch = useDispatch()
   const isPropertiesSidebarOpen = useSelector((state: State) => state.sidebars.isPropertiesOpen)
   const currentSprites = useSelector((state: State) => state.frames.currentSprites)
   const currentSprite = currentSprites.length <= 0 ? null : currentSprites[0]
+  const [validationErrors, setValidationErrors]: any = useState({})
+
+  const updateSpriteProperty = ({field, value}: any) => {
+    dispatch(updateSprite({field, value}))
+  }
 
   return (
     <BaseSidebar
@@ -106,7 +117,9 @@ export default function PropertiesSidebar() {
                 <Input
                   type="number"
                   value={currentSprite?.minTravelDistance || ''}
-                  onChange={(e) => dispatch(updateSprite({field: 'minTravelDistance', value: e.target.value}))}
+                  onChange={(e) => updateSpriteProperty({field: 'minTravelDistance', value: parseInt(e.target.value)})}
+                  endAdornment={validationErrors.minTravelDistance ? (<InputAdornment position="end"><Tooltip title={validationErrors.minTravelDistance}><Info color="error"/></Tooltip></InputAdornment>) : (<></>)}
+                  error={validationErrors.minTravelDistance}
                 />
               </TableCell>
             </TableRow>)}
@@ -116,7 +129,9 @@ export default function PropertiesSidebar() {
                 <Input
                   type="number"
                   value={currentSprite?.rangeOfMovement || ''}
-                  onChange={(e) => dispatch(updateSprite({field: 'rangeOfMovement', value: e.target.value}))}
+                  onChange={(e) => updateSpriteProperty({field: 'rangeOfMovement', value: parseInt(e.target.value)})}
+                  endAdornment={validationErrors.rangeOfMovement ? (<InputAdornment position="end"><Tooltip title={validationErrors.rangeOfMovement}><Info color="error"/></Tooltip></InputAdornment>) : (<></>)}
+                  error={validationErrors.rangeOfMovement}
                 />
               </TableCell>
             </TableRow>)}
@@ -126,7 +141,7 @@ export default function PropertiesSidebar() {
                 <Input
                   type="number"
                   value={currentSprite?.nrOfIterations || ''}
-                  onChange={(e) => dispatch(updateSprite({field: 'nrOfIterations', value: e.target.value}))}
+                  onChange={(e) => dispatch(updateSprite({field: 'nrOfIterations', value: parseInt(e.target.value || '0')}))}
                 />
               </TableCell>
             </TableRow>)}

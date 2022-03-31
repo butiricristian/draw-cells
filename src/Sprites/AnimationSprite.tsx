@@ -84,7 +84,7 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
       props = {...props, left: position.x, top: position.y}
     }
   } else {
-    props = {...props, ...linearProps}
+    props = {...props, left: position.x, top: position.y}
   }
 
   return (
