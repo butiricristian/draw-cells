@@ -1,4 +1,4 @@
-import { CircularProgress, Snackbar, useTheme } from '@mui/material';
+import { CircularProgress, useTheme } from '@mui/material';
 import { get, ref, update } from 'firebase/database';
 import React, { useEffect, useRef, useState } from 'react';
 import { DndProvider, useDrop, XYCoord } from 'react-dnd';
@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { leftDrawerWidth } from '../../constants';
 import { db } from '../../firebase-config';
-import { addSprite, loadInitialData, updateCurrentSpritePosition } from '../../Frames/actions';
+import { addSprite, loadInitialData, setIsFramesSaving, updateCurrentSpritePosition } from '../../Frames/actions';
 import { Sprite } from '../../Frames/reducers/frames';
 import Header from '../../Header/components/CanvasHeader';
 import PresentationModal from '../../Presentation/components/PresentationModal';
@@ -48,16 +48,6 @@ function AnimationCanvas() {
   const { presentationId } = useParams()
 
   const [isLoading, setIsLoading] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
-  const [isSavedOpen, setIsSavedOpen] = useState(false)
-
-  const handleSavedClose = (e: any, reason: any) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setIsSavedOpen(false);
-  }
 
   useEffect(() => {
     setIsLoading(true)
@@ -70,18 +60,16 @@ function AnimationCanvas() {
   }, [presentationId, dispatch])
 
   useEffect(() => {
-    setIsSavedOpen(false)
-    setIsSaving(true)
+    dispatch(setIsFramesSaving(true))
     const t = setTimeout(async () => {
       const res = await update(ref(db), {[`presentations/${presentationId}/frames`]: framesList})
-      setIsSaving(false)
-      setIsSavedOpen(true)
+      dispatch(setIsFramesSaving(false))
       console.log(res)
     }, 2000)
     return () => {
       clearTimeout(t)
     }
-  }, [framesList, presentationId])
+  }, [framesList, presentationId, dispatch])
 
   const smallDrawerWidth: number = parseInt(theme.spacing(6).replace('px', ''))
   const headerHeight: number = parseInt(theme.spacing(8).replace('px', ''))
@@ -167,36 +155,18 @@ function AnimationCanvas() {
   }
 
   return (
-    <>
-      <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        open={isSaving}
-        message="Saving..."
-        ContentProps={{sx: {bgcolor: 'blue', color: 'white', padding: '5px'}, style: { minWidth: '200px'}}}
-        style={{top: 64, right: 0}}
-      />
-      <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        open={isSavedOpen}
-        autoHideDuration={3000}
-        message="Saved"
-        onClose={handleSavedClose}
-        ContentProps={{sx: {bgcolor: 'green', color: 'white', padding: '5px'}, style: { minWidth: '200px'}}}
-        style={{top: 64, right: 0}}
-      />
-      <div ref={canvasContainer} style={{...containerStyle, transition: 'all 0.3s ease-out'}} id="main-canvas">
-        <div ref={drop} style={{width: '100%', height: '100%', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'scroll'}}>
-          <div ref={innerCanvas} style={{...canvasStyle, backgroundColor: (isOver ? '#eee' : '#fff'), transform: `scale(${scale})`}}>
-            {sprites.map((s: Sprite) => (
-              <BaseSprite key={`sprite-${s.id}`} id={s.id} position={s.position} backgroundUrl={s.backgroundUrl}
-                scale={s.scale} duration={s.duration}
-                minTravelDistance={s.minTravelDistance} rangeOfMovement={s.rangeOfMovement} nrOfIterations={s.nrOfIterations}
-                zIndex={s.zIndex}
-              />
-            ))}
-          </div>
+    <div ref={canvasContainer} style={{...containerStyle, transition: 'all 0.3s ease-out'}} id="main-canvas">
+      <div ref={drop} style={{width: '100%', height: '100%', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'scroll'}}>
+        <div ref={innerCanvas} style={{...canvasStyle, backgroundColor: (isOver ? '#eee' : '#fff'), transform: `scale(${scale})`}}>
+          {sprites.map((s: Sprite) => (
+            <BaseSprite key={`sprite-${s.id}`} id={s.id} position={s.position} backgroundUrl={s.backgroundUrl}
+              scale={s.scale} duration={s.duration}
+              minTravelDistance={s.minTravelDistance} rangeOfMovement={s.rangeOfMovement} nrOfIterations={s.nrOfIterations}
+              zIndex={s.zIndex}
+            />
+          ))}
         </div>
       </div>
-    </>
+    </div>
   );
 }

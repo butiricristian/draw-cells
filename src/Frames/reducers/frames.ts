@@ -14,6 +14,7 @@ const initialState: FramesState = {
   currentSprites: [],
   lastSpriteId: 1,
   title: '',
+  isFramesSaving: false
 }
 
 interface Action {
@@ -55,6 +56,7 @@ export interface FramesState {
   currentSprites: Array<Sprite>,
   lastSpriteId: number,
   title: string,
+  isFramesSaving?: boolean
 }
 
 const computeSpritePosition = (sprite: Sprite, deltaX: number | undefined, deltaY: number | undefined): Sprite => {
@@ -475,6 +477,18 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
       return {
         ...state,
         prevFrame: null,
+      }
+    }
+    case Actions.UPDATE_PRESENTATION_TITLE: {
+      return {
+        ...state,
+        title: payload
+      }
+    }
+    case Actions.SET_IS_FRAMES_SAVING: {
+      return {
+        ...state,
+        isFramesSaving: payload
       }
     }
     default:

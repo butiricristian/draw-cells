@@ -1,4 +1,5 @@
-import { AppBar, Button, Toolbar, Typography, useTheme } from '@mui/material';
+import { AccountCircle, ArrowDropDown } from '@mui/icons-material';
+import { AppBar, Button, Menu, MenuItem, Stack, Toolbar, Typography, useTheme } from '@mui/material';
 import { signOut } from 'firebase/auth';
 import { child, push, ref, set } from 'firebase/database';
 import React from 'react';
@@ -16,6 +17,7 @@ const HomeHeader = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const user = useSelector((state: State) => state.home.user)
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
   const openLoginModal = () => {
     dispatch(toggleLoginModalOpen(true))
@@ -24,6 +26,10 @@ const HomeHeader = () => {
   const handleLogOut = () => {
     signOut(auth)
   }
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleNewPresentation = async () => {
     if(!user) return
@@ -36,13 +42,38 @@ const HomeHeader = () => {
   return (
     <AppBar position="static" style={{zIndex: 25}}>
       <Toolbar style={{paddingLeft: theme.spacing(7), paddingRight: theme.spacing(7)}}>
-        <Typography variant="h6" style={{flexGrow: 1}}>
-          Draw Cells
-        </Typography>
-        {user && (<Button color="inherit" onClick={handleNewPresentation}>New Presentation</Button>)}
+        <Stack direction="row" style={{flexGrow: 1}} alignItems="center">
+          <Typography variant="h6">
+            Draw Cells
+          </Typography>
+          {user && (<Button color="inherit" onClick={handleNewPresentation}>New Presentation</Button>)}
+        </Stack>
         {!user && (<Button color="inherit" onClick={openLoginModal}>Log in</Button>)}
-        {user && (<Button color="inherit" onClick={handleLogOut}>Log out</Button>)}
-        {user && user.displayName}
+        {user && (
+          <>
+            <Button onClick={(e: any) => setAnchorEl(e.currentTarget)} sx={{color: 'white'}} startIcon={<AccountCircle />} endIcon={<ArrowDropDown />}>
+              {user.displayName}
+            </Button>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+            >
+              <MenuItem onClick={handleClose}>Profile</MenuItem>
+              <MenuItem onClick={handleLogOut}>Log out</MenuItem>
+            </Menu>
+          </>
+        )}
       </Toolbar>
     </AppBar>
   )

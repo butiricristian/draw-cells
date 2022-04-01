@@ -1,7 +1,11 @@
-import { AppBar, Box, Button, Toolbar, Typography, useTheme } from '@mui/material';
-import React from 'react';
+import { Close, Edit, Save } from '@mui/icons-material';
+import { AppBar, Box, Button, IconButton, TextField, Toolbar, Typography, useTheme } from '@mui/material';
+import { ref, update } from 'firebase/database';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { db } from '../../firebase-config';
+import { updatePresentationTitle } from '../../Frames/actions';
 import { toggleModal } from '../../Presentation/actions';
 import State from '../../stateInterface';
 
@@ -13,14 +17,56 @@ const CanvasHeader = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const presentationTitle = useSelector((state: State) => state.frames.title)
+  const isFramesSaving = useSelector((state: State) => state.frames.isFramesSaving)
+  const [isTitleEditing, setIsTitleEditing] = useState(false)
+  const [currentTitle, setCurrentTitle] = useState(presentationTitle)
+  const user = useSelector((state: State) => state.home.user)
+  const { presentationId } = useParams()
+
+  useEffect(() => {
+    setCurrentTitle(presentationTitle)
+  }, [presentationTitle])
+
+  const handleSave = async () => {
+    await update(ref(db), {
+      [`presentations/${presentationId}/title`]: currentTitle,
+      [`/user-presentations/${user.uid}/${presentationId}/title`]: currentTitle,
+    })
+    dispatch(updatePresentationTitle(currentTitle))
+    setIsTitleEditing(false)
+  }
 
   return (
     <AppBar position="static" style={{zIndex: 25}}>
       <Toolbar style={{paddingLeft: theme.spacing(7), paddingRight: theme.spacing(7)}}>
         <Box style={{flexGrow: 1, display: 'flex'}} alignItems="center">
-          <Typography variant="h6">
-            {presentationTitle}
-          </Typography>
+          {isTitleEditing && (
+            <>
+              <TextField
+                value={currentTitle}
+                size="small"
+                InputProps={{sx: {bgcolor: 'white'}}}
+                onChange={(e) => setCurrentTitle(e.target.value)}
+              />
+              <IconButton component="span" size="small" sx={{color: 'white'}} onClick={handleSave}>
+                <Save sx={{fontSize: '1.5rem'}} />
+              </IconButton>
+              <IconButton component="span" size="small" sx={{color: 'white'}} onClick={() => setIsTitleEditing(false)}>
+                <Close sx={{fontSize: '1.5rem'}} />
+              </IconButton>
+            </>
+          )}
+          {!isTitleEditing && (
+            <>
+              <Typography variant="h6">
+                {presentationTitle}
+              </Typography>
+              <IconButton component="span" size="small" sx={{color: 'white'}} onClick={() => setIsTitleEditing(true)}>
+                <Edit sx={{fontSize: '1rem'}} />
+              </IconButton>
+            </>
+          )}
+          <Typography variant='body2' sx={{ml: 3}}>{isFramesSaving ? 'Saving...' : 'Up to date'}</Typography>
         </Box>
         <Button color="inherit" onClick={() => navigate('/')}>HOME</Button>
         <Button color="inherit" onClick={() => dispatch(toggleModal(true))}>PREVIEW</Button>

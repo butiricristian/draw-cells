@@ -18,6 +18,8 @@ export const Actions = {
   COPY_SPRITE_INTO_FRAME: 'COPY_SPRITE_INTO_FRAME',
   COPY_SELECTED_SPRITES_INTO_FRAME: 'COPY_SELECTED_SPRITES_INTO_FRAME',
   ADD_CURRENT_SPRITE: 'ADD_CURRENT_SPRITE',
+  UPDATE_PRESENTATION_TITLE: 'UPDATE_PRESENTATION_TITLE',
+  SET_IS_FRAMES_SAVING: 'SET_IS_FRAMES_SAVING'
 }
 
 export const loadInitialData = (payload: any) => ({
@@ -103,4 +105,14 @@ export const updateCurrentSpritePosition = (spriteId: number | string | null, de
     deltaX,
     deltaY,
   }
+})
+
+export const updatePresentationTitle = (title: string) => ({
+  type: Actions.UPDATE_PRESENTATION_TITLE,
+  payload: title
+})
+
+export const setIsFramesSaving = (value: boolean) => ({
+  type: Actions.SET_IS_FRAMES_SAVING,
+  payload: value
 })
