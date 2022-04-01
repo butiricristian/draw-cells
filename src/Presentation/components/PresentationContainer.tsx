@@ -35,6 +35,7 @@ const PresentationContainer = () => {
             animationProps={s.animationProps}
             duration={s.duration}
             nrOfIterations={s.nrOfIterations}
+            zIndex={s.zIndex}
           />
         ))}
       </div>

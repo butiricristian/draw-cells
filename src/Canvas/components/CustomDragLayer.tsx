@@ -46,6 +46,7 @@ export const CustomDragLayer = () => {
               position={{x: item.x, y: item.y}}
               backgroundUrl={item.backgroundUrl}
               scale={item.scale * canvasScale}
+              zIndex={item.zIndex}
             />
           )
         default:

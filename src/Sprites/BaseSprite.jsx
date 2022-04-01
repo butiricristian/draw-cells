@@ -47,7 +47,7 @@ const useStyles = makeStyles({
   }
 })
 
-export default function BaseSprite({position, id, backgroundUrl, scale}: Sprite) {
+export default function BaseSprite({position, id, backgroundUrl, scale, zIndex}: Sprite) {
   const [state, setState] = React.useState(initialState);
   const frames = useSelector((state: State) => state.frames.frames)
   const framesForSelect = frames.filter(f => f.sprites.map(s => s.id).indexOf(id) < 0)
@@ -77,11 +77,11 @@ export default function BaseSprite({position, id, backgroundUrl, scale}: Sprite)
 
   const [{isDragging}, canvasSpriteDrag, preview] = useDrag(() => ({
     type: 'SPRITE',
-    item: { type: 'CANVAS_SPRITE', id, x: position.x, y: position.y, backgroundUrl, scale },
+    item: { type: 'CANVAS_SPRITE', id, x: position.x, y: position.y, backgroundUrl, scale, zIndex },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging()
     })
-  }), [position, scale])
+  }), [position, scale, zIndex])
 
   useEffect(() => {
     preview(getEmptyImage(), {captureDraggingState: true});
@@ -90,7 +90,7 @@ export default function BaseSprite({position, id, backgroundUrl, scale}: Sprite)
   const spriteToSvgMap: any = SPRITE_TO_SVG_ELEMENT_MAP
 
   return (
-    <div ref={canvasSpriteDrag} className={classes.spriteContainer} style={{left: position.x, top: position.y, transform: `scale(${scale})`, opacity: isDragging ? 0 : 1}}>
+    <div ref={canvasSpriteDrag} className={classes.spriteContainer} style={{left: position.x, top: position.y, transform: `scale(${scale})`, opacity: isDragging ? 0 : 1, zIndex}}>
       <div
         className={clsx(classes.sprite, {[classes.selected]: currentSpriteIds.find(sId => sId === id)})}
         style={{backgroundColor: 'transparent'}}

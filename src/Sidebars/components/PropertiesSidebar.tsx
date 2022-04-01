@@ -1,25 +1,21 @@
-import { Input, InputAdornment, MenuItem, Select, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from '@mui/material';
+import { Info } from '@mui/icons-material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import React, { useState } from 'react';
+import { Input, InputAdornment, MenuItem, Select, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from '@mui/material';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateSprite } from '../../Frames/actions';
 import State from '../../stateInterface';
 import { toggleProperties } from '../actions';
 import BaseSidebar from './BaseSidebar';
-import { Info } from '@mui/icons-material';
-
-const ROM_AND_MTD_ERRORS = {
-  minTravelDistance: 'Min travel distance must be lower than Range of movement',
-  rangeOfMovement: 'Range of movement must be greater than Min travel distance'
-}
 
 export default function PropertiesSidebar() {
   const dispatch = useDispatch()
   const isPropertiesSidebarOpen = useSelector((state: State) => state.sidebars.isPropertiesOpen)
   const currentSprites = useSelector((state: State) => state.frames.currentSprites)
   const currentSprite = currentSprites.length <= 0 ? null : currentSprites[0]
-  const [validationErrors, setValidationErrors]: any = useState({})
+  // const [validationErrors, setValidationErrors]: any = useState({})
+  const validationErrors: any = {}
 
   const updateSpriteProperty = ({field, value}: any) => {
     dispatch(updateSprite({field, value}))
@@ -80,6 +76,16 @@ export default function PropertiesSidebar() {
                   type="number"
                   value={currentSprite?.scale || ''}
                   onChange={(e) => dispatch(updateSprite({field: 'scale', value: e.target.value}))}
+                />
+              </TableCell>
+            </TableRow>
+            <TableRow key="zIndex">
+              <TableCell>z-index</TableCell>
+              <TableCell>
+                <Input
+                  type="number"
+                  value={currentSprite?.zIndex || ''}
+                  onChange={(e) => dispatch(updateSprite({field: 'zIndex', value: e.target.value}))}
                 />
               </TableCell>
             </TableRow>

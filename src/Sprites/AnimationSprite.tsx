@@ -36,7 +36,7 @@ interface AnimationSpriteProps extends Sprite {
 }
 
 export default function AnimationSprite({position, id, backgroundUrl, animationType, scale,
-  nrOfIterations = 10, duration = 1, opacity, animationProps}: AnimationSpriteProps) {
+  nrOfIterations = 10, duration = 1, opacity, animationProps, zIndex}: AnimationSpriteProps) {
   const classes = useStyles()
   const spriteToSvgMap: any = SPRITE_TO_SVG_ELEMENT_MAP
   const currentFrame = useSelector((state: State) => state.frames.currentFrame)
@@ -88,7 +88,7 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
   }
 
   return (
-    <animated.div className={clsx(classes.spriteContainer)} style={{...props}}>
+    <animated.div className={clsx(classes.spriteContainer)} style={{...props, zIndex}}>
       <div
         className={clsx(classes.sprite)}
         style={{backgroundColor: 'transparent', ...svgProps}}

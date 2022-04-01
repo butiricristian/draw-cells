@@ -7,7 +7,7 @@ const styles: any = {
   position: 'absolute',
   cursor: 'pointer',
   width: 50,
-  height: 50, 
+  height: 50,
 };
 
 const useStyles = makeStyles({
@@ -34,9 +34,9 @@ const BaseSpritePreview = memo(function BoxDragPreview(props: Sprite) {
     const spriteToSvgMap: any = SPRITE_TO_SVG_ELEMENT_MAP
 
     return (<div style={styles}>
-				<div 
+				<div
           className={classes.sprite}
-          style={{backgroundColor: 'transparent', transform: `scale(${props.scale})`}}
+          style={{backgroundColor: 'transparent', transform: `scale(${props.scale})`, zIndex: props.zIndex}}
         >
           {props.backgroundUrl && spriteToSvgMap[props.backgroundUrl]}
         </div>

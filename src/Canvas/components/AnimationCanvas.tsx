@@ -191,6 +191,7 @@ function AnimationCanvas() {
               <BaseSprite key={`sprite-${s.id}`} id={s.id} position={s.position} backgroundUrl={s.backgroundUrl}
                 scale={s.scale} duration={s.duration}
                 minTravelDistance={s.minTravelDistance} rangeOfMovement={s.rangeOfMovement} nrOfIterations={s.nrOfIterations}
+                zIndex={s.zIndex}
               />
             ))}
           </div>
