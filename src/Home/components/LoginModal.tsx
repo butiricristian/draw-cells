@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, Grid, Link, TextField, Typography, useTheme } from "@mui/material";
+import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, Grid, Link, TextField, Typography, useTheme } from "@mui/material";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -97,17 +97,20 @@ function RegisterForm({handleClose, toggleForm}: LoginFormProps) {
 function LoginForm({handleClose, toggleForm}: LoginFormProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async () => {
+    setIsLoading(true)
     try {
       const response = await signInWithEmailAndPassword(auth, email, password)
       localStorage.setItem('user_email', (response.user.email || ''))
       localStorage.setItem('user_uid', (response.user.uid || ''))
+      handleClose()
     } catch(e) {
       console.error(e)
+    } finally {
+      setIsLoading(false)
     }
-    console.log("submit")
-    handleClose()
   }
 
   return (
@@ -115,7 +118,7 @@ function LoginForm({handleClose, toggleForm}: LoginFormProps) {
       <DialogContent>
         <Grid container justifyContent="center">
           <DialogContentText fontSize={14}>
-            Enter email and password or click on <span style={{fontWeight: 'bold'}}>Sign Up</span> to create an account.
+            Enter email and password or click on <span style={{fontWeight: 'bold'}}>Sign Up</span> to create a new account.
           </DialogContentText>
           <Box sx={{mt: 5, mb: 5, display: 'flex', flexDirection: 'column', width: '100%'}} alignItems="center">
             <TextField
@@ -141,13 +144,17 @@ function LoginForm({handleClose, toggleForm}: LoginFormProps) {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <Link underline="hover" sx={{mt: 3, fontSize: 14, '&:hover': {cursor: 'pointer'}}} onClick={() => toggleForm('sign_up')}>Sign Up</Link>
+              <Typography fontSize="0.9rem" sx={{mt: 3}}>{ 'You don\'t have an account yet?' }</Typography>
+              <Link underline="hover" sx={{fontSize: 14, '&:hover': {cursor: 'pointer'}}} onClick={() => toggleForm('sign_up')}>Sign Up</Link>
           </Box>
         </Grid>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button variant="contained" onClick={handleSubmit}>Log In</Button>
+        <Button variant="contained" onClick={handleSubmit} disabled={isLoading}>
+          Log In
+          {isLoading && (<>&nbsp;<CircularProgress color="primary" size={20}/></>)}
+        </Button>
       </DialogActions>
     </>
   )
