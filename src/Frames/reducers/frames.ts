@@ -47,6 +47,7 @@ export interface Frame {
   id: number | string | null,
   title: string,
   sprites: Array<Sprite>
+  preview?: any,
 }
 
 export interface FramesState {
@@ -489,6 +490,13 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
       return {
         ...state,
         isFramesSaving: payload
+      }
+    }
+    case Actions.SET_FRAME_PREVIEW: {
+      const newFrames = state.frames.map(x => x.id === payload.frameId ? {...x, preview: payload.preview} : x)
+      return {
+        ...state,
+        frames: newFrames
       }
     }
     default:

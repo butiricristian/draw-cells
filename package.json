@@ -20,6 +20,7 @@
     "clsx": "^1.1.1",
     "firebase": "^9.6.8",
     "html-to-image": "^1.7.0",
+    "html2canvas": "^1.4.1",
     "mui-nested-menu": "^1.0.9",
     "react": "^17.0.2",
     "react-dnd": "^14.0.2",

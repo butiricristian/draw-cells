@@ -3,6 +3,7 @@ import { IconButton, Theme, Typography, useTheme } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import React from 'react';
+import { render } from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import State from '../../stateInterface';
 import { removeFrameById, setCurrentFrame } from '../actions';
@@ -10,6 +11,7 @@ import { removeFrameById, setCurrentFrame } from '../actions';
 interface FrameProps {
   title: string,
   id: string | number | null,
+  preview?: any
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -25,14 +27,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }))
 
-const Frame = ({title, id}: FrameProps) => {
+const Frame = ({title, id, preview}: FrameProps) => {
   const dispatch = useDispatch()
   const currentFrameId = useSelector((state: State) => state.frames.currentFrame.id)
   const classes = useStyles()
   const theme = useTheme()
 
   const removeFrame = () => {
-    console.log('remove Frame')
     dispatch(removeFrameById({id}))
   }
 
@@ -42,6 +43,9 @@ const Frame = ({title, id}: FrameProps) => {
       onClick={() => dispatch(setCurrentFrame(id))}
     >
       <Typography variant="body2" color="textSecondary"> {title} </Typography>
+      <div style={{width: '100%', height: "calc(100% - 20px)", overflow: 'hidden'}}>
+        {preview && <img src={ preview.toDataURL("image/png", 1.0) } alt="Frame Preview" style={{width: '100%'}}/>}
+      </div>
       <IconButton
         onClick={removeFrame}
         style={{position: 'absolute', top: -12, right: -3, color: theme.palette.error.main, backgroundColor: 'white', padding: 6}}

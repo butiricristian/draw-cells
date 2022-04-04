@@ -1,5 +1,6 @@
 import { CircularProgress, useTheme } from '@mui/material';
 import { get, ref, update } from 'firebase/database';
+import html2canvas from 'html2canvas';
 import React, { useEffect, useRef, useState } from 'react';
 import { DndProvider, useDrop, XYCoord } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -7,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { leftDrawerWidth } from '../../constants';
 import { db } from '../../firebase-config';
-import { addSprite, loadInitialData, setIsFramesSaving, updateCurrentSpritePosition } from '../../Frames/actions';
+import { addSprite, loadInitialData, setFramePreview, setIsFramesSaving, updateCurrentSpritePosition } from '../../Frames/actions';
 import { Sprite } from '../../Frames/reducers/frames';
 import Header from '../../Header/components/CanvasHeader';
 import PresentationModal from '../../Presentation/components/PresentationModal';
@@ -38,6 +39,7 @@ export default function AnimationCanvasContainer() {
 function AnimationCanvas() {
   const dispatch = useDispatch()
   const sprites = useSelector((state: State) => state.frames.currentFrame.sprites)
+  const currentFrameId = useSelector((state: State) => state.frames.currentFrame.id)
   const lastSpriteId = useSelector((state: State) => state.frames.lastSpriteId)
   const theme = useTheme()
   const isSpritesSidebarOpen = useSelector((state: State) => state.sidebars.isSpritesOpen)
@@ -70,6 +72,19 @@ function AnimationCanvas() {
       clearTimeout(t)
     }
   }, [framesList, presentationId, dispatch])
+
+  useEffect(() => {
+    const t = setTimeout(async () => {
+      const mainCanvas = document.getElementById('inner-canvas')
+      if (mainCanvas) {
+        const canvas = await html2canvas(mainCanvas)
+        if(currentFrameId) dispatch(setFramePreview(currentFrameId, canvas))
+      }
+    }, 50)
+    return () => {
+      clearTimeout(t)
+    }
+  }, [sprites, currentFrameId, dispatch])
 
   const smallDrawerWidth: number = parseInt(theme.spacing(6).replace('px', ''))
   const headerHeight: number = parseInt(theme.spacing(8).replace('px', ''))
@@ -157,7 +172,7 @@ function AnimationCanvas() {
   return (
     <div ref={canvasContainer} style={{...containerStyle, transition: 'all 0.3s ease-out'}} id="main-canvas">
       <div ref={drop} style={{width: '100%', height: '100%', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'scroll'}}>
-        <div ref={innerCanvas} style={{...canvasStyle, backgroundColor: (isOver ? '#eee' : '#fff'), transform: `scale(${scale})`}}>
+        <div ref={innerCanvas} style={{...canvasStyle, backgroundColor: (isOver ? '#eee' : '#fff'), transform: `scale(${scale})`}} id="inner-canvas">
           {sprites.map((s: Sprite) => (
             <BaseSprite key={`sprite-${s.id}`} id={s.id} position={s.position} backgroundUrl={s.backgroundUrl}
               scale={s.scale} duration={s.duration}

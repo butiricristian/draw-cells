@@ -19,7 +19,8 @@ export const Actions = {
   COPY_SELECTED_SPRITES_INTO_FRAME: 'COPY_SELECTED_SPRITES_INTO_FRAME',
   ADD_CURRENT_SPRITE: 'ADD_CURRENT_SPRITE',
   UPDATE_PRESENTATION_TITLE: 'UPDATE_PRESENTATION_TITLE',
-  SET_IS_FRAMES_SAVING: 'SET_IS_FRAMES_SAVING'
+  SET_IS_FRAMES_SAVING: 'SET_IS_FRAMES_SAVING',
+  SET_FRAME_PREVIEW: 'SET_FRAME_PREVIEW',
 }
 
 export const loadInitialData = (payload: any) => ({
@@ -115,4 +116,12 @@ export const updatePresentationTitle = (title: string) => ({
 export const setIsFramesSaving = (value: boolean) => ({
   type: Actions.SET_IS_FRAMES_SAVING,
   payload: value
+})
+
+export const setFramePreview = (frameId: string | number, preview: any) => ({
+  type: Actions.SET_FRAME_PREVIEW,
+  payload: {
+    frameId,
+    preview
+  }
 })

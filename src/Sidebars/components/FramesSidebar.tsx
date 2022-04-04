@@ -71,10 +71,10 @@ export default function FramesSidebar() {
   const handleClose = () => {
     setState(initialState);
   };
-  
+
   return (
-    <BaseSidebar 
-      isOpen={isFramesSidebarOpen} 
+    <BaseSidebar
+      isOpen={isFramesSidebarOpen}
       toggleOpen={() => dispatch(toggleFrames())}
       iconRenderer={() => isFramesSidebarOpen ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
       anchor="bottom"
@@ -84,7 +84,7 @@ export default function FramesSidebar() {
         <List style={{height: 'calc(100% - 50px)', display: 'inline-flex', overflowX: 'auto'}}>
           {framesList.map(f => (
             <ListItem key={`frame-${f.id}`} style={{height: '100%'}}>
-              <Frame id={f.id} title={f.title} />
+              <Frame id={f.id} title={f.title} preview={f.preview} />
             </ListItem>
           ))}
           <ListItem style={{height: '100%'}}>
