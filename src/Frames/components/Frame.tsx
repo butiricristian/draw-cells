@@ -3,7 +3,6 @@ import { IconButton, Theme, Typography, useTheme } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import React from 'react';
-import { render } from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import State from '../../stateInterface';
 import { removeFrameById, setCurrentFrame } from '../actions';
