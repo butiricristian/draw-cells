@@ -1,21 +1,27 @@
-import { child, get, ref } from 'firebase/database';
+import { get, ref } from 'firebase/database';
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import { db } from '../../firebase-config';
-import State from '../../stateInterface';
+import { loadInitialData } from '../../Frames/actions';
 import PresentationContainer from './PresentationContainer';
 
 
 const PresentationPage = () => {
-  const user = useSelector((state: State) => state.home.user)
+  const dispatch = useDispatch()
+  const { presentationId } = useParams()
+
+  // const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    const f = async () => {
-      const res = await get(child(ref(db), `users/${user.id}`))
-      console.log(res)
+    // setIsLoading(true)
+    const getData = async () => {
+      const res = await get(ref(db, `presentations/${presentationId}`))
+      dispatch(loadInitialData(res.val()))
+      // setIsLoading(false)
     }
-    f()
-  }, [user])
+    getData()
+  }, [presentationId, dispatch])
 
   return (
     <PresentationContainer />

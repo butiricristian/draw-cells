@@ -19,7 +19,7 @@ const PresentationContainer = () => {
   const canvasRef = useRef<HTMLDivElement>(null)
 
   return (
-    <div style={{padding: '10px 50px 20px', borderTopRightRadius: 20, borderTopLeftRadius: 20, display: 'flex', flexDirection: 'column', height: '100%'}}>
+    <div style={{padding: '10px 50px 20px', borderTopRightRadius: 20, borderTopLeftRadius: 20, display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: 'white'}}>
       <div ref={canvasRef} style={{flexGrow: 1, border: 'solid 1px #ddd', marginBottom: 20, overflow: 'hidden', position: 'relative'}}>
         {currentFrame.sprites.concat(...spritesToRemove).map((s: Sprite) => (
           <AnimationSprite
