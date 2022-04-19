@@ -203,16 +203,18 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
   const {type, payload} = action
   switch(type){
     case Actions.SET_INITIAL_DATA: {
-      if(!(payload.frames && payload.frames.length > 0)) {
+      if(!payload.frames || payload.frames.length <= 0) {
         return {
           ...initialState,
           title: payload.title,
         }
       }
+      const lastSpriteId = Math.max(...payload.frames.map((f: Frame) => Math.max(...f.sprites.map(s => parseInt(s.id.toString())))))
       return {
         ...initialState,
         title: payload.title,
         frames: payload.frames,
+        lastSpriteId: lastSpriteId + 1,
         currentFrame: {
           ...payload.frames[0],
           sprites: payload.frames[0].sprites || []

@@ -47,6 +47,7 @@ function AnimationCanvas() {
   const canvasContainer = useRef<any>(null)
   const innerCanvas = useRef<any>(null)
   const framesList = useSelector((state: State) => state.frames.frames)
+  const isAnimationPreviewModalOpen = useSelector((state: State) => state.presentations.isModalOpen)
   const { presentationId } = useParams()
 
   const [isLoading, setIsLoading] = useState(false)
@@ -74,17 +75,17 @@ function AnimationCanvas() {
   }, [framesList, presentationId, dispatch])
 
   useEffect(() => {
+    if (isAnimationPreviewModalOpen) return
     const t = setTimeout(async () => {
       const mainCanvas = document.getElementById('inner-canvas')
-      if (mainCanvas) {
-        const canvas = await html2canvas(mainCanvas)
-        if(currentFrameId) dispatch(setFramePreview(currentFrameId, canvas))
-      }
+      if (!mainCanvas) return
+      const canvas = await html2canvas(mainCanvas)
+      if(currentFrameId) dispatch(setFramePreview(currentFrameId, canvas))
     }, 50)
     return () => {
       clearTimeout(t)
     }
-  }, [sprites, currentFrameId, dispatch])
+  }, [sprites, currentFrameId, isAnimationPreviewModalOpen, dispatch])
 
   const smallDrawerWidth: number = parseInt(theme.spacing(6).replace('px', ''))
   const headerHeight: number = parseInt(theme.spacing(8).replace('px', ''))

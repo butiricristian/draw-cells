@@ -1,4 +1,6 @@
+import { getDownloadURL, ref } from 'firebase/storage';
 import React, { useEffect, useState } from 'react';
+import { storage } from '../firebase-config';
 
 interface SvgInlineProps {
   url: string
@@ -10,11 +12,14 @@ const SvgInline = (props: SvgInlineProps) => {
     const [isErrored, setIsErrored] = useState(false);
 
     useEffect(() => {
-        fetch(props.url)
+      getDownloadURL(ref(storage, props.url))
+        .then((url) => {
+          fetch(url)
             .then((res: any) => res.text())
             .then((res: any) => setSvg(res))
             .catch(setIsErrored)
             .then(() => setIsLoaded(true))
+        })
     }, [props.url]);
 
     return (

@@ -7,13 +7,14 @@ import SidebarSprite from '../../Sprites/SidebarSprite';
 import State from '../../stateInterface';
 import { toggleSprites } from '../actions';
 import BaseSidebar from './BaseSidebar';
+import { SPRITE_TO_SVG_ELEMENT_MAP } from '../../constants';
 
 const useStyles = makeStyles({
   container: {paddingTop: 50, height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center'},
   sprite: {width: 50, height: 50, cursor: 'pointer'}
 })
 
-const SPRITES_LIST = ["b_cell_1", "dendritic_cell_1", "dendritic_cell_2", "t_cell_1", "t_cell_2"]
+const SPRITES_LIST = Object.keys(SPRITE_TO_SVG_ELEMENT_MAP)
 
 export default function SpritesSidebar() {
   const dispatch = useDispatch()
@@ -22,8 +23,8 @@ export default function SpritesSidebar() {
 
   return (
     <>
-      <BaseSidebar 
-        isOpen={isSpritesSidebarOpen} 
+      <BaseSidebar
+        isOpen={isSpritesSidebarOpen}
         toggleOpen={() => dispatch(toggleSprites())}
         iconRenderer={() => isSpritesSidebarOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
         anchor="left"

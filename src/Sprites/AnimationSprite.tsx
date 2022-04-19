@@ -46,10 +46,10 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
   const animationDuration = ((isGoingBackwards ? duration : prevSprite?.duration) || 1) * 1000
 
   //SCALE PROPS
-  const scaleProps: any = useSpring({to: {transform: `scale(${scale})`}})
+  const scaleProps: any = useSpring({to: {transform: `scale(${scale})`}, config: {duration: animationDuration}})
 
   // OPACITY PROPS
-  const opacityProps: any = useSpring({from: {opacity: 0}, to: {opacity: opacity}})
+  const opacityProps: any = useSpring({from: {opacity: 0}, to: {opacity: opacity}, config: {duration: animationDuration}})
 
   // LINEAR PROPS
   const linearProps: any = useSpring({to: animationProps, config: {duration: animationDuration}})
