@@ -1,25 +1,77 @@
-import { Info } from '@mui/icons-material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { Input, InputAdornment, MenuItem, Select, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from '@mui/material';
-import React from 'react';
+import { Input, MenuItem, Select, Slider, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateSprite } from '../../Frames/actions';
 import State from '../../stateInterface';
 import { toggleProperties } from '../actions';
 import BaseSidebar from './BaseSidebar';
 
+function ChaoticAnimationProperties({currentSprite}: any) {
+  const dispatch = useDispatch()
+  const [rangeOfMovementSlider, setRangeOfMovementSlider] = useState(currentSprite.rangeOfMovement)
+  const [nrOfIterationsSlider, setNrOfIterationsSlider] = useState(currentSprite.nrOfIterations)
+
+  return (
+    <>
+      {/* <TableRow key="minTravelDistance">
+        <TableCell>Min. Travel Distance</TableCell>
+        <TableCell>
+          <Input
+            type="number"
+            value={currentSprite?.minTravelDistance || ''}
+            onChange={(e) => dispatch(updateSprite({field: 'minTravelDistance', value: parseInt(e.target.value)}))}
+          />
+        </TableCell>
+      </TableRow> */}
+      <TableRow key="rangeOfMovement">
+        <TableCell>Narrow/Wide</TableCell>
+        <TableCell>
+          {/* <Input
+            type="number"
+            value={currentSprite?.rangeOfMovement || ''}
+            onChange={(e) => dispatch(updateSprite({field: 'rangeOfMovement', value: parseInt(e.target.value)}))}
+          /> */}
+          <Slider
+            step={10}
+            min={10}
+            max={500}
+            valueLabelDisplay="auto"
+            onChange={(e, newValue) => setRangeOfMovementSlider(newValue)}
+            onChangeCommitted={(e, newValue) => dispatch(updateSprite({field: 'rangeOfMovement', value: newValue}))}
+            value={rangeOfMovementSlider}
+          />
+        </TableCell>
+      </TableRow>
+      <TableRow key="nrOfIterations">
+        <TableCell>Slow/Fast</TableCell>
+        <TableCell>
+          {/* <Input
+            type="number"
+            value={currentSprite?.nrOfIterations || ''}
+            onChange={(e) => dispatch(updateSprite({field: 'nrOfIterations', value: parseInt(e.target.value || '0')}))}
+          /> */}
+          <Slider
+            step={1}
+            min={1}
+            max={30}
+            valueLabelDisplay="auto"
+            onChange={(e, newValue) => setNrOfIterationsSlider(newValue)}
+            onChangeCommitted={(e, newValue) => dispatch(updateSprite({field: 'nrOfIterations', value: newValue}))}
+            value={nrOfIterationsSlider}
+          />
+        </TableCell>
+      </TableRow>
+    </>
+  )
+}
+
 export default function PropertiesSidebar() {
   const dispatch = useDispatch()
   const isPropertiesSidebarOpen = useSelector((state: State) => state.sidebars.isPropertiesOpen)
   const currentSprites = useSelector((state: State) => state.frames.currentSprites)
   const currentSprite = currentSprites.length <= 0 ? null : currentSprites[0]
-  // const [validationErrors, setValidationErrors]: any = useState({})
-  const validationErrors: any = {}
-
-  const updateSpriteProperty = ({field, value}: any) => {
-    dispatch(updateSprite({field, value}))
-  }
 
   return (
     <BaseSidebar
@@ -29,7 +81,7 @@ export default function PropertiesSidebar() {
       anchor="right"
     >
       <div style={{height: '100vh'}}>
-        <Table size="small">
+        <Table size="small" style={{width: 'calc(100% - 20px)'}}>
           <TableHead>
             <TableRow>
               <TableCell>Propety</TableCell>
@@ -110,6 +162,7 @@ export default function PropertiesSidebar() {
                 <Select
                   value={currentSprite?.animationType || ''}
                   onChange={(e) => dispatch(updateSprite({field: 'animationType', value: e.target.value}))}
+                  size="small"
                 >
                   <MenuItem value="LINEAR">Linear</MenuItem>
                   <MenuItem value="CHAOTIC">Chaotic</MenuItem>
@@ -117,46 +170,16 @@ export default function PropertiesSidebar() {
                 </Select>
               </TableCell>
             </TableRow>
-            {currentSprite?.animationType === 'CHAOTIC' && (<TableRow key="minTravelDistance">
-              <TableCell>Min. Travel Distance</TableCell>
-              <TableCell>
-                <Input
-                  type="number"
-                  value={currentSprite?.minTravelDistance || ''}
-                  onChange={(e) => updateSpriteProperty({field: 'minTravelDistance', value: parseInt(e.target.value)})}
-                  endAdornment={validationErrors.minTravelDistance ? (<InputAdornment position="end"><Tooltip title={validationErrors.minTravelDistance}><Info color="error"/></Tooltip></InputAdornment>) : (<></>)}
-                  error={validationErrors.minTravelDistance}
-                />
-              </TableCell>
-            </TableRow>)}
-            {currentSprite?.animationType === 'CHAOTIC' && (<TableRow key="rangeOfMovement">
-              <TableCell>Range of Movement</TableCell>
-              <TableCell>
-                <Input
-                  type="number"
-                  value={currentSprite?.rangeOfMovement || ''}
-                  onChange={(e) => updateSpriteProperty({field: 'rangeOfMovement', value: parseInt(e.target.value)})}
-                  endAdornment={validationErrors.rangeOfMovement ? (<InputAdornment position="end"><Tooltip title={validationErrors.rangeOfMovement}><Info color="error"/></Tooltip></InputAdornment>) : (<></>)}
-                  error={validationErrors.rangeOfMovement}
-                />
-              </TableCell>
-            </TableRow>)}
-            {currentSprite?.animationType === 'CHAOTIC' && (<TableRow key="nrOfIterations">
-              <TableCell>Number of iterations</TableCell>
-              <TableCell>
-                <Input
-                  type="number"
-                  value={currentSprite?.nrOfIterations || ''}
-                  onChange={(e) => dispatch(updateSprite({field: 'nrOfIterations', value: parseInt(e.target.value || '0')}))}
-                />
-              </TableCell>
-            </TableRow>)}
+            {currentSprite?.animationType === 'CHAOTIC' && (
+              <ChaoticAnimationProperties currentSprite={currentSprite} />
+            )}
             {currentSprite?.animationType === 'CIRCULAR' && (<TableRow key="circleDirection">
               <TableCell>Circle Direction</TableCell>
               <TableCell>
                 <Select
                   value={currentSprite?.circleDirection || 1}
                   onChange={(e) => dispatch(updateSprite({field: 'circleDirection', value: e.target.value}))}
+                  size="small"
                 >
                   <MenuItem value={1}>Upwards</MenuItem>
                   <MenuItem value={-1}>Downwards</MenuItem>

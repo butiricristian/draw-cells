@@ -37,12 +37,13 @@ interface AnimationSpriteProps extends Sprite {
 
 export default function AnimationSprite({position, id, backgroundUrl, animationType, scale,
   nrOfIterations = 10, duration = 1, opacity, animationProps, zIndex}: AnimationSpriteProps) {
+    console.log(id, nrOfIterations)
   const classes = useStyles()
   const spriteToSvgMap: any = SPRITE_TO_SVG_ELEMENT_MAP
   const currentFrame = useSelector((state: State) => state.frames.currentFrame)
   const prevFrame = useSelector((state: State) => state.frames.prevFrame)
   const prevSprite = prevFrame?.sprites.find(s => s.id === id)
-  const isGoingBackwards = (currentFrame.id || 0) < (prevFrame?.id || 0)
+  const isGoingBackwards = (currentFrame.id || 0) > (prevFrame?.id || 0)
   const animationDuration = ((isGoingBackwards ? duration : prevSprite?.duration) || 1) * 1000
 
   //SCALE PROPS

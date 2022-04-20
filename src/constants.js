@@ -11,7 +11,7 @@ import { ReactComponent as MhcClassI } from './assets/cells/mhc_class_i.svg'
 import { ReactComponent as NaturalKillerCell } from './assets/cells/natural_killer_cell.svg'
 // import SvgInline from './Sprites/SvgInline'
 
-export const rightDrawerWidth = 260;
+export const rightDrawerWidth = 300;
 export const bottomDrawerHeight = 240;
 export const leftDrawerWidth = 150
 
