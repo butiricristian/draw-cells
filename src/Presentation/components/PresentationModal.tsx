@@ -37,9 +37,9 @@ const PresentationModal = () => {
       onClose={() => dispatch(toggleModal(false))}
       TransitionComponent={Transition}
       className={classes.dialog}
-      style={{marginTop: 80}}
+      style={{marginTop: 50}}
     >
-      <div style={{padding: '10px 50px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+      <div style={{padding: '10px 50px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTopRightRadius: 20, borderTopLeftRadius: 20}}>
         <Typography variant="h6">Presentation Preview</Typography>
         <IconButton
           style={{padding: 6}}
@@ -48,7 +48,7 @@ const PresentationModal = () => {
           <CloseIcon fontSize="small"/>
         </IconButton>
       </div>
-      <PresentationContainer />
+      <PresentationContainer style={{}}/>
     </Dialog>
   );
 }

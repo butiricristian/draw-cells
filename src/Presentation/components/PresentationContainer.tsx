@@ -6,7 +6,7 @@ import { Sprite } from '../../Frames/reducers/frames'
 import AnimationSprite from '../../Sprites/AnimationSprite'
 import State from '../../stateInterface'
 
-const PresentationContainer = () => {
+const PresentationContainer = ({style}: any) => {
   const currentFrame = useSelector((state: State) => state.frames.currentFrame)
   const prevFrame = useSelector((state: State) => state.frames.prevFrame)
 
@@ -19,7 +19,7 @@ const PresentationContainer = () => {
   const canvasRef = useRef<HTMLDivElement>(null)
 
   return (
-    <div style={{padding: '10px 50px 20px', borderTopRightRadius: 20, borderTopLeftRadius: 20, display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: 'white'}}>
+    <div style={{padding: '10px 50px 20px', display: 'flex', flexDirection: 'column', height: 'calc(100% - 30px)', backgroundColor: 'white', ...style}}>
       <div ref={canvasRef} style={{flexGrow: 1, border: 'solid 1px #ddd', marginBottom: 20, overflow: 'hidden', position: 'relative'}}>
         {currentFrame.sprites.concat(...spritesToRemove).map((s: Sprite) => (
           <AnimationSprite
