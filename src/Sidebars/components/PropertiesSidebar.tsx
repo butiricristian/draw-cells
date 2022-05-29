@@ -152,7 +152,7 @@ export default function PropertiesSidebar() {
                 <Input
                   type="number"
                   value={currentSprite?.duration || ''}
-                  onChange={(e) => dispatch(updateSprite({field: 'duration', value: e.target.value}))}
+                  onChange={(e) => dispatch(updateSprite({field: 'duration', value: parseInt(e.target.value)}))}
                 />
               </TableCell>
             </TableRow>

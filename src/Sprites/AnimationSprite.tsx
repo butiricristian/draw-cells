@@ -37,26 +37,27 @@ interface AnimationSpriteProps extends Sprite {
 
 export default function AnimationSprite({position, id, backgroundUrl, animationType, scale,
   nrOfIterations = 10, duration = 1, opacity, animationProps, zIndex}: AnimationSpriteProps) {
-    console.log(id, nrOfIterations)
+
   const classes = useStyles()
   const spriteToSvgMap: any = SPRITE_TO_SVG_ELEMENT_MAP
   const currentFrame = useSelector((state: State) => state.frames.currentFrame)
   const prevFrame = useSelector((state: State) => state.frames.prevFrame)
   const prevSprite = prevFrame?.sprites.find(s => s.id === id)
   const isGoingBackwards = (currentFrame.id || 0) > (prevFrame?.id || 0)
-  const animationDuration = ((isGoingBackwards ? duration : prevSprite?.duration) || 1) * 1000
+  const animationDuration = ((isGoingBackwards ? prevSprite?.duration : duration) || 1) * 1000
+  console.log(id, nrOfIterations, animationDuration, Math.round(animationDuration/nrOfIterations * 100) / 100)
 
   //SCALE PROPS
   const scaleProps: any = useSpring({to: {transform: `scale(${scale})`}, config: {duration: animationDuration}})
 
   // OPACITY PROPS
-  const opacityProps: any = useSpring({from: {opacity: 0}, to: {opacity: opacity}, config: {duration: animationDuration}})
+  const opacityProps: any = useSpring({from: {opacity: 0}, to: {opacity: opacity}, config: {duration: 500}})
 
   // LINEAR PROPS
   const linearProps: any = useSpring({to: animationProps, config: {duration: animationDuration}})
 
   // CHAOTIC PROPS
-  const chaoticProps: any = useSpring({to: animationProps, config: {duration: animationDuration/nrOfIterations}})
+  const chaoticProps: any = useSpring({to: animationProps, config: {duration: Math.round(animationDuration/nrOfIterations * 100) / 100}})
 
   // CIRCULAR PROPS
   const {distX, distY, finalAngle, circleX, circleY} = animationProps
@@ -70,7 +71,7 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
   const circularSvgProps = {transform: `translate(${-distX}px, ${-distY}px)`}
 
   // CHOOSE THE PROPS
-  const currentAnimationType = isGoingBackwards ? animationType : prevSprite?.animationType
+  const currentAnimationType = isGoingBackwards ? prevSprite?.animationType : animationType
   let props = {...scaleProps, ...opacityProps}
   let svgProps = {}
   if (prevSprite) {

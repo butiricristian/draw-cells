@@ -70,7 +70,7 @@ const CanvasHeader = () => {
         </Box>
         <Button color="inherit" onClick={() => navigate('/')}>HOME</Button>
         <Button color="inherit" onClick={() => dispatch(toggleModal(true))}>PREVIEW</Button>
-        <Button color="inherit" onClick={() => console.log('GET PRESENTATION LINK')}>Get presentation link</Button>
+        <Button color="inherit" onClick={() => {navigator.clipboard.writeText(`${window.location.origin}/present/${presentationId}`)}}>Get presentation link</Button>
       </Toolbar>
     </AppBar>
   )
