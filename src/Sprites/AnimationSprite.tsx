@@ -2,7 +2,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { animated, useSpring } from 'react-spring';
+import { animated, to, useSpring } from 'react-spring';
 import { SPRITE_TO_SVG_ELEMENT_MAP } from '../constants';
 import { Sprite } from '../Frames/reducers/frames';
 import State from '../stateInterface';
@@ -46,7 +46,6 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
   const isGoingBackwards = (currentFrame.id || 0) < (prevFrame?.id || 0)
   const animationDuration = ((isGoingBackwards ? duration : prevSprite?.duration) || 1) * 1000
   const currentNrOfIterations = ((isGoingBackwards ? nrOfIterations : prevSprite?.nrOfIterations) || 10)
-  console.log(id, currentNrOfIterations, animationDuration, Math.round(animationDuration/currentNrOfIterations * 100) / 100)
 
   //SCALE PROPS
   const scaleProps: any = useSpring({to: {transform: `scale(${scale})`}, config: {duration: animationDuration}})
@@ -68,8 +67,15 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
     to: {rotateSpring: crtFrameId},
     config: { duration: animationDuration }
   })
-  const circularProps = { left: circleX, top: circleY, transform: rotateSpring.to([crtFrameId - 1, crtFrameId], [finalAngle, 0]).to((x: any) => `rotate(${x}deg)`) }
-  const circularSvgProps = {transform: `translate(${-distX}px, ${-distY}px)`}
+  const rotationProps = to(
+    [
+      rotateSpring.to([crtFrameId - 1, crtFrameId], [finalAngle, 0]).to((x: any) => `rotate(${x}deg)`),
+      rotateSpring.to([crtFrameId - 1, crtFrameId], [prevSprite?.scale || 1, scale || 1]).to((x: any) => `scale(${x})`),
+    ],
+    (x, y) => `${x} ${y}`
+  )
+  const circularProps = { left: circleX, top: circleY, transform: rotationProps }
+  const circularSvgProps = {transform: rotateSpring.to([crtFrameId - 1, crtFrameId], [prevSprite?.scale || 1, scale || 1]).to((x: any) => `translate(${-distX / x}px, ${-distY / x}px)`)}
 
   // CHOOSE THE PROPS
   const currentAnimationType = isGoingBackwards ? animationType : prevSprite?.animationType
@@ -92,12 +98,12 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
 
   return (
     <animated.div className={clsx(classes.spriteContainer)} style={{...props, zIndex}}>
-      <div
+      <animated.div
         className={clsx(classes.sprite)}
         style={{backgroundColor: 'transparent', ...svgProps}}
       >
         {backgroundUrl && spriteToSvgMap[backgroundUrl]}
-      </div>
+      </animated.div>
     </animated.div>
   );
 }
