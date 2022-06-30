@@ -1,7 +1,7 @@
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Input, MenuItem, Select, Slider, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateSprite } from '../../Frames/actions';
 import State from '../../stateInterface';
@@ -12,6 +12,11 @@ function ChaoticAnimationProperties({currentSprite}: any) {
   const dispatch = useDispatch()
   const [rangeOfMovementSlider, setRangeOfMovementSlider] = useState(currentSprite.rangeOfMovement)
   const [nrOfIterationsSlider, setNrOfIterationsSlider] = useState(currentSprite.nrOfIterations)
+
+  useEffect(() => {
+    setRangeOfMovementSlider(currentSprite.rangeOfMovement)
+    setNrOfIterationsSlider(currentSprite.nrOfIterations)
+  }, [currentSprite])
 
   return (
     <>

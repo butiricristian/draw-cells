@@ -81,7 +81,7 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
   const currentAnimationType = isGoingBackwards ? animationType : prevSprite?.animationType
   let props = {...scaleProps, ...opacityProps}
   let svgProps = {}
-  if (prevSprite) {
+  if (prevSprite && prevSprite.position.x !== position.x && prevSprite.position.y !== position.y) {
     if (currentAnimationType === 'LINEAR') {
       props = {...props, ...linearProps}
     } else if (currentAnimationType === 'CHAOTIC') {
