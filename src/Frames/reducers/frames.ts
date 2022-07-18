@@ -209,7 +209,10 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
           title: payload.title,
         }
       }
-      const lastSpriteId = Math.max(...payload.frames.map((f: Frame) => Math.max(...f.sprites.map(s => parseInt(s.id.toString())))))
+      const lastSpriteId = Math.max(...payload.frames.map((f: Frame) => {
+        if(!f.sprites) return 1
+        return Math.max(...f.sprites.map( s => parseInt(s.id.toString()) ))
+      }))
       return {
         ...initialState,
         title: payload.title,
