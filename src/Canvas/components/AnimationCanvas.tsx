@@ -4,11 +4,12 @@ import html2canvas from 'html2canvas';
 import React, { useEffect, useRef, useState } from 'react';
 import { DndProvider, useDrop, XYCoord } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { Layer, Stage } from 'react-konva';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { leftDrawerWidth } from '../../constants';
 import { db } from '../../firebase-config';
-import { addSprite, loadInitialData, setFramePreview, setIsFramesSaving, updateCurrentSpritePosition } from '../../Frames/actions';
+import { addCurrentSprite, addSprite, loadInitialData, setCurrentSprite, setFramePreview, setIsFramesSaving, updateCurrentSpritePosition, updateSprite } from '../../Frames/actions';
 import { Sprite } from '../../Frames/reducers/frames';
 import Header from '../../Header/components/CanvasHeader';
 import PresentationModal from '../../Presentation/components/PresentationModal';
@@ -16,6 +17,7 @@ import FramesSidebar from '../../Sidebars/components/FramesSidebar';
 import PropertiesSidebar from '../../Sidebars/components/PropertiesSidebar';
 import SpritesSidebar from '../../Sidebars/components/SpritesSidebar';
 import BaseSprite from '../../Sprites/BaseSprite';
+import CanvasSprite from '../../Sprites/CanvasSprite';
 import State from '../../stateInterface';
 import { zoomIn, zoomOut } from '../actions';
 import { CustomDragLayer } from './CustomDragLayer';
@@ -114,7 +116,7 @@ function AnimationCanvas() {
 
   function createSprite(pos: XYCoord | null, backgroundUrl: string){
     if (pos) {
-      dispatch(addSprite({id: lastSpriteId, position: pos, backgroundUrl}))
+      dispatch(addSprite({id: lastSpriteId, position: pos, backgroundUrl, height: 50, width: 50}))
     }
   }
 
@@ -126,8 +128,10 @@ function AnimationCanvas() {
     accept: 'SPRITE',
     drop: (item: any, monitor) => {
       if (item.type === 'SIDEBAR_SPRITE'){
-        const containersWidthSpacing = Math.round((canvasContainer.current?.clientWidth - innerCanvas.current?.clientWidth * scale) / 2)
-        const containersHeightSpacing = Math.round((canvasContainer.current?.clientHeight - innerCanvas.current?.clientHeight * scale) / 2)
+        const innerCanvasWidth = innerCanvas.current?.container().clientWidth
+        const innerCanvasHeight = innerCanvas.current?.container().clientHeight
+        const containersWidthSpacing = Math.round((canvasContainer.current?.clientWidth - innerCanvasWidth * scale) / 2)
+        const containersHeightSpacing = Math.round((canvasContainer.current?.clientHeight - innerCanvasHeight * scale) / 2)
         createSprite({
           x: Math.round(Math.round((monitor.getSourceClientOffset()?.x || 0) - containersWidthSpacing - leftDrawerWidth) / scale),
           y: Math.round(Math.round((monitor.getSourceClientOffset()?.y || 0) - containersHeightSpacing - headerHeight) / scale)
@@ -166,6 +170,16 @@ function AnimationCanvas() {
     }
   }, {passive: false});
 
+  const handleSelectSprite = (e: MouseEvent, id: number|string) => {
+    if (e.metaKey) {
+      dispatch(addCurrentSprite(id))
+    } else {
+      dispatch(setCurrentSprite(id))
+    }
+  }
+
+  const [selectedSpriteId, setSelectedSpriteId] = useState<string|number|null>(null)
+
   if(isLoading) {
     return (<CircularProgress />)
   }
@@ -173,15 +187,31 @@ function AnimationCanvas() {
   return (
     <div ref={canvasContainer} style={{...containerStyle, transition: 'all 0.3s ease-out'}} id="main-canvas">
       <div ref={drop} style={{width: '100%', height: '100%', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'scroll'}}>
-        <div ref={innerCanvas} style={{...canvasStyle, backgroundColor: (isOver ? '#eee' : '#fff'), transform: `scale(${scale})`}} id="inner-canvas">
-          {sprites.map((s: Sprite) => (
-            <BaseSprite key={`sprite-${s.id}`} id={s.id} position={s.position} backgroundUrl={s.backgroundUrl}
-              scale={s.scale} duration={s.duration}
-              minTravelDistance={s.minTravelDistance} rangeOfMovement={s.rangeOfMovement} nrOfIterations={s.nrOfIterations}
-              zIndex={s.zIndex}
-            />
-          ))}
-        </div>
+        <Stage width={1920} height={1080} ref={innerCanvas} style={{...canvasStyle, backgroundColor: (isOver ? '#eee' : '#fff'), transform: `scale(${scale})`}}>
+          <Layer>
+            {sprites.map((s: Sprite) => (
+              <CanvasSprite
+                key={s.id}
+                backgroundUrl={s.backgroundUrl}
+                x={s.position.x}
+                y={s.position.y}
+                width={s.width}
+                height={s.height}
+                onChange={(props: any) => {
+                  dispatch(updateSprite({field: 'width', value: props.width}))
+                  dispatch(updateSprite({field: 'height', value: props.height}))
+                  dispatch(updateSprite({field: 'positionX', value: props.x}))
+                  dispatch(updateSprite({field: 'positionY', value: props.y}))
+                }}
+                onSelect={(e: MouseEvent) => {
+                  handleSelectSprite(e, s.id)
+                  setSelectedSpriteId(s.id)
+                }}
+                isSelected={selectedSpriteId === s.id}
+              />
+            ))}
+          </Layer>
+        </Stage>
       </div>
     </div>
   );

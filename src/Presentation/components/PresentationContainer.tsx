@@ -36,6 +36,8 @@ const PresentationContainer = ({style}: any) => {
             duration={s.duration}
             nrOfIterations={s.nrOfIterations}
             zIndex={s.zIndex}
+            width={s.width}
+            height={s.height}
           />
         ))}
       </div>

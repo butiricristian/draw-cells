@@ -41,6 +41,8 @@ export interface Sprite {
   opacity?: number,
   animationProps?: any,
   zIndex?: any,
+  width: number,
+  height: number,
 }
 
 export interface Frame {
@@ -236,6 +238,8 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
         angle: 90,
         opacity: 1,
         zIndex: 1,
+        width: 50,
+        height: 50,
         ...payload
       }
       const crtFrame = {
