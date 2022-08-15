@@ -49,6 +49,7 @@ export const CustomDragLayer = () => {
               zIndex={item.zIndex}
               width={item.width}
               height={item.height}
+              rotation={item.rotation}
             />
           )
         default:

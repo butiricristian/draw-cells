@@ -16,7 +16,6 @@ import PresentationModal from '../../Presentation/components/PresentationModal';
 import FramesSidebar from '../../Sidebars/components/FramesSidebar';
 import PropertiesSidebar from '../../Sidebars/components/PropertiesSidebar';
 import SpritesSidebar from '../../Sidebars/components/SpritesSidebar';
-import BaseSprite from '../../Sprites/BaseSprite';
 import CanvasSprite from '../../Sprites/CanvasSprite';
 import State from '../../stateInterface';
 import { zoomIn, zoomOut } from '../actions';
@@ -116,7 +115,7 @@ function AnimationCanvas() {
 
   function createSprite(pos: XYCoord | null, backgroundUrl: string){
     if (pos) {
-      dispatch(addSprite({id: lastSpriteId, position: pos, backgroundUrl, height: 50, width: 50}))
+      dispatch(addSprite({id: lastSpriteId, position: pos, backgroundUrl, height: 50, width: 50, rotation: 0}))
     }
   }
 
@@ -179,6 +178,7 @@ function AnimationCanvas() {
   }
 
   const [selectedSpriteId, setSelectedSpriteId] = useState<string|number|null>(null)
+  const [stageSize, setStageSize] = useState({width: 1920, height: 1080})
 
   if(isLoading) {
     return (<CircularProgress />)
@@ -187,7 +187,7 @@ function AnimationCanvas() {
   return (
     <div ref={canvasContainer} style={{...containerStyle, transition: 'all 0.3s ease-out'}} id="main-canvas">
       <div ref={drop} style={{width: '100%', height: '100%', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'scroll'}}>
-        <Stage width={1920} height={1080} ref={innerCanvas} style={{...canvasStyle, backgroundColor: (isOver ? '#eee' : '#fff'), transform: `scale(${scale})`}}>
+        <Stage width={stageSize.width} height={stageSize.height} ref={innerCanvas} style={{...canvasStyle, backgroundColor: (isOver ? '#eee' : '#fff'), transform: `scale(${scale})`}}>
           <Layer>
             {sprites.map((s: Sprite) => (
               <CanvasSprite
@@ -197,9 +197,11 @@ function AnimationCanvas() {
                 y={s.position.y}
                 width={s.width}
                 height={s.height}
+                rotation={s.rotation}
                 onChange={(props: any) => {
                   dispatch(updateSprite({field: 'width', value: props.width}))
                   dispatch(updateSprite({field: 'height', value: props.height}))
+                  dispatch(updateSprite({field: 'rotation', value: props.rotation}))
                   dispatch(updateSprite({field: 'positionX', value: props.x}))
                   dispatch(updateSprite({field: 'positionY', value: props.y}))
                 }}

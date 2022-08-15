@@ -1,3 +1,4 @@
+import { Node } from 'konva/lib/Node'
 import React from 'react'
 import { Image, Transformer } from 'react-konva'
 
@@ -39,7 +40,7 @@ export default function CanvasSprite({isSelected, onSelect, onChange, ...shapePr
           // and NOT its width or height
           // but in the store we have only width and height
           // to match the data better we will reset scale on transform end
-          const node = shapeRef.current;
+          const node: Node = shapeRef.current;
           const scaleX = node.scaleX();
           const scaleY = node.scaleY();
 
@@ -53,6 +54,7 @@ export default function CanvasSprite({isSelected, onSelect, onChange, ...shapePr
             // set minimal value
             width: Math.max(5, node.width() * scaleX),
             height: Math.max(node.height() * scaleY),
+            rotation: node.rotation()
           });
         }}
       />

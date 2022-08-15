@@ -43,6 +43,7 @@ export interface Sprite {
   zIndex?: any,
   width: number,
   height: number,
+  rotation: number,
 }
 
 export interface Frame {

@@ -38,6 +38,7 @@ const PresentationContainer = ({style}: any) => {
             zIndex={s.zIndex}
             width={s.width}
             height={s.height}
+            rotation={s.rotation}
           />
         ))}
       </div>
