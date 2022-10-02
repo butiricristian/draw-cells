@@ -78,11 +78,11 @@ const computeSpritePosition = (sprite: Sprite, deltaX: number | undefined, delta
 }
 
 const computeLinearAnimation = (currentSprite: Sprite, prevSprite: Sprite) => {
-  return {left: currentSprite.position.x, top: currentSprite.position.y}
+  return {x: currentSprite.position.x, y: currentSprite.position.y}
 }
 
 const computeChaoticAnimation = (currentSprite: Sprite, prevSprite: Sprite) => {
-  if (!prevSprite) return {to: {left: currentSprite.position.x, top: currentSprite.position.y}}
+  if (!prevSprite) return {to: {x: currentSprite.position.x, y: currentSprite.position.y}}
   const chaoticArray = []
   let newLeft = prevSprite.position.x || 0
   const leftDistance = currentSprite.position?.x - newLeft
@@ -99,7 +99,7 @@ const computeChaoticAnimation = (currentSprite: Sprite, prevSprite: Sprite) => {
   const topDirection = topStep < 0 ? -1 : 1
 
   for(let i=0;i<numberOfIterations;i+=1){
-    chaoticArray.push({left: newLeft, top: newTop})
+    chaoticArray.push({x: newLeft, y: newTop})
     let newRandLeft
     const fromIntermediaryLeftPoint = Math.round((prevSprite?.position.x || 0) + leftStep*i)
     const toIntermediaryLeftPoint = Math.round((prevSprite?.position.x || 0) + leftStep*(i+1))
@@ -122,16 +122,20 @@ const computeChaoticAnimation = (currentSprite: Sprite, prevSprite: Sprite) => {
     }
     newTop = newRandTop
   }
-  chaoticArray.push({left: currentSprite.position.x, top: currentSprite.position.y})
+  chaoticArray.push({x: currentSprite.position.x, y: currentSprite.position.y})
   return chaoticArray
 }
 
 const computeCircularAnimation = (currentSprite: Sprite, prevSprite: Sprite) => {
-  const currentCircleDirection: number = prevSprite?.circleDirection || 1
+  let currentCircleDirection: number = prevSprite?.circleDirection || 1
   const currentAngle: number = prevSprite?.angle || 90
   const [x1, y1, x2, y2] = [prevSprite?.position.x || 0, prevSprite?.position.y || 0, currentSprite.position.x, currentSprite.position.y]
   const pointsDistance = Math.round(Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1))*100)/100
   const radius = Math.round((pointsDistance / 2) / (Math.sin((currentAngle/2) * (Math.PI/180)))*100)/100
+
+  if (y1 <= y2) {
+    currentCircleDirection *= -1
+  }
 
   const m = Math.round((x1 - x2) / (y2 - y1) * 100)/100
   const x3 = (x1+x2)/2
@@ -142,6 +146,7 @@ const computeCircularAnimation = (currentSprite: Sprite, prevSprite: Sprite) => 
   const delta = Math.round((b*b - 4*a*c)*100)/100
   const circleX = Math.round((-b + currentCircleDirection * Math.sqrt(delta)) / (2*a))
   const circleY = Math.round(m*circleX - m*x3 + y3)
+  if (!circleX || !circleY) return {x: x2, y: y2}
   const distX = (circleX - x2)
   const distY = (circleY - y2)
 
@@ -234,7 +239,7 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
         rangeOfMovement: 40,
         nrOfIterations: 30,
         animationType: 'LINEAR',
-        scale: 1,
+        scale: {x: 1, y: 1},
         circleDirection: 1,
         angle: 90,
         opacity: 1,
@@ -372,7 +377,6 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
       return {...state}
     }
     case Actions.ADD_FRAME: {
-      console.log(state.frames)
       const newFrames = computeNewFrames([...state.frames, payload], payload)
       return {
         ...state,

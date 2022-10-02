@@ -126,16 +126,6 @@ export default function PropertiesSidebar() {
                 />
               </TableCell>
             </TableRow>
-            <TableRow key="scale">
-              <TableCell>Scale</TableCell>
-              <TableCell>
-                <Input
-                  type="number"
-                  value={currentSprite?.scale || ''}
-                  onChange={(e) => dispatch(updateSprite({field: 'scale', value: parseInt(e.target.value)}))}
-                />
-              </TableCell>
-            </TableRow>
             <TableRow key="zIndex">
               <TableCell>z-index</TableCell>
               <TableCell>

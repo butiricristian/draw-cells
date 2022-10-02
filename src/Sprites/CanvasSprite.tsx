@@ -6,8 +6,6 @@ export default function CanvasSprite({isSelected, onSelect, onChange, ...shapePr
   const img = new window.Image()
   img.src = require(`../assets/cells/${shapeProps.backgroundUrl}.svg`)
 
-  console.log(shapeProps)
-
   const shapeRef: any = React.useRef();
   const trRef: any = React.useRef();
 
@@ -53,7 +51,7 @@ export default function CanvasSprite({isSelected, onSelect, onChange, ...shapePr
             y: node.y(),
             // set minimal value
             width: Math.max(5, node.width() * scaleX),
-            height: Math.max(node.height() * scaleY),
+            height: Math.max(5, node.height() * scaleY),
             rotation: node.rotation()
           });
         }}

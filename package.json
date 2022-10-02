@@ -9,6 +9,7 @@
     "@mui/material": "^5.4.4",
     "@mui/styles": "^5.4.4",
     "@react-firebase/database": "^0.3.11",
+    "@react-spring/konva": "^9.5.2",
     "@reduxjs/toolkit": "^1.8.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
