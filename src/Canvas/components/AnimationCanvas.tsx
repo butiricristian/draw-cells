@@ -178,7 +178,6 @@ function AnimationCanvas() {
   }
 
   const [selectedSpriteId, setSelectedSpriteId] = useState<string|number|null>(null)
-  const [stageSize, setStageSize] = useState({width: 1920, height: 1080})
 
   if(isLoading) {
     return (<CircularProgress />)
@@ -187,7 +186,7 @@ function AnimationCanvas() {
   return (
     <div ref={canvasContainer} style={{...containerStyle, transition: 'all 0.3s ease-out'}} id="main-canvas">
       <div ref={drop} style={{width: '100%', height: '100%', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'scroll'}}>
-        <Stage width={stageSize.width} height={stageSize.height} ref={innerCanvas} style={{...canvasStyle, backgroundColor: (isOver ? '#eee' : '#fff'), transform: `scale(${scale})`}}>
+        <Stage width={1920} height={1920} ref={innerCanvas} style={{...canvasStyle, backgroundColor: (isOver ? '#eee' : '#fff'), transform: `scale(${scale})`}}>
           <Layer>
             {sprites.map((s: Sprite) => (
               <CanvasSprite
