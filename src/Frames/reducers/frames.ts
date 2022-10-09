@@ -233,6 +233,7 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
       }
     }
     case Actions.ADD_SPRITE: {
+      console.log(payload)
       const newSprite = {
         duration: 1,
         minTravelDistance: 15,
@@ -324,33 +325,6 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
         currentSprites: newCurrentSprites
       }
     }
-    case Actions.REMOVE_SPRITE: {
-      const crtFrame = {
-        ...state.currentFrame,
-        sprites: state.currentFrame.sprites.filter(s => s.id !== payload.id)
-      }
-      const newFrames = computeNewFrames(state.frames, crtFrame)
-      return {
-        ...state,
-        frames: newFrames,
-        currentFrame: crtFrame,
-      }
-    }
-    case Actions.REMOVE_SPRITE_FROM_ALL_FRAMES: {
-      const crtFrame = {
-        ...state.currentFrame,
-        sprites: state.currentFrame.sprites.filter(s => s.id !== payload.id)
-      }
-      const newFrames = state.frames.map(f => ({
-        ...f,
-        sprites: f.sprites.filter(s => s.id !== payload.id)
-      }))
-      return {
-        ...state,
-        frames: newFrames,
-        currentFrame: crtFrame,
-      }
-    }
     case Actions.REMOVE_CURRENT_SPRITES: {
       const currentSpritesIds = state.currentSprites.map(x => x.id)
       const crtFrame = {
@@ -362,6 +336,7 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
         ...state,
         frames: newFrames,
         currentFrame: crtFrame,
+        currentSprites: []
       }
     }
     case Actions.REMOVE_CURRENT_SPRITES_FROM_ALL_FRAMES: {
@@ -378,6 +353,7 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
         ...state,
         frames: newFrames,
         currentFrame: crtFrame,
+        currentSprites: []
       }
     }
     case Actions.COPY_SPRITE_INTO_FRAME: {

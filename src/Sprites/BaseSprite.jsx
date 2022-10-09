@@ -99,41 +99,6 @@ export default function BaseSprite({position, id, backgroundUrl, scale, zIndex}:
       >
         {backgroundUrl && spriteToSvgMap[backgroundUrl]}
       </div>
-      <Menu
-        id="simple-menu"
-        open={state.mouseY !== null}
-        onClose={handleClose}
-        anchorReference="anchorPosition"
-        anchorPosition={
-          state.mouseY !== null && state.mouseX !== null
-            ? { top: state.mouseY, left: state.mouseX }
-            : undefined
-        }
-      >
-        <MenuItem onClick={() => dispatch(removeSprite(id || ''))}>Remove from crt. frame</MenuItem>
-        <MenuItem onClick={() => dispatch(removeCurrentSprites())}>Remove selected from crt. frame</MenuItem>
-        <MenuItem onClick={() => dispatch(removeSpriteFromAllFrames(id || ''))}>Remove from all frames</MenuItem>
-        <MenuItem onClick={() => dispatch(removeCurrentSpritesFromAllFrames())}>Remove selected from all frames</MenuItem>
-        <NestedMenuItem
-          label="Copy sprite into"
-          parentMenuOpen={state.mouseY !== null}
-          disabled={framesForSelect.length < 1}
-        >
-          {framesForSelect.map(f => (
-            <MenuItem key={`copy-into-${f.id}`} onClick={() => dispatch(copySpriteIntoFrame(id || '', f.id || ''))}>Frame {f.id}</MenuItem>
-          ))}
-        </NestedMenuItem>
-        <NestedMenuItem
-          label="Copy selected sprites into"
-          parentMenuOpen={state.mouseY !== null}
-          disabled={framesForSelect.length < 1}
-
-        >
-          {framesForSelect.map(f => (
-            <MenuItem key={`copy-selected-into-${f.id}`} onClick={() => dispatch(copySelectedSpriteSIntoFrame(f.id || ''))}>Frame {f.id}</MenuItem>
-          ))}
-        </NestedMenuItem>
-      </Menu>
     </div>
   );
 }

@@ -81,7 +81,7 @@ export default function FramesSidebar() {
       additionalTitle={(<>| <b>Frame {currentFrame.id}</b></>)}
     >
       <div className={classes.container}>
-        <List style={{height: 'calc(100% - 50px)', display: 'inline-flex', overflowX: 'auto'}}>
+        <List style={{height: 'calc(100%)', display: 'inline-flex', overflowX: 'auto'}}>
           {framesList.map(f => (
             <ListItem key={`frame-${f.id}`} style={{height: '100%'}}>
               <Frame id={f.id} title={f.title} preview={f.preview} />

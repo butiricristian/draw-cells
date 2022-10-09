@@ -83,7 +83,7 @@ export default function BaseSidebar({isOpen, toggleOpen, children, iconRenderer,
         {anchor === 'left' && (<Typography variant="subtitle1" style={{transform: 'rotate(-90deg)', position: 'absolute', top: 60, left: -1}}>Sprites</Typography>)}
         {anchor === 'bottom' && (<Typography variant="subtitle1" style={{position: 'absolute', top: 10, right: 60, whiteSpace: 'nowrap'}}>Frames {additionalTitle}</Typography>)}
       </div>
-      <div style={{...marginStyle, height: '100%'}}>
+      <div style={{...marginStyle, height: 'calc(100% - 25px)'}}>
         {isOpen && children}
       </div>
     </div>
