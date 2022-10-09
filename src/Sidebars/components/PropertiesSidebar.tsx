@@ -3,7 +3,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Input, MenuItem, Select, Slider, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateSprite } from '../../Frames/actions';
+import { updateAllSelectedSprites } from '../../Frames/actions';
 import State from '../../stateInterface';
 import { toggleProperties } from '../actions';
 import BaseSidebar from './BaseSidebar';
@@ -26,7 +26,7 @@ function ChaoticAnimationProperties({currentSprite}: any) {
           <Input
             type="number"
             value={currentSprite?.minTravelDistance || ''}
-            onChange={(e) => dispatch(updateSprite({field: 'minTravelDistance', value: parseInt(e.target.value)}))}
+            onChange={(e) => dispatch(updateAllSelectedSprites({field: 'minTravelDistance', value: parseInt(e.target.value)}))}
           />
         </TableCell>
       </TableRow> */}
@@ -36,7 +36,7 @@ function ChaoticAnimationProperties({currentSprite}: any) {
           {/* <Input
             type="number"
             value={currentSprite?.rangeOfMovement || ''}
-            onChange={(e) => dispatch(updateSprite({field: 'rangeOfMovement', value: parseInt(e.target.value)}))}
+            onChange={(e) => dispatch(updateAllSelectedSprites({field: 'rangeOfMovement', value: parseInt(e.target.value)}))}
           /> */}
           <Slider
             step={10}
@@ -44,7 +44,7 @@ function ChaoticAnimationProperties({currentSprite}: any) {
             max={500}
             valueLabelDisplay="auto"
             onChange={(e, newValue) => setRangeOfMovementSlider(newValue)}
-            onChangeCommitted={(e, newValue) => dispatch(updateSprite({field: 'rangeOfMovement', value: newValue}))}
+            onChangeCommitted={(e, newValue) => dispatch(updateAllSelectedSprites({field: 'rangeOfMovement', value: newValue}))}
             value={rangeOfMovementSlider}
           />
         </TableCell>
@@ -55,7 +55,7 @@ function ChaoticAnimationProperties({currentSprite}: any) {
           {/* <Input
             type="number"
             value={currentSprite?.nrOfIterations || ''}
-            onChange={(e) => dispatch(updateSprite({field: 'nrOfIterations', value: parseInt(e.target.value || '0')}))}
+            onChange={(e) => dispatch(updateAllSelectedSprites({field: 'nrOfIterations', value: parseInt(e.target.value || '0')}))}
           /> */}
           <Slider
             step={1}
@@ -63,7 +63,7 @@ function ChaoticAnimationProperties({currentSprite}: any) {
             max={30}
             valueLabelDisplay="auto"
             onChange={(e, newValue) => setNrOfIterationsSlider(newValue)}
-            onChangeCommitted={(e, newValue) => dispatch(updateSprite({field: 'nrOfIterations', value: newValue}))}
+            onChangeCommitted={(e, newValue) => dispatch(updateAllSelectedSprites({field: 'nrOfIterations', value: newValue}))}
             value={nrOfIterationsSlider}
           />
         </TableCell>
@@ -104,7 +104,7 @@ export default function PropertiesSidebar() {
               <TableCell>
                 <Input
                   value={currentSprite?.id || ''}
-                  onChange={(e) => dispatch(updateSprite({field: 'id', value: e.target.value}))}
+                  onChange={(e) => dispatch(updateAllSelectedSprites({field: 'id', value: e.target.value}))}
                 />
               </TableCell>
             </TableRow>
@@ -113,7 +113,7 @@ export default function PropertiesSidebar() {
               <TableCell>
                 <Input
                   value={currentSprite?.position.x || ''}
-                  onChange={(e) => dispatch(updateSprite({field: 'positionX', value: e.target.value}))}
+                  onChange={(e) => dispatch(updateAllSelectedSprites({field: 'positionX', value: e.target.value}))}
                 />
               </TableCell>
             </TableRow>
@@ -122,7 +122,7 @@ export default function PropertiesSidebar() {
               <TableCell>
                 <Input
                   value={currentSprite?.position.y || ''}
-                  onChange={(e) => dispatch(updateSprite({field: 'positionY', value: e.target.value}))}
+                  onChange={(e) => dispatch(updateAllSelectedSprites({field: 'positionY', value: e.target.value}))}
                 />
               </TableCell>
             </TableRow>
@@ -132,7 +132,7 @@ export default function PropertiesSidebar() {
                 <Input
                   type="number"
                   value={currentSprite?.zIndex || ''}
-                  onChange={(e) => dispatch(updateSprite({field: 'zIndex', value: e.target.value}))}
+                  onChange={(e) => dispatch(updateAllSelectedSprites({field: 'zIndex', value: e.target.value}))}
                 />
               </TableCell>
             </TableRow>
@@ -147,7 +147,7 @@ export default function PropertiesSidebar() {
                 <Input
                   type="number"
                   value={currentSprite?.duration || ''}
-                  onChange={(e) => dispatch(updateSprite({field: 'duration', value: parseInt(e.target.value)}))}
+                  onChange={(e) => dispatch(updateAllSelectedSprites({field: 'duration', value: parseInt(e.target.value)}))}
                 />
               </TableCell>
             </TableRow>
@@ -156,7 +156,7 @@ export default function PropertiesSidebar() {
               <TableCell>
                 <Select
                   value={currentSprite?.animationType || ''}
-                  onChange={(e) => dispatch(updateSprite({field: 'animationType', value: e.target.value}))}
+                  onChange={(e) => dispatch(updateAllSelectedSprites({field: 'animationType', value: e.target.value}))}
                   size="small"
                 >
                   <MenuItem value="LINEAR">Linear</MenuItem>
@@ -173,7 +173,7 @@ export default function PropertiesSidebar() {
               <TableCell>
                 <Select
                   value={currentSprite?.circleDirection || 1}
-                  onChange={(e) => dispatch(updateSprite({field: 'circleDirection', value: e.target.value}))}
+                  onChange={(e) => dispatch(updateAllSelectedSprites({field: 'circleDirection', value: e.target.value}))}
                   size="small"
                 >
                   <MenuItem value={1}>Upwards</MenuItem>
@@ -187,7 +187,7 @@ export default function PropertiesSidebar() {
                 <Input
                   type="number"
                   value={currentSprite?.angle || ''}
-                  onChange={(e) => dispatch(updateSprite({field: 'angle', value: e.target.value}))}
+                  onChange={(e) => dispatch(updateAllSelectedSprites({field: 'angle', value: e.target.value}))}
                 />
               </TableCell>
             </TableRow>)}

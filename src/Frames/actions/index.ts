@@ -10,6 +10,7 @@ export const Actions = {
   REMOVE_FRAME: 'REMOVE_FRAME',
   NEXT_FRAME: 'NEXT_FRAME',
   PREV_FRAME: 'PREV_FRAME',
+  UPDATE_ALL_SELECTED_SPRITES: 'UPDATE_ALL_SELECTED_SPRITES',
   UPDATE_SPRITE: 'UPDATE_SPRITE',
   REMOVE_SPRITE: 'REMOVE_SPRITE',
   REMOVE_CURRENT_SPRITES: 'REMOVE_CURRENT_SPRITES',
@@ -18,6 +19,7 @@ export const Actions = {
   COPY_SPRITE_INTO_FRAME: 'COPY_SPRITE_INTO_FRAME',
   COPY_SELECTED_SPRITES_INTO_FRAME: 'COPY_SELECTED_SPRITES_INTO_FRAME',
   ADD_CURRENT_SPRITE: 'ADD_CURRENT_SPRITE',
+  REMOVE_ALL_CURRENT_SPRITES: 'REMOVE_ALL_CURRENT_SPRITES',
   UPDATE_PRESENTATION_TITLE: 'UPDATE_PRESENTATION_TITLE',
   SET_IS_FRAMES_SAVING: 'SET_IS_FRAMES_SAVING',
   SET_FRAME_PREVIEW: 'SET_FRAME_PREVIEW',
@@ -33,9 +35,14 @@ export const addSprite = (sprite: Sprite) => ({
   payload: sprite,
 })
 
-export const updateSprite = ({field, value}: any) => ({
-  type: Actions.UPDATE_SPRITE,
+export const updateAllSelectedSprites = ({field, value}: any) => ({
+  type: Actions.UPDATE_ALL_SELECTED_SPRITES,
   payload: {field, value},
+})
+
+export const updateSprite = ({field, value, id}: any) => ({
+  type: Actions.UPDATE_SPRITE,
+  payload: {field, value, id},
 })
 
 export const removeSprite = (id: number | string) => ({
@@ -97,6 +104,10 @@ export const setCurrentSprite = (spriteId: number | string | null) => ({
 export const addCurrentSprite = (spriteId: number | string | null) => ({
   type: Actions.ADD_CURRENT_SPRITE,
   payload: spriteId,
+})
+
+export const unselectAllSprites = () => ({
+  type: Actions.REMOVE_ALL_CURRENT_SPRITES,
 })
 
 export const updateCurrentSpritePosition = (spriteId: number | string | null, deltaX: number | undefined, deltaY: number | undefined) => ({
