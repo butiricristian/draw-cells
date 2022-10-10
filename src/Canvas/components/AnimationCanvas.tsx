@@ -7,7 +7,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { Layer, Rect, Stage, Transformer } from "react-konva";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { leftDrawerWidth } from "../../constants";
+import { leftDrawerWidth, OFFSET, VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "../../constants";
 import { db } from "../../firebase-config";
 import {
   addCurrentSprite,
@@ -30,10 +30,6 @@ import State from "../../stateInterface";
 import { zoomIn, zoomOut } from "../actions";
 import ContextMenu from "./ContextMenu";
 import { CustomDragLayer } from "./CustomDragLayer";
-
-const OFFSET = 200
-const VIEWPORT_WIDTH = 810
-const VIEWPORT_HEIGHT = 540
 
 export default function AnimationCanvasContainer() {
   return (
@@ -62,6 +58,7 @@ const initialMenuState: StateProps = {
 
 function AnimationCanvas() {
   const dispatch = useDispatch();
+
   const sprites = useSelector(
     (state: State) => state.frames.currentFrame.sprites
   );
@@ -69,7 +66,6 @@ function AnimationCanvas() {
     (state: State) => state.frames.currentSprites
   );
   const lastSpriteId = useSelector((state: State) => state.frames.lastSpriteId);
-  const theme = useTheme();
   const isSpritesSidebarOpen = useSelector(
     (state: State) => state.sidebars.isSpritesOpen
   );
@@ -84,6 +80,11 @@ function AnimationCanvas() {
   const isAnimationPreviewModalOpen = useSelector(
     (state: State) => state.presentations.isModalOpen
   );
+
+  const theme = useTheme();
+  const smallDrawerWidth: number = parseInt(theme.spacing(6).replace("px", ""));
+  const headerHeight: number = parseInt(theme.spacing(8).replace("px", ""));
+
   const { presentationId } = useParams();
 
   // LOADING FROM DB
@@ -94,10 +95,13 @@ function AnimationCanvas() {
       const res = await get(ref(db, `presentations/${presentationId}`));
       dispatch(loadInitialData(res.val()));
       setIsLoading(false);
-      scrollContainerRef.current.scrollTo(OFFSET, VIEWPORT_HEIGHT/2 + OFFSET/2)
+
+      const scrollX = ((VIEWPORT_WIDTH*2 + OFFSET*2) - (window.innerWidth - smallDrawerWidth*2))/2
+      const scrollY = ((VIEWPORT_HEIGHT*2 + OFFSET*2) - (window.innerHeight - smallDrawerWidth - headerHeight))/2
+      scrollContainerRef.current.scrollTo(scrollX, scrollY)
     };
     getData();
-  }, [presentationId, dispatch]);
+  }, [presentationId, headerHeight, smallDrawerWidth, dispatch]);
 
 
 
@@ -138,8 +142,6 @@ function AnimationCanvas() {
 
 
   // STYLING
-  const smallDrawerWidth: number = parseInt(theme.spacing(6).replace("px", ""));
-  const headerHeight: number = parseInt(theme.spacing(8).replace("px", ""));
   const canvasWidth = `calc(100vw - ${
     smallDrawerWidth +
     (isSpritesSidebarOpen ? leftDrawerWidth : smallDrawerWidth)

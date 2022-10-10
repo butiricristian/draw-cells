@@ -15,6 +15,10 @@ export const rightDrawerWidth = 300;
 export const bottomDrawerHeight = 240;
 export const leftDrawerWidth = 150
 
+export const OFFSET = 200
+export const VIEWPORT_WIDTH = 810
+export const VIEWPORT_HEIGHT = 540
+
 export const SPRITE_TO_SVG_ELEMENT_MAP = {
   b_cell_1: (<BCell1 />),
   dendritic_cell_1: (<DendriticCell1 />),
