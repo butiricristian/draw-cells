@@ -94,7 +94,7 @@ function AnimationCanvas() {
       const res = await get(ref(db, `presentations/${presentationId}`));
       dispatch(loadInitialData(res.val()));
       setIsLoading(false);
-      scrollContainerRef.current.scrollBy(VIEWPORT_WIDTH/2 + OFFSET/2, VIEWPORT_HEIGHT/2 + OFFSET/2)
+      scrollContainerRef.current.scrollTo(OFFSET, VIEWPORT_HEIGHT/2 + OFFSET/2)
     };
     getData();
   }, [presentationId, dispatch]);
@@ -304,11 +304,14 @@ function AnimationCanvas() {
   // SPRITE TRANSFORMATIONS
   const handleTransform = (e: any) => {
     const transformerNode = e.currentTarget
-    const scaleX = transformerNode.scaleX();
-    const scaleY = transformerNode.scaleY()
-
     for (let n of transformerNode.nodes()) {
       const commonDetails = { id: n.attrs.spriteId }
+
+      const scaleX = n.scaleX()
+      const scaleY = n.scaleY()
+      n.scaleX(1)
+      n.scaleY(1)
+
       dispatch(
         updateSprite({ field: "positionX", value: n.x(), ...commonDetails })
       );
