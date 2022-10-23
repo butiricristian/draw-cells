@@ -164,7 +164,7 @@ function AnimationCanvas() {
     width: 2*VIEWPORT_WIDTH + 2*OFFSET,
     height: 2*VIEWPORT_HEIGHT + 2*OFFSET,
     overflow: 'hidden',
-    backgroundColor: '#ddd'
+    backgroundColor: '#f0f0f0'
   }
 
   const scrollContainerStyle = {
@@ -416,11 +416,15 @@ function AnimationCanvas() {
                     ref={viewportRef}
                     x={0}
                     y={0}
-                    stroke={'#ddd'}
+                    stroke={'#eaeaea'}
                     strokeWidth={1}
                     width={VIEWPORT_WIDTH}
                     height={VIEWPORT_HEIGHT}
                     fill="white"
+                    shadowColor="#555"
+                    shadowBlur={90}
+                    shadowOffset={{x: 10, y: 10}}
+                    shadowOpacity={0.1}
                   />
                   {sprites.map((s: Sprite) => {
                     shapeRefs.current[s.id] = React.createRef();
@@ -440,6 +444,7 @@ function AnimationCanvas() {
                         spriteId={s.id}
                         onMouseEnter={() => setCursor('pointer')}
                         onMouseLeave={() => setCursor('default')}
+                        zIndex={s.zIndex}
                       />
                     );
                   })}
