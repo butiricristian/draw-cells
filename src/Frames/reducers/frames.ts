@@ -11,6 +11,7 @@ const initialState: FramesState = {
   frames: [initialFrame],
   currentFrame: initialFrame,
   prevFrame: null,
+  nextFrame: null,
   currentSprites: [],
   lastSpriteId: 1,
   title: '',
@@ -57,10 +58,17 @@ export interface FramesState {
   frames: Array<Frame>,
   currentFrame: Frame,
   prevFrame: Frame | null,
+  nextFrame: Frame | null,
   currentSprites: Array<Sprite>,
   lastSpriteId: number,
   title: string,
   isFramesSaving?: boolean
+}
+
+const computeNextFrame = (frames: Array<Frame>, crtFrame: Frame): Frame | null => {
+  const crtFrameIndex = frames.map(f => f.id).indexOf(crtFrame.id)
+  const nextFrame = crtFrameIndex + 1 < frames.length ? frames[crtFrameIndex + 1] : null
+  return nextFrame
 }
 
 const computeSpritePosition = (sprite: Sprite, deltaX: number | undefined, deltaY: number | undefined): Sprite => {
@@ -133,9 +141,10 @@ const computeCircularAnimation = (currentSprite: Sprite, prevSprite: Sprite) => 
   const pointsDistance = Math.round(Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1))*100)/100
   const radius = Math.round((pointsDistance / 2) / (Math.sin((currentAngle/2) * (Math.PI/180)))*100)/100
 
-  if (y1 <= y2) {
-    currentCircleDirection *= -1
-  }
+  if (y1 <= y2 && x1 <= x2) currentCircleDirection *= -1
+  if (y1 <= y2 && x1 >= x2) currentCircleDirection *= 1
+  if (y1 >= y2 && x1 >= x2) currentCircleDirection *= -1
+  if (y1 >= y2 && x1 <= x2) currentCircleDirection *= 1
 
   const m = Math.round((x1 - x2) / (y2 - y1) * 100)/100
   const x3 = (x1+x2)/2
@@ -150,9 +159,8 @@ const computeCircularAnimation = (currentSprite: Sprite, prevSprite: Sprite) => 
   const distX = (circleX - x2)
   const distY = (circleY - y2)
 
-  const angleDirection = (y1 > y2) ? -1 : 1
-  const finalAngle = currentAngle * angleDirection * currentCircleDirection
-  return { distX, distY, finalAngle, circleX, circleY }
+  const finalAngle = currentAngle * currentCircleDirection
+  return { distX, distY, finalAngle, circleX, circleY, x1, y1, x2, y2, radius, angleDirection: currentCircleDirection }
 }
 
 const getAnimationProps = (currentSprite: Sprite, prevSprite: Sprite) => {
@@ -221,6 +229,9 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
         if(!f.sprites) return 1
         return Math.max(...f.sprites.map( s => parseInt(s.id.toString()) ))
       }))
+
+      const nextFrame = computeNextFrame(payload.frames, payload.frames[0])
+
       return {
         ...initialState,
         title: payload.title,
@@ -229,7 +240,8 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
         currentFrame: {
           ...payload.frames[0],
           sprites: payload.frames[0].sprites || []
-        }
+        },
+        nextFrame: nextFrame
       }
     }
     case Actions.ADD_SPRITE: {
@@ -381,24 +393,36 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
     }
     case Actions.ADD_FRAME: {
       const newFrames = computeNewFrames([...state.frames, payload], payload)
+      const crtFrame = state.frames.find(f => f.id === payload) || initialState.frames[0]
+      const nextFrame = computeNextFrame(state.frames, crtFrame)
+
       return {
         ...state,
         currentFrame: payload,
+        nextFrame: nextFrame,
         frames: newFrames
       }
     }
     case Actions.REMOVE_FRAME:
+      const crtFrame = state.frames.find(f => f.id === payload) || initialState.frames[0]
+      const nextFrame = computeNextFrame(state.frames, crtFrame)
+
       return {
         ...state,
         frames: state.frames.filter(f => f.id !== payload.id),
-        currentFrame: payload.id === state.currentFrame.id ? state.frames[0] : state.currentFrame
+        currentFrame: payload.id === state.currentFrame.id ? state.frames[0] : state.currentFrame,
+        nextFrame: nextFrame
       }
     case Actions.SET_CURRENT_FRAME: {
       const crtFrame = state.frames.find(f => f.id === payload) || initialState.frames[0]
       const newCurrentSprites = crtFrame.sprites.filter(s => state.currentSprites.find(crtSprite => crtSprite.id === s.id)) || []
+
+      const nextFrame = computeNextFrame(state.frames, crtFrame)
+
       return {
         ...state,
         currentFrame: crtFrame,
+        nextFrame: nextFrame,
         currentSprites: newCurrentSprites,
       }
     }

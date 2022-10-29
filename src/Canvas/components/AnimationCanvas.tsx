@@ -28,6 +28,7 @@ import SpritesSidebar from "../../Sidebars/components/SpritesSidebar";
 import CanvasSprite from "../../Sprites/CanvasSprite";
 import State from "../../stateInterface";
 import { zoomIn, zoomOut } from "../actions";
+import AnimationCanvasPreview from "./AnimationCanvasPreview";
 import ContextMenu from "./ContextMenu";
 import { CustomDragLayer } from "./CustomDragLayer";
 
@@ -76,6 +77,7 @@ function AnimationCanvas() {
     (state: State) => state.frames.currentFrame.id
   );
   const framesList = useSelector((state: State) => state.frames.frames);
+  const nextFrame = useSelector((state: State) => state.frames.nextFrame);
 
   const isAnimationPreviewModalOpen = useSelector(
     (state: State) => state.presentations.isModalOpen
@@ -428,24 +430,38 @@ function AnimationCanvas() {
                   />
                   {sprites.map((s: Sprite) => {
                     shapeRefs.current[s.id] = React.createRef();
+                    const nextFrameSprite = nextFrame?.sprites.find(s2 => s2.id.toString() === s.id.toString())
+                    const isSelected = selectedSprites.find(s2 => s2.id.toString() === s.id.toString())
                     return (
-                      <CanvasSprite
-                        key={s.id}
-                        backgroundUrl={s.backgroundUrl}
-                        x={s.position.x}
-                        y={s.position.y}
-                        width={s.width}
-                        height={s.height}
-                        rotation={s.rotation}
-                        onSelect={(e: MouseEvent) => {
-                          handleSelectSprite(e, s.id);
-                        }}
-                        ref={shapeRefs.current[s.id]}
-                        spriteId={s.id}
-                        onMouseEnter={() => setCursor('pointer')}
-                        onMouseLeave={() => setCursor('default')}
-                        zIndex={s.zIndex}
-                      />
+                      <React.Fragment key={s.id}>
+                        {isSelected && nextFrameSprite && <AnimationCanvasPreview
+                          x1={s.position.x}
+                          y1={s.position.y}
+                          animationProps={nextFrameSprite.animationProps}
+                          animationType={s.animationType}
+                          width1={s.width}
+                          height1={s.height}
+                          width2={nextFrameSprite.width}
+                          height2={nextFrameSprite.height}
+                        />}
+                        <CanvasSprite
+                          backgroundUrl={s.backgroundUrl}
+                          x={s.position.x}
+                          y={s.position.y}
+                          width={s.width}
+                          height={s.height}
+                          rotation={s.rotation}
+                          onSelect={(e: MouseEvent) => {
+                            handleSelectSprite(e, s.id);
+                          }}
+                          ref={shapeRefs.current[s.id]}
+                          spriteId={s.id}
+                          onMouseEnter={() => setCursor('pointer')}
+                          onMouseLeave={() => setCursor('default')}
+                          offsetX={s.width/2}
+                          offsetY={s.height/2}
+                        />
+                      </React.Fragment>
                     );
                   })}
                   {selectedSprites.length > 0 && (

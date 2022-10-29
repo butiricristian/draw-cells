@@ -61,11 +61,11 @@ export default function AnimationSprite({position, id, backgroundUrl, animationT
     config: { duration: animationDuration }
   })
   const rotationProps = to(
-    [rotateSpring.to([crtFrameId - 1, crtFrameId], [finalAngle, 0]).to(x => x)],
+    [rotateSpring.to([crtFrameId - 1, crtFrameId], [-finalAngle, 0]).to(x => x)],
     x => x
   )
   const svgRotationProps = to(
-    [rotateSpring.to([crtFrameId - 1, crtFrameId], [prevSprite?.rotation-finalAngle, rotation]).to(x => x)],
+    [rotateSpring.to([crtFrameId - 1, crtFrameId], [prevSprite?.rotation+finalAngle, rotation]).to(x => x)],
     x => x
   )
 
