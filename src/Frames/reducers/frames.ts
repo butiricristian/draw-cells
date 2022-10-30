@@ -252,7 +252,6 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
       }
     }
     case Actions.ADD_SPRITE: {
-      console.log(payload)
       const newSprite = {
         duration: 1,
         minTravelDistance: 15,
