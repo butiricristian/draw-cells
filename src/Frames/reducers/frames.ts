@@ -139,27 +139,34 @@ const computeCircularAnimation = (currentSprite: Sprite, prevSprite: Sprite) => 
   const currentAngle: number = prevSprite?.angle || 90
   const [x1, y1, x2, y2] = [prevSprite?.position.x || 0, prevSprite?.position.y || 0, currentSprite.position.x, currentSprite.position.y]
   const pointsDistance = Math.round(Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1))*100)/100
-  const radius = Math.round((pointsDistance / 2) / (Math.sin((currentAngle/2) * (Math.PI/180)))*100)/100
+  const radius = Math.round((pointsDistance/2) / (Math.sin((currentAngle/2) * (Math.PI/180)))*100)/100
+  const finalAngle = currentAngle * currentCircleDirection
 
   if (y1 <= y2 && x1 <= x2) currentCircleDirection *= -1
   if (y1 <= y2 && x1 >= x2) currentCircleDirection *= 1
   if (y1 >= y2 && x1 >= x2) currentCircleDirection *= -1
   if (y1 >= y2 && x1 <= x2) currentCircleDirection *= 1
 
-  const m = Math.round((x1 - x2) / (y2 - y1) * 100)/100
   const x3 = (x1+x2)/2
   const y3 = (y1+y2)/2
+  // slope of the perpendicular line through (x1, y1), (x2, y2)
+  const m = Math.round((x1 - x2) / (y2 - y1) * 100)/100
   const a = Math.round((m*m + 1)*100)/100
   const b = Math.round((-2 * (x1 + y1*m - y3*m + m*m*x3)) * 100)/100
   const c = Math.round((x1*x1 + y1*y1 + 2*y1*(m*x3-y3) + m*m*x3*x3 + y3*y3 - 2*m*x3*y3 - radius*radius)*100)/100
   const delta = Math.round((b*b - 4*a*c)*100)/100
+
+  // if delta is negative, we can't find the center of the circle, so we set it to middle of the line
+  if (delta < 0) {
+    return {distX: x3-x2, distY: y3-y2, circleX: x3, circleY: y3, x1, y1, x2, y2, radius: pointsDistance/2, angleDirection: currentCircleDirection}
+  }
+
   const circleX = Math.round((-b + currentCircleDirection * Math.sqrt(delta)) / (2*a))
   const circleY = Math.round(m*circleX - m*x3 + y3)
-  if (!circleX || !circleY) return {x: x2, y: y2}
+
   const distX = (circleX - x2)
   const distY = (circleY - y2)
 
-  const finalAngle = currentAngle * currentCircleDirection
   return { distX, distY, finalAngle, circleX, circleY, x1, y1, x2, y2, radius, angleDirection: currentCircleDirection }
 }
 
