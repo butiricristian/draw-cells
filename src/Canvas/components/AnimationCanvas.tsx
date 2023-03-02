@@ -199,8 +199,8 @@ function AnimationCanvas() {
     accept: "SPRITE",
     drop: (item: any, monitor) => {
       if (item.type === "SIDEBAR_SPRITE") {
-        const offsetX= (VIEWPORT_WIDTH / 2 + OFFSET + leftDrawerWidth - (50 / 2)) * (1/scale)
-        const offsetY= (VIEWPORT_HEIGHT / 2 + OFFSET + smallDrawerWidth - (50 / item.ratio / 2)) * (1/scale)
+        const offsetX= (VIEWPORT_WIDTH / 2 + OFFSET + leftDrawerWidth - 30) * (1/scale)
+        const offsetY= (VIEWPORT_HEIGHT / 2 + OFFSET + smallDrawerWidth - 15) * (1/scale)
         createSprite(
           {
             x: (monitor.getSourceClientOffset()?.x || 0) - offsetX + scrollContainerRef.current.scrollLeft,
