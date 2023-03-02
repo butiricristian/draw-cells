@@ -1,5 +1,5 @@
 import { Button } from '@mui/material'
-import React, { useRef } from 'react'
+import React from 'react'
 import { Layer, Stage } from 'react-konva'
 import { useDispatch, useSelector } from 'react-redux'
 import { nextAnimationFrame, prevAnimationFrame } from '../../Frames/actions'
@@ -17,7 +17,6 @@ const PresentationContainer = ({style}: any) => {
     .map(s => ({...s, opacity: 0})) || []
 
   const dispatch = useDispatch()
-  const canvasRef = useRef<HTMLDivElement>(null)
 
   return (
     <div style={{padding: '10px 50px 20px', display: 'flex', flexDirection: 'column', height: 'calc(100% - 30px)', backgroundColor: 'white', ...style}}>
@@ -31,13 +30,12 @@ const PresentationContainer = ({style}: any) => {
             key={`animation-${s.id}`}
             animationType={s.animationType}
             scale={s.scale}
-            canvas={canvasRef.current}
-            angle={s.angle}
+            // angle={s.angle}
             opacity={s.opacity}
             animationProps={s.animationProps}
             duration={s.duration}
             nrOfIterations={s.nrOfIterations}
-            zIndex={s.zIndex}
+            // zIndex={s.zIndex}
             width={s.width}
             height={s.height}
             rotation={s.rotation}

@@ -20,13 +20,13 @@ export const VIEWPORT_WIDTH = 810
 export const VIEWPORT_HEIGHT = 540
 
 export const SPRITE_TO_SVG_ELEMENT_MAP = {
-  b_cell_1: (<BCell1 />),
-  dendritic_cell_1: (<DendriticCell1 />),
-  dendritic_cell_2: (<DendriticCell2 />),
-  t_cell_1: (<TCell1 />),
-  t_cell_2: (<TCell2 />),
-  fibroblast_1: (<Fibroblast1 />),
-  macrophage_1: (<Macrophage1 />),
-  mhc_class_i: (<MhcClassI />),
-  natural_killer_cell: (<NaturalKillerCell />),
+  b_cell_1: (<BCell1 id="b_cell_1" />),
+  dendritic_cell_1: (<DendriticCell1 id="dendritic_cell_1" />),
+  dendritic_cell_2: (<DendriticCell2 id="dendritic_cell_2" />),
+  t_cell_1: (<TCell1 id="t_cell_1" />),
+  t_cell_2: (<TCell2 id="t_cell_2" />),
+  fibroblast_1: (<Fibroblast1 id="fibroblast_1" />),
+  macrophage_1: (<Macrophage1 id="macrophage_1" />),
+  mhc_class_i: (<MhcClassI id="mhc_class_i" />),
+  natural_killer_cell: (<NaturalKillerCell id="natural_killer_cell" />),
 }

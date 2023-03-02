@@ -180,14 +180,14 @@ function AnimationCanvas() {
 
 
   // DRAG AND DROP FROM SIDEBAR
-  function createSprite(pos: XYCoord | null, backgroundUrl: string) {
+  function createSprite(pos: XYCoord | null, backgroundUrl: string, ratio: number) {
     if (pos) {
       dispatch(
         addSprite({
           id: lastSpriteId,
           position: pos,
           backgroundUrl,
-          height: 50,
+          height: 50 / ratio,
           width: 50,
           rotation: 0,
         })
@@ -199,14 +199,15 @@ function AnimationCanvas() {
     accept: "SPRITE",
     drop: (item: any, monitor) => {
       if (item.type === "SIDEBAR_SPRITE") {
-        const offsetX= (VIEWPORT_WIDTH / 2 + OFFSET + leftDrawerWidth) * (1/scale)
-        const offsetY= (VIEWPORT_HEIGHT / 2 + OFFSET + smallDrawerWidth) * (1/scale)
+        const offsetX= (VIEWPORT_WIDTH / 2 + OFFSET + leftDrawerWidth - (50 / 2)) * (1/scale)
+        const offsetY= (VIEWPORT_HEIGHT / 2 + OFFSET + smallDrawerWidth - (50 / item.ratio / 2)) * (1/scale)
         createSprite(
           {
             x: (monitor.getSourceClientOffset()?.x || 0) - offsetX + scrollContainerRef.current.scrollLeft,
             y: (monitor.getSourceClientOffset()?.y || 0) - offsetY + scrollContainerRef.current.scrollTop
           },
-          item.backgroundUrl
+          item.backgroundUrl,
+          item.ratio
         );
       }
     },

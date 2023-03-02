@@ -1,13 +1,13 @@
 <svg
   xmlns="http://www.w3.org/2000/svg"
-  xmlnsVectornator="http://vectornator.io"
+  xmlnsvectornator="http://vectornator.io"
   strokeLinecap="round"
   strokeLinejoin="round"
   strokeMiterlimit="10"
   clipRule="evenodd"
   viewBox="0 0 1224 792"
 >
-  <g vectornatorLayerName="Layer 1">
+  <g vectornatorlayername="Layer 1">
     <path
       fillRule="evenodd"
       stroke="#000"
