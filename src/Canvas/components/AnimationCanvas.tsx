@@ -438,7 +438,7 @@ function AnimationCanvas() {
                         {isSelected && nextFrameSprite && <AnimationCanvasPreview
                           x1={s.position.x}
                           y1={s.position.y}
-                          animationProps={nextFrameSprite.animationProps}
+                          animationProps={s.animationProps}
                           animationType={s.animationType}
                           width1={s.width}
                           height1={s.height}

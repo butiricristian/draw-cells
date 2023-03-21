@@ -1,28 +1,46 @@
 import React from "react";
 import { animated, to, useSpring } from "@react-spring/konva";
 
-export default function AnimationSprite({
-  position,
-  id,
-  backgroundUrl,
-  animationType,
-  scale,
-  width,
-  height,
-  rotation,
-  nrOfIterations = 10,
-  duration = 1,
-  opacity,
-  animationProps,
-  currentFrame,
-  prevFrame,
-}) {
-  const prevSprite = prevFrame?.sprites.find((s) => s.id === id);
+function getCurrentAndPrevSprite(animationProps) {
+  const {currentFrame, prevFrame, id} = animationProps
   const isGoingBackwards = (currentFrame.id || 0) < (prevFrame?.id || 0);
-  const animationDuration =
-    ((isGoingBackwards ? duration : prevSprite?.duration) || 1) * 1000;
-  const currentNrOfIterations =
-    (isGoingBackwards ? nrOfIterations : prevSprite?.nrOfIterations) || 10;
+  const prevSprite = prevFrame?.sprites.find((s) => s.id === id);
+  const currentSprite = animationProps
+
+  if (!prevSprite) {
+    return [currentSprite]
+  }
+
+  if (isGoingBackwards) {
+    return [currentSprite, prevSprite]
+  }
+  return [prevSprite, currentSprite]
+}
+
+export default function AnimationSprite(props) {
+  const [currentSprite, prevSprite] = getCurrentAndPrevSprite(props)
+  const { currentFrame } = props
+
+  console.log(currentSprite, prevSprite)
+
+  const {
+    position,
+    backgroundUrl,
+    animationType,
+    scale,
+    width,
+    height,
+    rotation,
+    nrOfIterations = 10,
+    duration = 1,
+    opacity,
+    animationProps: spriteAnimationProps,
+  } = currentSprite
+
+  const animationDuration = (duration || 1) * 1000;
+    // ((isGoingBackwards ? duration : prevSprite?.duration) || 1) * 1000;
+  const currentNrOfIterations = nrOfIterations || 10
+    // (isGoingBackwards ? nrOfIterations : prevSprite?.nrOfIterations) || 10;
 
   //SCALE PROPS
   const scaleProps = useSpring({
@@ -39,13 +57,13 @@ export default function AnimationSprite({
 
   // LINEAR PROPS
   const linearProps = useSpring({
-    to: animationProps,
+    to: spriteAnimationProps,
     config: { duration: animationDuration },
   });
 
   // CHAOTIC PROPS
   const chaoticProps = useSpring({
-    to: animationProps,
+    to: spriteAnimationProps,
     config: {
       duration:
         Math.round((animationDuration / currentNrOfIterations) * 100) / 100,
@@ -53,7 +71,7 @@ export default function AnimationSprite({
   });
 
   // CIRCULAR PROPS
-  const { distX, distY, finalAngle, circleX, circleY } = animationProps;
+  const { distX, distY, finalAngle, circleX, circleY } = spriteAnimationProps;
   const crtFrameId = parseInt(String(currentFrame.id || "1"));
   const { rotateSpring } = useSpring({
     from: { rotateSpring: crtFrameId - 1 },
@@ -81,10 +99,11 @@ export default function AnimationSprite({
   );
 
   // CHOOSE THE PROPS
-  const currentAnimationType = isGoingBackwards
-    ? animationType
-    : prevSprite?.animationType;
-  let props = {};
+  // const currentAnimationType = isGoingBackwards
+  //   ? animationType
+  //   : prevSprite?.animationType;
+  const currentAnimationType = animationType
+  let animationProps = {};
   let svgProps = { ...scaleProps, ...opacityProps };
   if (
     prevSprite &&
@@ -92,11 +111,11 @@ export default function AnimationSprite({
     prevSprite.position.y !== position.y
   ) {
     if (currentAnimationType === "LINEAR") {
-      props = { ...props, ...linearProps };
+      animationProps = { ...animationProps, ...linearProps };
     } else if (currentAnimationType === "CHAOTIC") {
-      props = { ...props, ...chaoticProps };
+      animationProps = { ...animationProps, ...chaoticProps };
     } else if (currentAnimationType === "CIRCULAR") {
-      props = { ...props, x: circleX, y: circleY, rotation: rotationProps };
+      animationProps = { ...animationProps, x: circleX, y: circleY, rotation: rotationProps };
       // svgProps = circularSvgProps
       svgProps = {
         ...svgProps,
@@ -105,17 +124,17 @@ export default function AnimationSprite({
         rotation: svgRotationProps,
       };
     } else {
-      props = { ...props, x: position.x, y: position.y };
+      animationProps = { ...animationProps, x: position.x, y: position.y };
     }
   } else {
-    props = { ...props, x: position.x, y: position.y };
+    animationProps = { ...animationProps, x: position.x, y: position.y };
   }
 
   const img = new window.Image();
   img.src = require(`../assets/cells/${backgroundUrl}.svg`);
 
   return (
-    <animated.Group width={1} height={1} {...props}>
+    <animated.Group width={1} height={1} {...animationProps}>
       <animated.Image
         image={img}
         offsetX={width / 2}

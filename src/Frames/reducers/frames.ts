@@ -142,6 +142,10 @@ const computeCircularAnimation = (currentSprite: Sprite, prevSprite: Sprite) => 
   const radius = Math.round((pointsDistance/2) / (Math.sin((currentAngle/2) * (Math.PI/180)))*100)/100
   const finalAngle = currentAngle * currentCircleDirection
 
+  if (x1 === x2 && y1 === y2) {
+    return {distX: 0, distY: 0, circleX: x1, circleY: y1, x1, y1, x2, y2, radius: 0, angleDirection: currentCircleDirection}
+  }
+
   if (y1 <= y2 && x1 <= x2) currentCircleDirection *= -1
   if (y1 <= y2 && x1 >= x2) currentCircleDirection *= 1
   if (y1 >= y2 && x1 >= x2) currentCircleDirection *= -1
@@ -171,6 +175,7 @@ const computeCircularAnimation = (currentSprite: Sprite, prevSprite: Sprite) => 
 }
 
 const getAnimationProps = (currentSprite: Sprite, prevSprite: Sprite) => {
+  if (!currentSprite) return {}
   if (!prevSprite) return computeLinearAnimation(currentSprite, prevSprite)
   switch(prevSprite.animationType) {
     case 'LINEAR': {
@@ -186,29 +191,35 @@ const getAnimationProps = (currentSprite: Sprite, prevSprite: Sprite) => {
 
 const computeNewFrames = (frames: Array<Frame>, crtFrame: Frame): Array<Frame> => {
   const crtFrameIndex = frames.map(f => f.id).indexOf(crtFrame.id)
+  const prevFrame = crtFrameIndex - 1 >= 0 ? frames[crtFrameIndex - 1] : null
+  const nextFrame = crtFrameIndex + 1 < frames.length ? frames[crtFrameIndex + 1] : null
+
   const crtFrameSprites = crtFrame.sprites.reduce((r: any, s) => {
     if (!s || !s.id) return r
     r[s.id] = s
     return r
   }, {})
-  const prevFrameSprites = crtFrameIndex - 1 >= 0 && frames[crtFrameIndex - 1].sprites.reduce((r: any, s) => {
+  const nextFrameSprites = !nextFrame ? {} : nextFrame?.sprites.reduce((r: any, s) => {
     if (!s || !s.id) return r
     r[s.id] = s
     return r
   }, {})
-  const nextFrame = crtFrameIndex + 1 < frames.length && frames[crtFrameIndex + 1]
 
-  for(let s of crtFrame.sprites) {
-    s.animationProps = getAnimationProps(s, prevFrameSprites[s.id])
-  }
-  if (nextFrame) {
-    for(let s of nextFrame.sprites) {
-      s.animationProps = getAnimationProps(s, crtFrameSprites[s.id])
+  if (prevFrame) {
+    for(let s of prevFrame.sprites) {
+      s.animationProps = getAnimationProps(crtFrameSprites[s.id], s)
+      console.log(s.animationProps)
     }
+  }
+  for(let s of crtFrame.sprites) {
+    s.animationProps = getAnimationProps(nextFrameSprites[s.id], s)
   }
 
   const newFrames = frames.map(f => f.id === crtFrame.id ? crtFrame : f)
-    .map(f => nextFrame && f.id === nextFrame.id ? nextFrame : f)
+    // .map(f => nextFrame && f.id === nextFrame.id ? nextFrame : f)
+    .map(f => prevFrame && f.id === prevFrame.id ? prevFrame : f)
+
+  console.log(newFrames)
 
   return newFrames
 }
