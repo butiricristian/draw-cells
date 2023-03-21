@@ -562,6 +562,34 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
         frames: newFrames
       }
     }
+    case Actions.SEND_SPRITE_TO_BACK: {
+      let sprites = state.currentFrame.sprites
+      for (let sprite of state.currentSprites) {
+        sprites = sprites.filter(s => s.id !== sprite.id)
+        sprites.unshift(sprite)
+      }
+      return {
+        ...state,
+        currentFrame: {
+          ...state.currentFrame,
+          sprites
+        }
+      }
+    }
+    case Actions.BRING_SPRITE_TO_FRONT: {
+      let sprites = state.currentFrame.sprites
+      for (let sprite of state.currentSprites) {
+        sprites = sprites.filter(s => s.id !== sprite.id)
+        sprites.push(sprite)
+      }
+      return {
+        ...state,
+        currentFrame: {
+          ...state.currentFrame,
+          sprites
+        }
+      }
+    }
     default:
       return state
   }

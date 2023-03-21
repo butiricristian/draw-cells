@@ -23,6 +23,8 @@ export const Actions = {
   UPDATE_PRESENTATION_TITLE: 'UPDATE_PRESENTATION_TITLE',
   SET_IS_FRAMES_SAVING: 'SET_IS_FRAMES_SAVING',
   SET_FRAME_PREVIEW: 'SET_FRAME_PREVIEW',
+  SEND_SPRITE_TO_BACK: 'SEND_SPRITE_TO_BACK',
+  BRING_SPRITE_TO_FRONT: 'BRING_SPRITE_TO_FRONT'
 }
 
 export const loadInitialData = (payload: any) => ({
@@ -135,4 +137,12 @@ export const setFramePreview = (frameId: string | number, preview: any) => ({
     frameId,
     preview
   }
+})
+
+export const sendSpriteToBack = () => ({
+  type: Actions.SEND_SPRITE_TO_BACK,
+})
+
+export const bringSpriteToFront = () => ({
+  type: Actions.BRING_SPRITE_TO_FRONT,
 })
