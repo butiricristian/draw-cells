@@ -208,7 +208,6 @@ const computeNewFrames = (frames: Array<Frame>, crtFrame: Frame): Array<Frame> =
   if (prevFrame) {
     for(let s of prevFrame.sprites) {
       s.animationProps = getAnimationProps(crtFrameSprites[s.id], s)
-      console.log(s.animationProps)
     }
   }
   for(let s of crtFrame.sprites) {

@@ -18,13 +18,16 @@ export default function AnimationCanvasPreview({x1, y1, animationProps, animatio
   let midX = 0, midY = 0
   let nx, ny = 0
 
-  const {radius: r, x2, y2, circleX, circleY, angleDirection} = animationProps
+  if (!animationProps) {
+    return <></>
+  }
 
   if (animationType === 'LINEAR') {
     otherPoints = [animationProps.x + width2/2, animationProps.y + height2/2]
   } else if (animationType === 'CHAOTIC') {
     otherPoints = animationProps.slice(0).map((p: any) => [p.x, p.y]).flat()
   } else if (animationType === 'CIRCULAR') {
+    const {radius: r, x2, y2, circleX, circleY, angleDirection} = animationProps
     tension = 0.8
     // Coordinates of the middle of initial point and final point (we'll call it N)
     nx = (x1+x2)/2
@@ -68,9 +71,9 @@ export default function AnimationCanvasPreview({x1, y1, animationProps, animatio
             fill="red"
           />
           <Circle
-            x={circleX}
-            y={circleY}
-            radius={r }
+            x={animationProps.circleX}
+            y={animationProps.circleY}
+            radius={animationProps.r }
             stroke="black"
             strokeWidth={2}
           />
