@@ -17,6 +17,8 @@ function getCurrentAndPrevSprite(animationProps) {
 export default function AnimationSprite(props) {
   const [prevSprite, currentSprite] = getCurrentAndPrevSprite(props)
   const { currentFrame, prevFrame } = props
+  const crtFrameId = parseInt(String(currentFrame.id || "1"));
+  const prevFrameId = parseInt(String(prevFrame?.id || "0"));
 
   const {
     position,
@@ -24,22 +26,25 @@ export default function AnimationSprite(props) {
     scale,
     width,
     height,
-    rotation,
     opacity,
+    rotation,
+    animationType: reverseAnimationType,
+    nrOfIterations: reverseNrOfIterations,
+    duration: reverseDuration,
   } = currentSprite
 
   const {
-    animationType,
-    animationProps: spriteAnimationProps,
-    nrOfIterations,
-    duration,
+    animationType: forwardAnimationType,
+    nrOfIterations: forwardNrOfIterations,
+    duration: forwardDuration,
+    animationProps: forwardAnimationProps,
+    reverseAnimationProps,
   } = prevSprite || {}
 
-  console.log("Previous Sprite: ", prevSprite)
-  console.log("Current Sprite: ", currentSprite)
-
-  const animationDuration = (duration || 1) * 1000;
-  const currentNrOfIterations = nrOfIterations || 10
+  const spriteAnimationProps = crtFrameId > prevFrameId ? forwardAnimationProps : reverseAnimationProps
+  const animationType = crtFrameId > prevFrameId ? forwardAnimationType : reverseAnimationType
+  const animationDuration = ((crtFrameId > prevFrameId ? forwardDuration : reverseDuration) || 1) * 1000;
+  const currentNrOfIterations = (crtFrameId > prevFrameId ? forwardNrOfIterations : reverseNrOfIterations) || 10
 
   //SCALE PROPS
   const scaleProps = useSpring({
@@ -62,8 +67,6 @@ export default function AnimationSprite(props) {
   });
 
   // CHAOTIC PROPS
-  console.log(animationDuration)
-  console.log(currentNrOfIterations)
   const chaoticProps = useSpring({
     from: {x: prevSprite?.position?.x || 0, y: prevSprite?.position?.y || 0},
     to: spriteAnimationProps,
@@ -74,29 +77,30 @@ export default function AnimationSprite(props) {
   });
 
   //CIRCULAR PROPS
-  const finalAngle = spriteAnimationProps?.finalAngle || 0;
-  const crtFrameId = parseInt(String(currentFrame.id || "1"));
-  const prevFrameId = parseInt(String(prevFrame?.id || "0"));
-  const angleDirection = prevFrameId < crtFrameId ? [-finalAngle, 0] : [0, -finalAngle]
+  const finalAngle = parseInt(spriteAnimationProps?.finalAngle || '90');
+  const angleDirection = parseInt(spriteAnimationProps?.angleDirection || '1');
+  console.log(finalAngle)
+  console.log(angleDirection)
+
   const { rotateSpring } = useSpring({
-    from: { rotateSpring: crtFrameId - 1 },
+    from: { rotateSpring: prevFrameId },
     to: { rotateSpring: crtFrameId },
     config: { duration: animationDuration },
   });
   const rotationProps = to(
     [
       rotateSpring
-        .to([prevFrameId, crtFrameId], angleDirection)
-        .to((x) => x),
+        .to([prevFrameId, crtFrameId], [angleDirection * finalAngle, 0])
+        .to((x) => x)
     ],
     (x) => x
-  );
+  )
   const svgRotationProps = to(
     [
       rotateSpring
         .to(
           [prevFrameId, crtFrameId],
-          [prevSprite?.rotation + finalAngle, rotation]
+          [prevSprite?.rotation - angleDirection * finalAngle, rotation]
         )
         .to((x) => x),
     ],
@@ -107,10 +111,9 @@ export default function AnimationSprite(props) {
   let animationProps = {};
   let svgProps = { ...scaleProps, ...opacityProps };
 
-  console.log("Animation Type: ", animationType)
-  console.log("Animation Props: ", spriteAnimationProps)
-
-  if (animationType === "LINEAR") {
+  if (crtFrameId === prevFrameId) {
+    animationProps = { ...animationProps, x: position.x, y: position.y };
+  } else if (animationType === "LINEAR") {
     animationProps = { ...animationProps, ...linearProps };
   } else if (animationType === "CHAOTIC") {
     animationProps = { ...animationProps, ...chaoticProps };
