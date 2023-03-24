@@ -139,8 +139,8 @@ export default function AnimationSprite(props) {
     <animated.Group width={1} height={1} {...animationProps}>
       <animated.Image
         image={img}
-        offsetX={width / 2}
-        offsetY={height / 2}
+        // offsetX={width / 2}
+        // offsetY={height / 2}
         {...svgProps}
       />
     </animated.Group>
