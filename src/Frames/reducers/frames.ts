@@ -41,6 +41,7 @@ export interface Sprite {
   angle?: number | undefined,
   opacity?: number,
   animationProps?: any,
+  reverseAnimationProps?: any,
   zIndex?: any,
   width: number,
   height: number,
@@ -89,7 +90,7 @@ const computeLinearAnimation = (currentSprite: Sprite, prevSprite: Sprite) => {
   return {x: currentSprite.position.x, y: currentSprite.position.y}
 }
 
-const computeChaoticAnimation = (currentSprite: Sprite, prevSprite: Sprite) => {
+const computeChaoticAnimation = (currentSprite: Sprite, prevSprite: Sprite, reversed: boolean = false) => {
   if (!prevSprite) return {to: {x: currentSprite.position.x, y: currentSprite.position.y}}
   const chaoticArray = []
   let newLeft = prevSprite.position.x || 0
@@ -97,9 +98,9 @@ const computeChaoticAnimation = (currentSprite: Sprite, prevSprite: Sprite) => {
   let newTop = prevSprite.position.y || 0
   const topDistance = currentSprite.position?.y - newTop
 
-  const finalMinTravelDistance = prevSprite.minTravelDistance || 15
-  const rangeOfMotion = prevSprite.rangeOfMovement || 40
-  const numberOfIterations = prevSprite.nrOfIterations || 10
+  const finalMinTravelDistance = (reversed ? currentSprite.minTravelDistance : prevSprite.minTravelDistance) || 15
+  const rangeOfMotion = (reversed ? currentSprite.rangeOfMovement : prevSprite.rangeOfMovement) || 40
+  const numberOfIterations = (reversed ? currentSprite.nrOfIterations : prevSprite.nrOfIterations) || 10
 
   const leftStep = leftDistance / numberOfIterations
   const leftDirection = leftStep < 0 ? -1 : 1
@@ -134,18 +135,31 @@ const computeChaoticAnimation = (currentSprite: Sprite, prevSprite: Sprite) => {
   return chaoticArray
 }
 
-const computeCircularAnimation = (currentSprite: Sprite, prevSprite: Sprite) => {
-  let currentCircleDirection: number = prevSprite?.circleDirection || 1
-  const currentAngle: number = prevSprite?.angle || 90
-  const [x1, y1, x2, y2] = [prevSprite?.position.x || 0, prevSprite?.position.y || 0, currentSprite.position.x, currentSprite.position.y]
+const computeCircularAnimation = (currentSprite: Sprite, prevSprite: Sprite, reversed: boolean = false) => {
+  const circleDirection: number = (reversed ? currentSprite.circleDirection : prevSprite?.circleDirection) || 1
+  const currentAngle: number = (reversed ? currentSprite?.angle : prevSprite?.angle) || 90
+  const [x1, y1, x2, y2] = [
+    prevSprite?.position.x || 0,
+    prevSprite?.position.y || 0,
+    currentSprite.position.x,
+    currentSprite.position.y]
+  console.log({x1, y1, x2, y2, width1: prevSprite.width, height1: prevSprite.height, width2: currentSprite.width, height2: currentSprite.height})
   const pointsDistance = Math.round(Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1))*100)/100
   const radius = Math.round((pointsDistance/2) / (Math.sin((currentAngle/2) * (Math.PI/180)))*100)/100
-  const finalAngle = currentAngle * currentCircleDirection
 
-  if (y1 <= y2 && x1 <= x2) currentCircleDirection *= -1
-  if (y1 <= y2 && x1 >= x2) currentCircleDirection *= 1
-  if (y1 >= y2 && x1 >= x2) currentCircleDirection *= -1
-  if (y1 >= y2 && x1 <= x2) currentCircleDirection *= 1
+  if (x1 === x2 && y1 === y2) {
+    return {distX: 0, distY: 0, circleX: x1, circleY: y1, x1, y1, x2, y2, radius: 0, angleDirection: circleDirection}
+  }
+
+  let currentCircleDirection = 1
+  if (y1 <= y2 && x1 <= x2) currentCircleDirection = circleDirection * -1
+  if (y1 <= y2 && x1 >= x2) currentCircleDirection = circleDirection * 1
+  if (y1 >= y2 && x1 >= x2) currentCircleDirection = circleDirection * -1
+  if (y1 >= y2 && x1 <= x2) currentCircleDirection = circleDirection * 1
+
+  let angleDirection = 1
+  if (x1 <= x2) angleDirection = circleDirection * -1
+  if (x1 >= x2) angleDirection = circleDirection * 1
 
   const x3 = (x1+x2)/2
   const y3 = (y1+y2)/2
@@ -158,7 +172,7 @@ const computeCircularAnimation = (currentSprite: Sprite, prevSprite: Sprite) => 
 
   // if delta is negative, we can't find the center of the circle, so we set it to middle of the line
   if (delta < 0) {
-    return {distX: x3-x2, distY: y3-y2, circleX: x3, circleY: y3, x1, y1, x2, y2, radius: pointsDistance/2, angleDirection: currentCircleDirection}
+    return {distX: x3-x2, distY: y3-y2, circleX: x3, circleY: y3, x1, y1, x2, y2, radius: pointsDistance/2, circleDirection: currentCircleDirection, angleDirection}
   }
 
   const circleX = Math.round((-b + currentCircleDirection * Math.sqrt(delta)) / (2*a))
@@ -167,18 +181,20 @@ const computeCircularAnimation = (currentSprite: Sprite, prevSprite: Sprite) => 
   const distX = (circleX - x2)
   const distY = (circleY - y2)
 
-  return { distX, distY, finalAngle, circleX, circleY, x1, y1, x2, y2, radius, angleDirection: currentCircleDirection }
+  return { distX, distY, finalAngle: currentAngle, circleX, circleY, x1, y1, x2, y2, radius, circleDirection: currentCircleDirection, angleDirection }
 }
 
-const getAnimationProps = (currentSprite: Sprite, prevSprite: Sprite) => {
+const getAnimationProps = (currentSprite: Sprite, prevSprite: Sprite, reversed: boolean = false) => {
+  if (!currentSprite) return {}
   if (!prevSprite) return computeLinearAnimation(currentSprite, prevSprite)
-  switch(prevSprite.animationType) {
+  const animationType = reversed ? currentSprite.animationType : prevSprite.animationType
+  switch(animationType) {
     case 'LINEAR': {
       return computeLinearAnimation(currentSprite, prevSprite)
     } case 'CHAOTIC': {
-      return computeChaoticAnimation(currentSprite, prevSprite)
+      return computeChaoticAnimation(currentSprite, prevSprite, reversed)
     } case 'CIRCULAR': {
-      return computeCircularAnimation(currentSprite, prevSprite)
+      return computeCircularAnimation(currentSprite, prevSprite, reversed)
     }
   }
 
@@ -186,29 +202,37 @@ const getAnimationProps = (currentSprite: Sprite, prevSprite: Sprite) => {
 
 const computeNewFrames = (frames: Array<Frame>, crtFrame: Frame): Array<Frame> => {
   const crtFrameIndex = frames.map(f => f.id).indexOf(crtFrame.id)
+  const prevFrame = crtFrameIndex - 1 >= 0 ? frames[crtFrameIndex - 1] : null
+  const nextFrame = crtFrameIndex + 1 < frames.length ? frames[crtFrameIndex + 1] : null
+
   const crtFrameSprites = crtFrame.sprites.reduce((r: any, s) => {
     if (!s || !s.id) return r
     r[s.id] = s
     return r
   }, {})
-  const prevFrameSprites = crtFrameIndex - 1 >= 0 && frames[crtFrameIndex - 1].sprites.reduce((r: any, s) => {
+  const nextFrameSprites = !nextFrame ? {} : nextFrame?.sprites.reduce((r: any, s) => {
     if (!s || !s.id) return r
     r[s.id] = s
     return r
   }, {})
-  const nextFrame = crtFrameIndex + 1 < frames.length && frames[crtFrameIndex + 1]
 
-  for(let s of crtFrame.sprites) {
-    s.animationProps = getAnimationProps(s, prevFrameSprites[s.id])
+  if (prevFrame) {
+    for(let s of prevFrame.sprites) {
+      s.animationProps = getAnimationProps(crtFrameSprites[s.id], s)
+      if (crtFrameSprites[s.id]) {
+        crtFrameSprites[s.id].reverseAnimationProps = getAnimationProps(s, crtFrameSprites[s.id], true)
+      }
+    }
   }
-  if (nextFrame) {
-    for(let s of nextFrame.sprites) {
-      s.animationProps = getAnimationProps(s, crtFrameSprites[s.id])
+  for(let s of crtFrame.sprites) {
+    s.animationProps = getAnimationProps(nextFrameSprites[s.id], s)
+    if (nextFrame && nextFrameSprites[s.id]) {
+      nextFrameSprites[s.id].reverseAnimationProps = getAnimationProps(s, nextFrameSprites[s.id], true)
     }
   }
 
   const newFrames = frames.map(f => f.id === crtFrame.id ? crtFrame : f)
-    .map(f => nextFrame && f.id === nextFrame.id ? nextFrame : f)
+    .map(f => prevFrame && f.id === prevFrame.id ? prevFrame : f)
 
   return newFrames
 }
@@ -432,6 +456,16 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
         currentSprites: newCurrentSprites,
       }
     }
+    case Actions.RECOMPUTE_FRAMES: {
+      let frames = state.frames
+      for (let f of frames) {
+        frames = computeNewFrames(frames, f)
+      }
+      return {
+        ...state,
+        frames
+      }
+    }
     case Actions.SET_CURRENT_SPRITE: {
       const crtSprite = state.currentFrame.sprites.find(s => s.id === payload)
       const shouldRemove = !!state.currentSprites.find(s => s.id === payload)
@@ -549,6 +583,34 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
       return {
         ...state,
         frames: newFrames
+      }
+    }
+    case Actions.SEND_SPRITE_TO_BACK: {
+      let sprites = state.currentFrame.sprites
+      for (let sprite of state.currentSprites) {
+        sprites = sprites.filter(s => s.id !== sprite.id)
+        sprites.unshift(sprite)
+      }
+      return {
+        ...state,
+        currentFrame: {
+          ...state.currentFrame,
+          sprites
+        }
+      }
+    }
+    case Actions.BRING_SPRITE_TO_FRONT: {
+      let sprites = state.currentFrame.sprites
+      for (let sprite of state.currentSprites) {
+        sprites = sprites.filter(s => s.id !== sprite.id)
+        sprites.push(sprite)
+      }
+      return {
+        ...state,
+        currentFrame: {
+          ...state.currentFrame,
+          sprites
+        }
       }
     }
     default:

@@ -1,5 +1,5 @@
 import React from 'react'
-import { removeCurrentSprites, removeCurrentSpritesFromAllFrames, copySelectedSpriteSIntoFrame, } from '../../Frames/actions';
+import { removeCurrentSprites, removeCurrentSpritesFromAllFrames, copySelectedSpriteSIntoFrame, sendSpriteToBack, bringSpriteToFront, } from '../../Frames/actions';
 import { NestedMenuItem } from 'mui-nested-menu';
 import { Menu, MenuItem } from "@mui/material";
 import { useDispatch, useSelector } from 'react-redux';
@@ -40,6 +40,8 @@ export default function ContextMenu({menuState, setMenuState}: any) {
           <MenuItem key={`copy-selected-into-${f.id}`} onClick={() => dispatch(copySelectedSpriteSIntoFrame(f.id || ''))}>Frame {f.id}</MenuItem>
         ))}
       </NestedMenuItem>
+      <MenuItem onClick={() => dispatch(sendSpriteToBack())}>Send to Back</MenuItem>
+      <MenuItem onClick={() => dispatch(bringSpriteToFront())}>Bring to Front</MenuItem>
     </Menu>
   )
 }

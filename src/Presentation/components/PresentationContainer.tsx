@@ -69,6 +69,7 @@ const PresentationContainer = ({ style }: any) => {
                 rotation={s.rotation}
                 currentFrame={currentFrame}
                 prevFrame={prevFrame}
+                isRemoved={s.opacity === 0}
               />
             ))}
           </Layer>

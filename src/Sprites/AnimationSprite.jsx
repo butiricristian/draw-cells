@@ -1,28 +1,51 @@
 import React from "react";
 import { animated, to, useSpring } from "@react-spring/konva";
 
-export default function AnimationSprite({
-  position,
-  id,
-  backgroundUrl,
-  animationType,
-  scale,
-  width,
-  height,
-  rotation,
-  nrOfIterations = 10,
-  duration = 1,
-  opacity,
-  animationProps,
-  currentFrame,
-  prevFrame,
-}) {
+function getCurrentAndPrevSprite(animationProps) {
+  const {prevFrame, id} = animationProps
+
   const prevSprite = prevFrame?.sprites.find((s) => s.id === id);
-  const isGoingBackwards = (currentFrame.id || 0) < (prevFrame?.id || 0);
-  const animationDuration =
-    ((isGoingBackwards ? duration : prevSprite?.duration) || 1) * 1000;
-  const currentNrOfIterations =
-    (isGoingBackwards ? nrOfIterations : prevSprite?.nrOfIterations) || 10;
+  const currentSprite = animationProps
+
+  if (!prevSprite) {
+    return [null, currentSprite]
+  }
+
+  return [prevSprite, currentSprite]
+}
+
+export default function AnimationSprite(props) {
+  const [prevSprite, currentSprite] = getCurrentAndPrevSprite(props)
+  const { currentFrame, prevFrame } = props
+  const crtFrameId = parseInt(String(currentFrame.id || "1"));
+  const prevFrameId = parseInt(String(prevFrame?.id || "0"));
+
+  const {
+    position,
+    backgroundUrl,
+    scale,
+    width,
+    height,
+    opacity,
+    rotation,
+    isRemoved,
+    animationType: reverseAnimationType,
+    nrOfIterations: reverseNrOfIterations,
+    duration: reverseDuration,
+  } = currentSprite
+
+  const {
+    animationType: forwardAnimationType,
+    nrOfIterations: forwardNrOfIterations,
+    duration: forwardDuration,
+    animationProps: forwardAnimationProps,
+    reverseAnimationProps,
+  } = prevSprite || {}
+
+  const spriteAnimationProps = crtFrameId > prevFrameId ? forwardAnimationProps : reverseAnimationProps
+  const animationType = crtFrameId > prevFrameId ? forwardAnimationType : reverseAnimationType
+  const animationDuration = ((crtFrameId > prevFrameId ? forwardDuration : reverseDuration) || 1) * 1000;
+  const currentNrOfIterations = (crtFrameId > prevFrameId ? forwardNrOfIterations : reverseNrOfIterations) || 10
 
   //SCALE PROPS
   const scaleProps = useSpring({
@@ -37,43 +60,59 @@ export default function AnimationSprite({
     config: { duration: 500 },
   });
 
+
+  // OFFSET PROPS
+  const offsetProps = useSpring({
+    to: { offsetX: width / 2, offsetY: height / 2 },
+    config: { duration: animationDuration },
+  })
+
+
+  //STATIC PROPS
+  const staticProps = useSpring({
+    to: {x: currentSprite.position.x, y: currentSprite.position.y},
+    config: { duration: animationDuration }
+  })
+
   // LINEAR PROPS
   const linearProps = useSpring({
-    to: animationProps,
+    from: {x: prevSprite?.position?.x || 0, y: prevSprite?.position?.y || 0},
+    to: spriteAnimationProps,
     config: { duration: animationDuration },
   });
 
   // CHAOTIC PROPS
   const chaoticProps = useSpring({
-    to: animationProps,
+    from: {x: prevSprite?.position?.x || 0, y: prevSprite?.position?.y || 0},
+    to: spriteAnimationProps,
     config: {
       duration:
         Math.round((animationDuration / currentNrOfIterations) * 100) / 100,
     },
   });
 
-  // CIRCULAR PROPS
-  const { distX, distY, finalAngle, circleX, circleY } = animationProps;
-  const crtFrameId = parseInt(String(currentFrame.id || "1"));
+  //CIRCULAR PROPS
+  const finalAngle = parseInt(spriteAnimationProps?.finalAngle || '90');
+  const angleDirection = parseInt(spriteAnimationProps?.angleDirection || '1');
   const { rotateSpring } = useSpring({
-    from: { rotateSpring: crtFrameId - 1 },
+    from: { rotateSpring: prevFrameId },
     to: { rotateSpring: crtFrameId },
     config: { duration: animationDuration },
   });
   const rotationProps = to(
     [
       rotateSpring
-        .to([crtFrameId - 1, crtFrameId], [-finalAngle, 0])
-        .to((x) => x),
+        .to([prevFrameId, crtFrameId], [angleDirection * finalAngle, 0])
+        .to((x) => x)
     ],
     (x) => x
-  );
+  )
   const svgRotationProps = to(
     [
       rotateSpring
         .to(
-          [crtFrameId - 1, crtFrameId],
-          [prevSprite?.rotation + finalAngle, rotation]
+          [prevFrameId, crtFrameId],
+          [prevSprite?.rotation - angleDirection * finalAngle, rotation]
         )
         .to((x) => x),
     ],
@@ -81,45 +120,48 @@ export default function AnimationSprite({
   );
 
   // CHOOSE THE PROPS
-  const currentAnimationType = isGoingBackwards
-    ? animationType
-    : prevSprite?.animationType;
-  let props = {};
-  let svgProps = { ...scaleProps, ...opacityProps };
-  if (
-    prevSprite &&
-    prevSprite.position.x !== position.x &&
-    prevSprite.position.y !== position.y
-  ) {
-    if (currentAnimationType === "LINEAR") {
-      props = { ...props, ...linearProps };
-    } else if (currentAnimationType === "CHAOTIC") {
-      props = { ...props, ...chaoticProps };
-    } else if (currentAnimationType === "CIRCULAR") {
-      props = { ...props, x: circleX, y: circleY, rotation: rotationProps };
-      // svgProps = circularSvgProps
-      svgProps = {
-        ...svgProps,
-        x: -distX,
-        y: -distY,
-        rotation: svgRotationProps,
-      };
-    } else {
-      props = { ...props, x: position.x, y: position.y };
-    }
+  let animationProps = {};
+  let svgProps = { ...scaleProps, ...opacityProps, ...offsetProps };
+
+  if (crtFrameId === prevFrameId || !prevSprite || isRemoved) {
+    animationProps = { ...animationProps, ...staticProps };
+  } else if (animationType === "LINEAR") {
+    animationProps = { ...animationProps, ...linearProps };
+  } else if (animationType === "CHAOTIC") {
+    animationProps = { ...animationProps, ...chaoticProps };
+  } else if (animationType === "CIRCULAR") {
+    // CIRCULAR PROPS
+    const { distX, distY, circleX, circleY } = spriteAnimationProps;
+    animationProps = { ...animationProps, x: circleX, y: circleY, rotation: rotationProps };
+    // svgProps = circularSvgProps
+    svgProps = {
+      ...svgProps,
+      x: -distX,
+      y: -distY,
+      rotation: svgRotationProps,
+    };
   } else {
-    props = { ...props, x: position.x, y: position.y };
+    animationProps = { ...animationProps, x: position.x, y: position.y };
   }
 
   const img = new window.Image();
   img.src = require(`../assets/cells/${backgroundUrl}.svg`);
 
+  console.log(backgroundUrl)
+  console.log(prevSprite)
+  console.log(currentSprite)
+  console.log(isRemoved)
+
   return (
-    <animated.Group width={1} height={1} {...props}>
+    <animated.Group
+      width={width}
+      height={height}
+      {...animationProps}
+    >
       <animated.Image
         image={img}
-        offsetX={width / 2}
-        offsetY={height / 2}
+        width={width}
+        height={height}
         {...svgProps}
       />
     </animated.Group>
