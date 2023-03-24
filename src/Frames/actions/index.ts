@@ -8,6 +8,7 @@ export const Actions = {
   ADD_SPRITE: 'ADD_SPRITE',
   ADD_FRAME: 'ADD_FRAME',
   REMOVE_FRAME: 'REMOVE_FRAME',
+  RECOMPUTE_FRAMES: 'RECOMPUTE_FRAMES',
   NEXT_FRAME: 'NEXT_FRAME',
   PREV_FRAME: 'PREV_FRAME',
   UPDATE_ALL_SELECTED_SPRITES: 'UPDATE_ALL_SELECTED_SPRITES',
@@ -145,4 +146,8 @@ export const sendSpriteToBack = () => ({
 
 export const bringSpriteToFront = () => ({
   type: Actions.BRING_SPRITE_TO_FRONT,
+})
+
+export const recomputeFrames = () => ({
+  type: Actions.RECOMPUTE_FRAMES,
 })

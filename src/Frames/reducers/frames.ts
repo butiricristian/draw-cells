@@ -138,7 +138,12 @@ const computeChaoticAnimation = (currentSprite: Sprite, prevSprite: Sprite, reve
 const computeCircularAnimation = (currentSprite: Sprite, prevSprite: Sprite, reversed: boolean = false) => {
   const circleDirection: number = (reversed ? currentSprite.circleDirection : prevSprite?.circleDirection) || 1
   const currentAngle: number = (reversed ? currentSprite?.angle : prevSprite?.angle) || 90
-  const [x1, y1, x2, y2] = [prevSprite?.position.x || 0, prevSprite?.position.y || 0, currentSprite.position.x, currentSprite.position.y]
+  const [x1, y1, x2, y2] = [
+    prevSprite?.position.x || 0,
+    prevSprite?.position.y || 0,
+    currentSprite.position.x,
+    currentSprite.position.y]
+  console.log({x1, y1, x2, y2, width1: prevSprite.width, height1: prevSprite.height, width2: currentSprite.width, height2: currentSprite.height})
   const pointsDistance = Math.round(Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1))*100)/100
   const radius = Math.round((pointsDistance/2) / (Math.sin((currentAngle/2) * (Math.PI/180)))*100)/100
 
@@ -214,18 +219,19 @@ const computeNewFrames = (frames: Array<Frame>, crtFrame: Frame): Array<Frame> =
   if (prevFrame) {
     for(let s of prevFrame.sprites) {
       s.animationProps = getAnimationProps(crtFrameSprites[s.id], s)
-      crtFrameSprites[s.id].reverseAnimationProps = getAnimationProps(s, crtFrameSprites[s.id], true)
+      if (crtFrameSprites[s.id]) {
+        crtFrameSprites[s.id].reverseAnimationProps = getAnimationProps(s, crtFrameSprites[s.id], true)
+      }
     }
   }
   for(let s of crtFrame.sprites) {
     s.animationProps = getAnimationProps(nextFrameSprites[s.id], s)
-    if (nextFrame) {
+    if (nextFrame && nextFrameSprites[s.id]) {
       nextFrameSprites[s.id].reverseAnimationProps = getAnimationProps(s, nextFrameSprites[s.id], true)
     }
   }
 
   const newFrames = frames.map(f => f.id === crtFrame.id ? crtFrame : f)
-    // .map(f => nextFrame && f.id === nextFrame.id ? nextFrame : f)
     .map(f => prevFrame && f.id === prevFrame.id ? prevFrame : f)
 
   return newFrames
@@ -448,6 +454,16 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
         currentFrame: crtFrame,
         nextFrame: nextFrame,
         currentSprites: newCurrentSprites,
+      }
+    }
+    case Actions.RECOMPUTE_FRAMES: {
+      let frames = state.frames
+      for (let f of frames) {
+        frames = computeNewFrames(frames, f)
+      }
+      return {
+        ...state,
+        frames
       }
     }
     case Actions.SET_CURRENT_SPRITE: {

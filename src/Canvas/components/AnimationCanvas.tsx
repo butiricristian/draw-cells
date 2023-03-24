@@ -1,6 +1,5 @@
 import { CircularProgress, useTheme } from "@mui/material";
 import { get, ref, update } from "firebase/database";
-import html2canvas from "html2canvas";
 import React, { useEffect, useRef, useState } from "react";
 import { DndProvider, useDrop, XYCoord } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -129,10 +128,14 @@ function AnimationCanvas() {
   useEffect(() => {
     if (isAnimationPreviewModalOpen) return;
     const t = setTimeout(async () => {
-      const mainCanvas = document.getElementById("inner-canvas");
-      if (!mainCanvas) return;
-      const canvas = await html2canvas(mainCanvas);
-      if (currentFrameId) dispatch(setFramePreview(currentFrameId, canvas));
+      const viewportImg = await stageRef.current.toDataURL({
+        pixelRatio: 3,
+        x: VIEWPORT_WIDTH - OFFSET - 5,
+        y: VIEWPORT_HEIGHT - OFFSET/2 + 30,
+        width: VIEWPORT_WIDTH,
+        height: VIEWPORT_HEIGHT
+      })
+      if(currentFrameId) dispatch(setFramePreview(currentFrameId, viewportImg));
     }, 50);
     return () => {
       clearTimeout(t);

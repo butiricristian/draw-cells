@@ -43,7 +43,7 @@ const Frame = ({title, id, preview}: FrameProps) => {
     >
       <Typography variant="body2" color="textSecondary"> {title} </Typography>
       <div style={{width: '100%', height: "calc(100% - 20px)", overflow: 'hidden'}}>
-        {preview && <img src={ preview.toDataURL("image/png", 1.0) } alt="Frame Preview" style={{width: '100%'}}/>}
+        {preview && <img src={ preview } alt="Frame Preview" style={{width: '100%'}}/>}
       </div>
       <IconButton
         onClick={removeFrame}

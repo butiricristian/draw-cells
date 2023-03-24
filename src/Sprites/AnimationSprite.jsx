@@ -28,6 +28,7 @@ export default function AnimationSprite(props) {
     height,
     opacity,
     rotation,
+    isRemoved,
     animationType: reverseAnimationType,
     nrOfIterations: reverseNrOfIterations,
     duration: reverseDuration,
@@ -59,6 +60,20 @@ export default function AnimationSprite(props) {
     config: { duration: 500 },
   });
 
+
+  // OFFSET PROPS
+  const offsetProps = useSpring({
+    to: { offsetX: width / 2, offsetY: height / 2 },
+    config: { duration: animationDuration },
+  })
+
+
+  //STATIC PROPS
+  const staticProps = useSpring({
+    to: {x: currentSprite.position.x, y: currentSprite.position.y},
+    config: { duration: animationDuration }
+  })
+
   // LINEAR PROPS
   const linearProps = useSpring({
     from: {x: prevSprite?.position?.x || 0, y: prevSprite?.position?.y || 0},
@@ -79,9 +94,6 @@ export default function AnimationSprite(props) {
   //CIRCULAR PROPS
   const finalAngle = parseInt(spriteAnimationProps?.finalAngle || '90');
   const angleDirection = parseInt(spriteAnimationProps?.angleDirection || '1');
-  console.log(finalAngle)
-  console.log(angleDirection)
-
   const { rotateSpring } = useSpring({
     from: { rotateSpring: prevFrameId },
     to: { rotateSpring: crtFrameId },
@@ -109,10 +121,10 @@ export default function AnimationSprite(props) {
 
   // CHOOSE THE PROPS
   let animationProps = {};
-  let svgProps = { ...scaleProps, ...opacityProps };
+  let svgProps = { ...scaleProps, ...opacityProps, ...offsetProps };
 
-  if (crtFrameId === prevFrameId) {
-    animationProps = { ...animationProps, x: position.x, y: position.y };
+  if (crtFrameId === prevFrameId || !prevSprite || isRemoved) {
+    animationProps = { ...animationProps, ...staticProps };
   } else if (animationType === "LINEAR") {
     animationProps = { ...animationProps, ...linearProps };
   } else if (animationType === "CHAOTIC") {
@@ -135,12 +147,21 @@ export default function AnimationSprite(props) {
   const img = new window.Image();
   img.src = require(`../assets/cells/${backgroundUrl}.svg`);
 
+  console.log(backgroundUrl)
+  console.log(prevSprite)
+  console.log(currentSprite)
+  console.log(isRemoved)
+
   return (
-    <animated.Group width={1} height={1} {...animationProps}>
+    <animated.Group
+      width={width}
+      height={height}
+      {...animationProps}
+    >
       <animated.Image
         image={img}
-        // offsetX={width / 2}
-        // offsetY={height / 2}
+        width={width}
+        height={height}
         {...svgProps}
       />
     </animated.Group>

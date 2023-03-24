@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { db } from '../../firebase-config';
-import { updatePresentationTitle } from '../../Frames/actions';
+import { recomputeFrames, updatePresentationTitle } from '../../Frames/actions';
 import { toggleModal } from '../../Presentation/actions';
 import State from '../../stateInterface';
 
@@ -70,6 +70,7 @@ const CanvasHeader = () => {
         </Box>
         <Button color="inherit" onClick={() => navigate('/')}>HOME</Button>
         <Button color="inherit" onClick={() => dispatch(toggleModal(true))}>PREVIEW</Button>
+        <Button color="inherit" onClick={() => dispatch(recomputeFrames())}> Recompute Frames </Button>
         <Button color="inherit" onClick={() => {navigator.clipboard.writeText(`${window.location.origin}/present/${presentationId}`)}}>Get presentation link</Button>
       </Toolbar>
     </AppBar>
