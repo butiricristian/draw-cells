@@ -128,6 +128,8 @@ function AnimationCanvas() {
   useEffect(() => {
     if (isAnimationPreviewModalOpen) return;
     const t = setTimeout(async () => {
+      if (!stageRef.current) return;
+
       const viewportImg = await stageRef.current.toDataURL({
         pixelRatio: 3,
         x: VIEWPORT_WIDTH - OFFSET - 5,

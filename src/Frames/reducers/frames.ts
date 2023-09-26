@@ -434,13 +434,29 @@ export const frames = (state: FramesState = initialState, action: Action): Frame
       }
     }
     case Actions.REMOVE_FRAME:
-      const crtFrame = state.frames.find(f => f.id === payload) || initialState.frames[0]
+      if (state.frames.length === 1) {
+        return {
+          ...state,
+          frames: [initialFrame],
+          currentFrame: initialFrame,
+          prevFrame: null,
+          nextFrame: null,
+          currentSprites: [],
+          lastSpriteId: 1,
+        }
+      }
+
+      const crtFrame = state.frames.find(f => f.id === payload.id)
+      if (crtFrame === undefined || crtFrame === null) return {...state}
+
       const nextFrame = computeNextFrame(state.frames, crtFrame)
+      const frames = state.frames.filter(f => f.id !== payload.id)
+      const currentFrame = payload.id === state.currentFrame.id ? frames[0] : state.currentFrame
 
       return {
         ...state,
-        frames: state.frames.filter(f => f.id !== payload.id),
-        currentFrame: payload.id === state.currentFrame.id ? state.frames[0] : state.currentFrame,
+        frames: frames,
+        currentFrame: currentFrame,
         nextFrame: nextFrame
       }
     case Actions.SET_CURRENT_FRAME: {

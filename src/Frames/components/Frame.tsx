@@ -28,17 +28,18 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const Frame = ({title, id, preview}: FrameProps) => {
   const dispatch = useDispatch()
-  const currentFrameId = useSelector((state: State) => state.frames.currentFrame.id)
+  const currentFrame = useSelector((state: State) => state.frames.currentFrame)
   const classes = useStyles()
   const theme = useTheme()
 
-  const removeFrame = () => {
+  const removeFrame = (e: React.MouseEvent) => {
+    e.stopPropagation()
     dispatch(removeFrameById({id}))
   }
 
   return (
     <div
-      className={clsx(classes.frame, {[classes.selected]: (id === currentFrameId), [classes.unselected]: (id !== currentFrameId)})}
+      className={clsx(classes.frame, {[classes.selected]: (id === currentFrame.id), [classes.unselected]: (id !== currentFrame.id)})}
       onClick={() => dispatch(setCurrentFrame(id))}
     >
       <Typography variant="body2" color="textSecondary"> {title} </Typography>
