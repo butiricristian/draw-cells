@@ -8,6 +8,8 @@ import { Sprite } from "../../Frames/reducers/frames";
 import AnimationSprite from "../../Sprites/AnimationSprite";
 import State from "../../stateInterface";
 
+const SCALE = (window.innerWidth - 250) / VIEWPORT_WIDTH;
+
 const PresentationContainer = ({ style }: any) => {
   const currentFrame = useSelector((state: State) => state.frames.currentFrame);
   const prevFrame = useSelector((state: State) => state.frames.prevFrame);
@@ -28,6 +30,7 @@ const PresentationContainer = ({ style }: any) => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        justifyContent: 'center',
         ...style,
       }}
     >
@@ -35,14 +38,15 @@ const PresentationContainer = ({ style }: any) => {
         style={{
           padding: "10px 50px 20px",
           backgroundColor: "white",
-          width: VIEWPORT_WIDTH + 100,
-          height: VIEWPORT_HEIGHT + 90,
+          width: VIEWPORT_WIDTH * SCALE,
+          height: VIEWPORT_HEIGHT * SCALE,
           ...style,
         }}
       >
         <Stage
-          width={VIEWPORT_WIDTH + 100}
-          height={VIEWPORT_HEIGHT + 90}
+          scale={{ x: SCALE, y: SCALE }}
+          width={VIEWPORT_WIDTH * SCALE}
+          height={VIEWPORT_HEIGHT * SCALE}
           style={{
             border: "solid 1px #ddd",
             marginBottom: 20,
