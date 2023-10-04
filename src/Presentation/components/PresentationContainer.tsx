@@ -8,7 +8,7 @@ import { Sprite } from "../../Frames/reducers/frames";
 import AnimationSprite from "../../Sprites/AnimationSprite";
 import State from "../../stateInterface";
 
-const SCALE = (window.innerWidth - 250) / VIEWPORT_WIDTH;
+const SCALE = Math.min((window.innerWidth - 250) / VIEWPORT_WIDTH, (window.innerHeight - 200) / VIEWPORT_HEIGHT);
 
 const PresentationContainer = ({ style }: any) => {
   const currentFrame = useSelector((state: State) => state.frames.currentFrame);

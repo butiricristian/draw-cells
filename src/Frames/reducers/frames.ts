@@ -143,7 +143,6 @@ const computeCircularAnimation = (currentSprite: Sprite, prevSprite: Sprite, rev
     prevSprite?.position.y || 0,
     currentSprite.position.x,
     currentSprite.position.y]
-  console.log({x1, y1, x2, y2, width1: prevSprite.width, height1: prevSprite.height, width2: currentSprite.width, height2: currentSprite.height})
   const pointsDistance = Math.round(Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1))*100)/100
   const radius = Math.round((pointsDistance/2) / (Math.sin((currentAngle/2) * (Math.PI/180)))*100)/100
 

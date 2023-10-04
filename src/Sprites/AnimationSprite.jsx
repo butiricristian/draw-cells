@@ -53,6 +53,10 @@ export default function AnimationSprite(props) {
     (crtFrameId > prevFrameId
       ? forwardNrOfIterations
       : reverseNrOfIterations) || 10;
+  const isStatic =
+    !prevSprite ||
+    (prevSprite?.position?.x === position.x &&
+      prevSprite?.position?.y === position.y);
 
   //SCALE PROPS
   const scaleProps = useSpring({
@@ -75,7 +79,7 @@ export default function AnimationSprite(props) {
 
   //STATIC PROPS
   const staticProps = useSpring({
-    to: { x: currentSprite.position.x, y: currentSprite.position.y },
+    to: { x: position.x, y: position.y },
     config: { duration: animationDuration },
   });
 
@@ -128,7 +132,7 @@ export default function AnimationSprite(props) {
   let animationProps = {};
   let svgProps = { ...scaleProps, ...opacityProps, ...offsetProps };
 
-  if (crtFrameId === prevFrameId || !prevSprite || isRemoved) {
+  if (crtFrameId === prevFrameId || isRemoved || isStatic) {
     animationProps = { ...animationProps, ...staticProps };
   } else if (animationType === "LINEAR") {
     animationProps = { ...animationProps, ...linearProps };
