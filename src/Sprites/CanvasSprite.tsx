@@ -6,7 +6,7 @@ const CanvasSprite = React.forwardRef(({spriteId, onSelect, onChange, ...shapePr
   img.src = require(`../assets/cells/${shapeProps.backgroundUrl}.svg`)
 
   return (
-    <React.Fragment>
+    <>
       <Image
         spriteId={spriteId}
         image={img}
@@ -15,7 +15,7 @@ const CanvasSprite = React.forwardRef(({spriteId, onSelect, onChange, ...shapePr
         ref={ref}
         {...shapeProps}
       />
-    </React.Fragment>
+    </>
   )
 })
 

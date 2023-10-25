@@ -1,5 +1,6 @@
 import { CircularProgress, useTheme } from "@mui/material";
 import { get, ref, update } from "firebase/database";
+import { getDownloadURL, ref as storageRef } from 'firebase/storage';
 import React, { useEffect, useRef, useState } from "react";
 import { DndProvider, useDrop, XYCoord } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -7,7 +8,7 @@ import { Layer, Rect, Stage, Transformer } from "react-konva";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { leftDrawerWidth, OFFSET, VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "../../constants";
-import { db } from "../../firebase-config";
+import { db, storage } from "../../firebase-config";
 import {
   addCurrentSprite,
   addSprite,
@@ -88,6 +89,8 @@ function AnimationCanvas() {
 
   const { presentationId } = useParams();
 
+  const viewportRef: any = React.useRef();
+
   // LOADING FROM DB
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
@@ -120,6 +123,25 @@ function AnimationCanvas() {
       clearTimeout(t);
     };
   }, [framesList, presentationId, dispatch]);
+
+
+
+
+  // Get bg from db
+  useEffect(() => {
+    const getBg = async () => {
+      const url = await getDownloadURL(storageRef(storage, 'download.jpeg'))
+      if (url) {
+        const img = new Image();
+        img.src = url
+        img.onload = () => {
+          viewportRef.current.fillPatternImage(img)
+          viewportRef.current.fillPatternScale({x: VIEWPORT_WIDTH/img.width, y: VIEWPORT_HEIGHT/img.height})
+        };
+      }
+    };
+    getBg();
+  }, [])
 
 
 
@@ -359,11 +381,6 @@ function AnimationCanvas() {
 
 
 
-  const viewportRef: any = React.useRef();
-
-
-
-
 
   // SET CURSOR
   const [cursor, setCursor] = useState('default')
@@ -428,11 +445,11 @@ function AnimationCanvas() {
                     strokeWidth={1}
                     width={VIEWPORT_WIDTH}
                     height={VIEWPORT_HEIGHT}
-                    fill="white"
                     shadowColor="#555"
                     shadowBlur={90}
                     shadowOffset={{x: 10, y: 10}}
                     shadowOpacity={0.1}
+                    fillPatternRepeat="no-repeat"
                   />
                   {sprites.map((s: Sprite) => {
                     shapeRefs.current[s.id] = React.createRef();
