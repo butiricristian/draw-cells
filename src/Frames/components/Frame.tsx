@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   frame: {
     height: '100%',
-    width: '300px'
+    width: '233px'
   }
 }))
 
@@ -43,8 +43,8 @@ const Frame = ({title, id, preview}: FrameProps) => {
       onClick={() => dispatch(setCurrentFrame(id))}
     >
       <Typography variant="body2" color="textSecondary"> {title} </Typography>
-      <div style={{width: '100%', height: "calc(100% - 20px)", overflow: 'hidden'}}>
-        {preview && <img src={ preview } alt="Frame Preview" style={{width: '100%'}}/>}
+      <div style={{width: '100%', height: "calc(100% - 20px)", overflow: 'hidden', backgroundImage: `url(${preview})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center'}}>
+        {/* {preview && <img src={ preview } alt="Frame Preview" style={{width: '100%'}}/>} */}
       </div>
       <IconButton
         onClick={removeFrame}

@@ -83,7 +83,7 @@ export default function FramesSidebar() {
       <div className={classes.container}>
         <List style={{height: 'calc(100%)', display: 'inline-flex', overflowX: 'auto'}}>
           {framesList.map(f => (
-            <ListItem key={`frame-${f.id}`} style={{height: '100%'}}>
+            <ListItem key={`frame-${f.id}`} style={{width: '100%'}}>
               <Frame id={f.id} title={f.title} preview={f.preview} />
             </ListItem>
           ))}
