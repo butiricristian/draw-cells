@@ -73,9 +73,8 @@ function AnimationCanvas() {
   const scale = useSelector((state: State) => state.canvas.scale);
   const canvasContainer = useRef<any>(null);
 
-  const currentFrameId = useSelector(
-    (state: State) => state.frames.currentFrame.id
-  );
+  const currentFrameId = useSelector((state: State) => state.frames.currentFrame.id);
+  const currentFrameBgUrl = useSelector((state: State) => state.frames.currentFrame.backgroundUrl);
   const framesList = useSelector((state: State) => state.frames.frames);
   const nextFrame = useSelector((state: State) => state.frames.nextFrame);
 
@@ -129,19 +128,17 @@ function AnimationCanvas() {
 
   // Get bg from db
   useEffect(() => {
-    const getBg = async () => {
-      const url = await getDownloadURL(storageRef(storage, 'download.jpeg'))
-      if (url) {
-        const img = new Image();
-        img.src = url
-        img.onload = () => {
-          viewportRef.current.fillPatternImage(img)
-          viewportRef.current.fillPatternScale({x: VIEWPORT_WIDTH/img.width, y: VIEWPORT_HEIGHT/img.height})
-        };
-      }
-    };
-    getBg();
-  }, [])
+    if(!currentFrameBgUrl) return
+
+    if (currentFrameBgUrl) {
+      const img = new Image();
+      img.src = currentFrameBgUrl
+      img.onload = () => {
+        viewportRef.current.fillPatternImage(img)
+        viewportRef.current.fillPatternScale({x: VIEWPORT_WIDTH/img.width, y: VIEWPORT_HEIGHT/img.height})
+      };
+    }
+  }, [currentFrameBgUrl])
 
 
 

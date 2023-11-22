@@ -15,6 +15,7 @@ export interface SidebarsState {
   isSpritesOpen: boolean,
   isFramesOpen: boolean,
   isPropertiesOpen: boolean,
+  backgrounds?: Array<any>,
 }
 
 export const sidebars = (state: SidebarsState = initialState, action: Action): SidebarsState => {
@@ -34,6 +35,11 @@ export const sidebars = (state: SidebarsState = initialState, action: Action): S
       return {
         ...state,
         isFramesOpen: !state.isFramesOpen,
+      }
+    case Actions.LOAD_BACKGROUNDS:
+      return {
+        ...state,
+        backgrounds: action.payload as Array<any>,
       }
     default:
       return state

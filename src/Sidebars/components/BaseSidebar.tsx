@@ -65,7 +65,7 @@ export default function BaseSidebar({isOpen, toggleOpen, children, iconRenderer,
     }
   }
 
-  const marginStyle = anchor === 'left' ? {marginRight: 24} : (anchor === 'right' ? {marginLeft: 40} : {marginTop: 0})
+  const marginStyle = anchor === 'left' ? {marginRight: 40} : (anchor === 'right' ? {marginLeft: 40} : {marginTop: 0})
 
   return <>
     <div
