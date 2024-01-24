@@ -39,7 +39,10 @@ export const sidebars = (state: SidebarsState = initialState, action: Action): S
     case Actions.LOAD_BACKGROUNDS:
       return {
         ...state,
-        backgrounds: action.payload as Array<any>,
+        backgrounds: [
+          ...state.backgrounds || [],
+          ...action.payload as Array<any>,
+        ]
       }
     default:
       return state

@@ -128,8 +128,7 @@ function AnimationCanvas() {
 
   // Get bg from db
   useEffect(() => {
-    if(!currentFrameBgUrl) return
-
+    console.log('currentFrameBgUrl', currentFrameBgUrl)
     if (currentFrameBgUrl) {
       const img = new Image();
       img.src = currentFrameBgUrl
@@ -447,6 +446,7 @@ function AnimationCanvas() {
                     shadowOffset={{x: 10, y: 10}}
                     shadowOpacity={0.1}
                     fillPatternRepeat="no-repeat"
+                    fill={ currentFrameBgUrl ? undefined : 'white' }
                   />
                   {sprites.map((s: Sprite) => {
                     shapeRefs.current[s.id] = React.createRef();
