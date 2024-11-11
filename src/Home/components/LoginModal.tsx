@@ -1,3 +1,5 @@
+"use client"
+
 import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, Grid, Link, TextField, Typography, useTheme } from "@mui/material";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import React, { useState } from 'react';

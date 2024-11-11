@@ -3,7 +3,8 @@ import { AppBar, Box, Button, IconButton, TextField, Toolbar, Typography, useThe
 import { ref, update } from 'firebase/database';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { db } from '../../firebase-config';
 import { recomputeFrames, updatePresentationTitle } from '../../Frames/actions';
 import { toggleModal } from '../../Presentation/actions';
@@ -15,7 +16,7 @@ import State from '../../stateInterface';
 const CanvasHeader = () => {
   const theme = useTheme()
   const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const router = useRouter()
   const presentationTitle = useSelector((state: State) => state.frames.title)
   const isFramesSaving = useSelector((state: State) => state.frames.isFramesSaving)
   const [isTitleEditing, setIsTitleEditing] = useState(false)
@@ -68,7 +69,7 @@ const CanvasHeader = () => {
           )}
           <Typography variant='body2' sx={{ml: 3}}>{isFramesSaving ? 'Saving...' : 'Up to date'}</Typography>
         </Box>
-        <Button color="inherit" onClick={() => navigate('/')}>HOME</Button>
+        <Button color="inherit" onClick={() => router.push('/')}>HOME</Button>
         <Button color="inherit" onClick={() => dispatch(toggleModal(true))}>PREVIEW</Button>
         <Button color="inherit" onClick={() => dispatch(recomputeFrames())}> Recompute Frames </Button>
         <Button color="inherit" onClick={() => {navigator.clipboard.writeText(`${window.location.origin}/present/${presentationId}`)}}>Get presentation link</Button>

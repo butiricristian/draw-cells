@@ -1,25 +1,33 @@
+"use client"
+
 import { Edit } from '@mui/icons-material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { Button, Card, CardActions, CardContent, CircularProgress, Container, Grid, Stack, Typography } from '@mui/material'
 import { child, get, push, ref, remove, set } from 'firebase/database'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/navigation'
 import { db } from '../../firebase-config'
 import State from '../../stateInterface'
+
+export const getServerSideProps = async () => {
+  return {
+    props: {}
+  }
+}
 
 export default function PresentationsList() {
   const user = useSelector((state: State) => state.home.user)
   const [isPresentationsLoading, setIsPresentationsLoading] = useState(false)
   const [presentations, setPresentations] = useState({})
-  const navigate = useNavigate()
+  const router = useRouter()
 
   const handleNewPresentation = async () => {
     if(!user) return
     const newPresKey = push(child(ref(db), 'presentations')).key
     set(ref(db, `/presentations/${newPresKey}`), {user_id: user.uid, title: 'New Presentation'})
     set(ref(db, `/user-presentations/${user.uid}/${newPresKey}`), {title: 'New Presentation'})
-    navigate(`/presentations/${newPresKey}`)
+    router.push(`/presentations/${newPresKey}`)
   }
 
   useEffect(() => {
@@ -64,7 +72,7 @@ export default function PresentationsList() {
                 </CardContent>
                 <CardActions>
                   <Stack direction="row-reverse" spacing={2} width="100%">
-                    <Button variant="contained" onClick={() => navigate(`/presentations/${id}`)} startIcon={<Edit fontSize="small" />}>
+                    <Button variant="contained" onClick={() => router.push(`/presentations/${id}`)} startIcon={<Edit fontSize="small" />}>
                       Edit
                     </Button>
                     <Button variant="outlined" color='error' onClick={() => deletePresentation(id)} startIcon={<DeleteIcon fontSize="small" />}>

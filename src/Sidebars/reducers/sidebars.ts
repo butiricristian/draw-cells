@@ -1,3 +1,4 @@
+import { PayloadAction } from '@reduxjs/toolkit'
 import { Actions } from '../actions'
 
 const initialState: SidebarsState = {
@@ -6,18 +7,13 @@ const initialState: SidebarsState = {
   isPropertiesOpen: false,
 }
 
-interface Action {
-  type: string,
-  payload: object,
-}
-
 export interface SidebarsState {
   isSpritesOpen: boolean,
   isFramesOpen: boolean,
   isPropertiesOpen: boolean,
 }
 
-export const sidebars = (state: SidebarsState = initialState, action: Action): SidebarsState => {
+export const sidebars = (state: SidebarsState = initialState, action: PayloadAction<any>): SidebarsState => {
   const {type} = action
   switch(type){
     case Actions.TOGGLE_SPRITES:

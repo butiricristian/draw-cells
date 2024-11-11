@@ -1,3 +1,5 @@
+"use client"
+
 import { useSelector } from "react-redux";
 import HomeHeader from "../../Header/components/HomeHeader";
 import State from "../../stateInterface";

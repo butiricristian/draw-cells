@@ -4,10 +4,10 @@ import { signOut } from 'firebase/auth';
 import { child, push, ref, set } from 'firebase/database';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../../firebase-config';
 import { toggleLoginModalOpen } from '../../Home/reducers';
 import State from '../../stateInterface';
+import { redirect } from 'next/navigation';
 
 // interface HeaderProps {
 // }
@@ -15,7 +15,6 @@ import State from '../../stateInterface';
 const HomeHeader = () => {
   const theme = useTheme()
   const dispatch = useDispatch()
-  const navigate = useNavigate()
   const user = useSelector((state: State) => state.home.user)
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -36,7 +35,7 @@ const HomeHeader = () => {
     const newPresKey = push(child(ref(db), 'presentations')).key
     set(ref(db, `/presentations/${newPresKey}`), {user_id: user.uid, title: 'New Presentation'})
     set(ref(db, `/user-presentations/${user.uid}/${newPresKey}`), {title: 'New Presentation'})
-    navigate(`/presentations/${newPresKey}`)
+    redirect(`/presentations/${newPresKey}`)
   }
 
   return (
