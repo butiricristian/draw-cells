@@ -5,13 +5,13 @@ import React, { useEffect } from "react";
 import { db } from "../../../src/firebase-config";
 import dynamic from "next/dynamic";
 
-const PresentationContainer = dynamic(
-  () => import("../../../src/Presentation/components/PresentationContainer"),
+const AnimationCanvasContainer = dynamic(
+  () => import("../../../src/Canvas/components/AnimationCanvas"),
   { ssr: false }
 );
 
-const PresentationPage = async ({ params }: { params: { id: string } }) => {
-  return <PresentationContainer presentationId={params.id} />;
+const CanvasPage = async ({ params }: { params: { id: string } }) => {
+  return <AnimationCanvasContainer />;
 };
 
-export default PresentationPage;
+export default CanvasPage;

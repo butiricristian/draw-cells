@@ -1,19 +1,19 @@
 import React from "react";
 
-import { ReactComponent as BCell1 } from "./assets/cells/b_cell_1.svg";
-import { ReactComponent as Basophil } from "./assets/cells/basophil.svg";
-import { ReactComponent as DendriticCell1 } from "./assets/cells/dendritic_cell_1.svg";
-import { ReactComponent as DendriticCell2 } from "./assets/cells/dendritic_cell_2.svg";
-import { ReactComponent as TCell1 } from "./assets/cells/t_cell_1.svg";
-import { ReactComponent as TCell2 } from "./assets/cells/t_cell_2.svg";
-import { ReactComponent as Fibroblast1 } from "./assets/cells/fibroblast_1.svg";
-import { ReactComponent as Macrophage1 } from "./assets/cells/macrophage_1.svg";
-import { ReactComponent as MhcClassI } from "./assets/cells/mhc_class_i.svg";
-import { ReactComponent as MhcClassII } from "./assets/cells/mhc_class_ii.svg";
-import { ReactComponent as Monocyte } from "./assets/cells/monocyte.svg";
-import { ReactComponent as NaturalKillerCell2 } from "./assets/cells/natural_killer_cell_2.svg";
-import { ReactComponent as NaturalKillerCell } from "./assets/cells/natural_killer_cell.svg";
-import { ReactComponent as Neutrophil } from "./assets/cells/neutrophil.svg";
+import BCell1 from "./assets/cells/b_cell_1.svg";
+import Basophil from "./assets/cells/basophil.svg";
+import DendriticCell1 from "./assets/cells/dendritic_cell_1.svg";
+import DendriticCell2 from "./assets/cells/dendritic_cell_2.svg";
+import TCell1 from "./assets/cells/t_cell_1.svg";
+import TCell2 from "./assets/cells/t_cell_2.svg";
+import Fibroblast1 from "./assets/cells/fibroblast_1.svg";
+import Macrophage1 from "./assets/cells/macrophage_1.svg";
+import MhcClassI from "./assets/cells/mhc_class_i.svg";
+import MhcClassII from "./assets/cells/mhc_class_ii.svg";
+import Monocyte from "./assets/cells/monocyte.svg";
+import NaturalKillerCell2 from "./assets/cells/natural_killer_cell_2.svg";
+import NaturalKillerCell from "./assets/cells/natural_killer_cell.svg";
+import Neutrophil from "./assets/cells/neutrophil.svg";
 // import SvgInline from './Sprites/SvgInline'
 
 export const rightDrawerWidth = 300;
