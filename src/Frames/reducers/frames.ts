@@ -596,7 +596,10 @@ export const frames = (
       return { ...state };
     }
     case Actions.ADD_FRAME: {
-      const newFrames = computeNewFrames([...state.frames, payload], payload);
+      const newFrames = computeNewFrames(
+        [...structuredClone(state.frames), payload],
+        payload
+      );
       const crtFrame =
         state.frames.find((f) => f.id === payload) || initialState.frames[0];
       const nextFrame = computeNextFrame(

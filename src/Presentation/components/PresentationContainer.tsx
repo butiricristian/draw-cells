@@ -24,7 +24,7 @@ const SCALE = Math.min(
 const PresentationContainer = ({
   presentationId,
 }: {
-  presentationId: string;
+  presentationId?: string;
 }) => {
   const currentFrame = useSelector((state: State) => state.frames.currentFrame);
   const prevFrame = useSelector((state: State) => state.frames.prevFrame);
@@ -38,9 +38,14 @@ const PresentationContainer = ({
   const dispatch = useDispatch();
 
   useEffect(() => {
-    get(ref(db, `presentations/${presentationId}`)).then((res) =>
-      dispatch(loadInitialData(res.val()))
-    );
+    if (!presentationId) {
+      return;
+    }
+
+    get(ref(db, `presentations/${presentationId}`)).then((res) => {
+      console.log("Pres container", res.val());
+      dispatch(loadInitialData(res.val()));
+    });
   }, [presentationId]);
 
   return (

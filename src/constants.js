@@ -1,19 +1,19 @@
 import React from "react";
 
-import BCell1 from "/src/assets/cells/b_cell_1.svg";
-import Basophil from "/src/assets/cells/basophil.svg";
-import DendriticCell1 from "./assets/cells/dendritic_cell_1.svg";
-import DendriticCell2 from "./assets/cells/dendritic_cell_2.svg";
-import TCell1 from "./assets/cells/t_cell_1.svg";
-import TCell2 from "./assets/cells/t_cell_2.svg";
-import Fibroblast1 from "./assets/cells/fibroblast_1.svg";
-import Macrophage1 from "./assets/cells/macrophage_1.svg";
-import MhcClassI from "./assets/cells/mhc_class_i.svg";
-import MhcClassII from "./assets/cells/mhc_class_ii.svg";
-import Monocyte from "./assets/cells/monocyte.svg";
-import NaturalKillerCell2 from "./assets/cells/natural_killer_cell_2.svg";
-import NaturalKillerCell from "./assets/cells/natural_killer_cell.svg";
-import Neutrophil from "./assets/cells/neutrophil.svg";
+import BCell1 from "../public/assets/cells/b_cell_1.svg";
+import Basophil from "../public/assets/cells/basophil.svg";
+import DendriticCell1 from "../public/assets/cells/dendritic_cell_1.svg";
+import DendriticCell2 from "../public/assets/cells/dendritic_cell_2.svg";
+import TCell1 from "../public/assets/cells/t_cell_1.svg";
+import TCell2 from "../public/assets/cells/t_cell_2.svg";
+import Fibroblast1 from "../public/assets/cells/fibroblast_1.svg";
+import Macrophage1 from "../public/assets/cells/macrophage_1.svg";
+import MhcClassI from "../public/assets/cells/mhc_class_i.svg";
+import MhcClassII from "../public/assets/cells/mhc_class_ii.svg";
+import Monocyte from "../public/assets/cells/monocyte.svg";
+import NaturalKillerCell2 from "../public/assets/cells/natural_killer_cell_2.svg";
+import NaturalKillerCell from "../public/assets/cells/natural_killer_cell.svg";
+import Neutrophil from "../public/assets/cells/neutrophil.svg";
 // import SvgInline from './Sprites/SvgInline'
 
 export const rightDrawerWidth = 300;

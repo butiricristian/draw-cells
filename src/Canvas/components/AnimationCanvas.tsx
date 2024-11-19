@@ -7,7 +7,6 @@ import { DndProvider, useDrop, XYCoord } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Layer, Rect, Stage, Transformer } from "react-konva";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
 import {
   leftDrawerWidth,
   OFFSET,
@@ -37,6 +36,7 @@ import { zoomIn, zoomOut } from "../actions";
 import AnimationCanvasPreview from "./AnimationCanvasPreview";
 import ContextMenu from "./ContextMenu";
 import { CustomDragLayer } from "./CustomDragLayer";
+import { useParams } from "next/navigation";
 
 export default function AnimationCanvasContainer() {
   return (
@@ -94,7 +94,8 @@ function AnimationCanvas() {
   const smallDrawerWidth: number = parseInt(theme.spacing(6).replace("px", ""));
   const headerHeight: number = parseInt(theme.spacing(8).replace("px", ""));
 
-  const { presentationId } = useParams();
+  const { id: presentationId } = useParams();
+  console.log("presentationId: ", presentationId);
 
   // LOADING FROM DB
   const [isLoading, setIsLoading] = useState(false);
@@ -102,6 +103,7 @@ function AnimationCanvas() {
     setIsLoading(true);
     const getData = async () => {
       const res = await get(ref(db, `presentations/${presentationId}`));
+      console.log("received data: ", res.val());
       dispatch(loadInitialData(res.val()));
       setIsLoading(false);
 

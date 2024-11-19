@@ -1,39 +1,83 @@
-import { Button, Grid, Stack, Typography } from '@mui/material'
-import React from 'react'
-import { useDispatch } from 'react-redux'
-import { toggleLoginModalOpen } from '../reducers'
-import Image from 'next/image'
-import macbookPng from '../../assets/macbook_mock.png'
+import { Button, Grid, Stack, Typography } from "@mui/material";
+import React from "react";
+import { useDispatch } from "react-redux";
+import { toggleLoginModalOpen } from "../reducers";
+import Image from "next/image";
 
-export default function Landing(){
-  const dispatch = useDispatch()
+export default function Landing() {
+  const dispatch = useDispatch();
 
   const handleLogin = () => {
-    dispatch(toggleLoginModalOpen(true))
-  }
+    dispatch(toggleLoginModalOpen(true));
+  };
 
   return (
-    <Grid container sx={{height: 'calc(100vh - 70px)'}} spacing={4}>
+    <Grid container sx={{ height: "calc(100vh - 70px)" }} spacing={4}>
       <Grid item xs={12} lg={5}>
-        <Stack sx={{height: "80%", pl: 10, pr: 10, pt: 20}}>
-          <Typography variant="h1" fontWeight={600} style={{lineHeight: 1, wordWrap: 'initial'}}>Draw Cells</Typography>
-          <Typography variant="h4" color="GrayText" fontWeight={300}>Give life to your cells</Typography>
-          <Grid container spacing={2} sx={{mt: 4}}>
-            <Grid item xs={12} sm={6}><Button fullWidth variant="contained" size="large" onClick={handleLogin}>Sign up</Button></Grid>
-            <Grid item xs={12} sm={6}><Button fullWidth variant="outlined" size="large" onClick={handleLogin}>Log in</Button></Grid>
+        <Stack sx={{ height: "80%", pl: 10, pr: 10, pt: 20 }}>
+          <Typography
+            variant="h1"
+            fontWeight={600}
+            style={{ lineHeight: 1, wordWrap: "initial" }}
+          >
+            Draw Cells
+          </Typography>
+          <Typography variant="h4" color="GrayText" fontWeight={300}>
+            Give life to your cells
+          </Typography>
+          <Grid container spacing={2} sx={{ mt: 4 }}>
+            <Grid item xs={12} sm={6}>
+              <Button
+                fullWidth
+                variant="contained"
+                size="large"
+                onClick={handleLogin}
+              >
+                Sign up
+              </Button>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Button
+                fullWidth
+                variant="outlined"
+                size="large"
+                onClick={handleLogin}
+              >
+                Log in
+              </Button>
+            </Grid>
           </Grid>
         </Stack>
       </Grid>
       <Grid item xs={12} lg={7}>
-        <Stack alignItems="center" justifyContent="center" sx={{height: '100%'}}>
-          <div style={{position: 'relative', width: '100%', height:'100%'}}>
-            <Image src={macbookPng} alt="Macbook Animation" fill objectFit='contain' />
-            <video controls style={{position: 'absolute', left: '16.15%', top: '24.8%', width: '67.7%', height: '46.2%', backgroundColor: '#111'}}>
-              <source src="assets/animation_sample_1.mp4" type="video/mp4"/>
+        <Stack
+          alignItems="center"
+          justifyContent="center"
+          sx={{ height: "100%" }}
+        >
+          <div style={{ position: "relative", width: "100%", height: "100%" }}>
+            <Image
+              src="/assets/macbook_mock.png"
+              alt="Macbook Animation"
+              fill
+              objectFit="contain"
+            />
+            <video
+              controls
+              style={{
+                position: "absolute",
+                left: "16.15%",
+                top: "24.8%",
+                width: "67.7%",
+                height: "46.2%",
+                backgroundColor: "#111",
+              }}
+            >
+              <source src="assets/animation_sample_1.mp4" type="video/mp4" />
             </video>
           </div>
         </Stack>
       </Grid>
     </Grid>
-  )
+  );
 }
