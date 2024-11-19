@@ -5,10 +5,7 @@ import { useDrag } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
 import { useDispatch, useSelector } from "react-redux";
 import { SPRITE_TO_SVG_ELEMENT_MAP } from "../constants";
-import {
-  addCurrentSprite,
-  setCurrentSprite,
-} from "../Frames/actions";
+import { addCurrentSprite, setCurrentSprite } from "../Frames/actions";
 
 const initialState = {
   mouseX: null,
@@ -94,8 +91,6 @@ export default function BaseSprite({
     preview(getEmptyImage(), { captureDraggingState: true });
   }, [preview]);
 
-  const spriteToSvgMap = SPRITE_TO_SVG_ELEMENT_MAP;
-
   return (
     <div
       ref={canvasSpriteDrag}
@@ -116,7 +111,7 @@ export default function BaseSprite({
         onContextMenu={handleClick}
         onClick={(e) => handleSelectSprite(e)}
       >
-        {backgroundUrl && spriteToSvgMap[backgroundUrl]}
+        {backgroundUrl && SPRITE_TO_SVG_ELEMENT_MAP[backgroundUrl]}
       </div>
     </div>
   );

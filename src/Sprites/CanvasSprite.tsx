@@ -1,22 +1,36 @@
-import React from 'react'
-import { Image } from 'react-konva'
+"use client";
 
-const CanvasSprite = React.forwardRef(({spriteId, onSelect, onChange, ...shapeProps}: any, ref: any) => {
-  const img = new window.Image()
-  img.src = require(`../assets/cells/${shapeProps.backgroundUrl}.svg`)
+import React from "react";
+import { Image } from "react-konva";
 
-  return (
-    <React.Fragment>
-      <Image
-        spriteId={spriteId}
-        image={img}
-        onClick={onSelect}
-        onTap={onSelect}
-        ref={ref}
-        {...shapeProps}
-      />
-    </React.Fragment>
-  )
-})
+const CanvasSprite = React.forwardRef(
+  ({ spriteId, onSelect, onChange, ...shapeProps }: any, ref: any) => {
+    const [image, setImage] = React.useState<HTMLImageElement | null>(null);
 
-export default CanvasSprite
+    React.useEffect(() => {
+      const img = new window.Image();
+      img.src = `/assets/cells/${shapeProps.backgroundUrl}.svg`;
+      img.onload = () => setImage(img);
+      img.onerror = (err) => console.error("Error loading image", err);
+    }, [shapeProps.backgroundUrl]);
+
+    if (!image) {
+      return null;
+    }
+
+    return (
+      <React.Fragment>
+        <Image
+          spriteId={spriteId}
+          image={image}
+          onClick={onSelect}
+          onTap={onSelect}
+          ref={ref}
+          {...shapeProps}
+        />
+      </React.Fragment>
+    );
+  }
+);
+
+export default CanvasSprite;
