@@ -2,11 +2,11 @@
 
 import { get, ref } from "firebase/database";
 import React, { useEffect } from "react";
-import { db } from "../../../src/firebase-config";
+import { db } from "../../../../src/firebase-config";
 import dynamic from "next/dynamic";
 
 const PresentationContainer = dynamic(
-  () => import("../../../src/Presentation/components/PresentationContainer"),
+  () => import("../../../../src/Presentation/components/PresentationContainer"),
   { ssr: false }
 );
 
