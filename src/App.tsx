@@ -1,17 +1,17 @@
-"use client"
+"use client";
 
-import { createTheme } from '@mui/material';
-import { ThemeProvider } from '@mui/styles';
-import { onAuthStateChanged } from 'firebase/auth';
-import React from 'react';
-import { Provider } from 'react-redux';
-import { canvas } from './Canvas/reducers/canvas';
-import { auth } from './firebase-config';
-import { frames } from './Frames/reducers/frames';
-import homeReducer, { setUser } from './Home/reducers';
-import { presentations } from './Presentation/reducers/presentations';
-import { sidebars } from './Sidebars/reducers/sidebars';
-import { configureStore, PayloadAction } from '@reduxjs/toolkit';
+import { createTheme } from "@mui/material";
+import { ThemeProvider } from "@mui/styles";
+import { onAuthStateChanged } from "firebase/auth";
+import React from "react";
+import { Provider } from "react-redux";
+import { canvas } from "./Canvas/reducers/canvas";
+import { auth } from "./firebase-config";
+import { frames } from "./Frames/reducers/frames";
+import homeReducer, { setUser } from "./Home/reducers";
+import { presentations } from "./Presentation/reducers/presentations";
+import { sidebars } from "./Sidebars/reducers/sidebars";
+import { configureStore, PayloadAction } from "@reduxjs/toolkit";
 
 const store = configureStore<any, PayloadAction<any>, any>({
   reducer: {
@@ -19,22 +19,26 @@ const store = configureStore<any, PayloadAction<any>, any>({
     frames,
     presentations,
     canvas,
-    home: homeReducer
-  }
-})
+    home: homeReducer,
+  },
+});
 
-function App({children}: {children?: React.ReactNode}) {
-  const theme = createTheme({})
+function App({ children }: { children?: React.ReactNode }) {
+  const theme = createTheme({});
 
   onAuthStateChanged(auth, (user) => {
-    store.dispatch(setUser(user))
-  })
+    store.dispatch(
+      setUser({
+        uid: user?.uid,
+        displayName: user?.displayName,
+        email: user?.email,
+      })
+    );
+  });
 
   return (
     <ThemeProvider theme={theme}>
-      <Provider store={store}>
-        {children}
-      </Provider>
+      <Provider store={store}>{children}</Provider>
     </ThemeProvider>
   );
 }

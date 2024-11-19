@@ -1,7 +1,7 @@
 import React from "react";
 
-import BCell1 from "./assets/cells/b_cell_1.svg";
-import Basophil from "./assets/cells/basophil.svg";
+import BCell1 from "/src/assets/cells/b_cell_1.svg";
+import Basophil from "/src/assets/cells/basophil.svg";
 import DendriticCell1 from "./assets/cells/dendritic_cell_1.svg";
 import DendriticCell2 from "./assets/cells/dendritic_cell_2.svg";
 import TCell1 from "./assets/cells/t_cell_1.svg";

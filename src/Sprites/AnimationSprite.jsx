@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { animated, to, useSpring } from "@react-spring/konva";
 
 function getCurrentAndPrevSprite(animationProps) {
@@ -158,8 +158,13 @@ export default function AnimationSprite(props) {
     animationProps = { ...animationProps, x: position.x, y: position.y };
   }
 
-  const img = new window.Image();
-  img.src = require(`../assets/cells/${backgroundUrl}.svg`);
+  const [img, setImg] = React.useState(null);
+
+  useEffect(() => {
+    const newImg = new window.Image();
+    newImg.src = `/assets/cells/${backgroundUrl}.svg`;
+    newImg.onload = () => setImg(newImg);
+  });
 
   return (
     <animated.Group width={width} height={height} {...animationProps}>

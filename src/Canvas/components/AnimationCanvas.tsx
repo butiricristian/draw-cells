@@ -1,3 +1,5 @@
+"use client";
+
 import { CircularProgress, useTheme } from "@mui/material";
 import { get, ref, update } from "firebase/database";
 import React, { useEffect, useRef, useState } from "react";
@@ -76,6 +78,7 @@ function AnimationCanvas() {
   );
   const scale = useSelector((state: State) => state.canvas.scale);
   const canvasContainer = useRef<any>(null);
+  const dndContainerRef = useRef<any>(null);
 
   const currentFrameId = useSelector(
     (state: State) => state.frames.currentFrame.id
@@ -112,7 +115,9 @@ function AnimationCanvas() {
           OFFSET * 2 -
           (window.innerHeight - smallDrawerWidth - headerHeight)) /
         2;
-      scrollContainerRef.current.scrollTo(scrollX, scrollY);
+      if (scrollContainerRef.current) {
+        scrollContainerRef.current.scrollTo(scrollX, scrollY);
+      }
     };
     getData();
   }, [presentationId, headerHeight, smallDrawerWidth, dispatch]);
@@ -133,25 +138,25 @@ function AnimationCanvas() {
   }, [framesList, presentationId, dispatch]);
 
   // SAVE FRAME PREVIEW
-  useEffect(() => {
-    if (isAnimationPreviewModalOpen) return;
-    const t = setTimeout(async () => {
-      if (!stageRef.current) return;
+  // useEffect(() => {
+  //   if (isAnimationPreviewModalOpen) return;
+  //   const t = setTimeout(async () => {
+  //     if (!stageRef.current) return;
 
-      const viewportImg = await stageRef.current.toDataURL({
-        pixelRatio: 3,
-        x: VIEWPORT_WIDTH - OFFSET - 5,
-        y: VIEWPORT_HEIGHT - OFFSET / 2 + 30,
-        width: VIEWPORT_WIDTH,
-        height: VIEWPORT_HEIGHT,
-      });
-      if (currentFrameId)
-        dispatch(setFramePreview(currentFrameId, viewportImg));
-    }, 50);
-    return () => {
-      clearTimeout(t);
-    };
-  }, [sprites, currentFrameId, isAnimationPreviewModalOpen, dispatch]);
+  //     const viewportImg = await stageRef.current.toDataURL({
+  //       pixelRatio: 3,
+  //       x: VIEWPORT_WIDTH - OFFSET - 5,
+  //       y: VIEWPORT_HEIGHT - OFFSET / 2 + 30,
+  //       width: VIEWPORT_WIDTH,
+  //       height: VIEWPORT_HEIGHT,
+  //     });
+  //     if (currentFrameId)
+  //       dispatch(setFramePreview(currentFrameId, viewportImg));
+  //   }, 200);
+  //   return () => {
+  //     clearTimeout(t);
+  //   };
+  // }, [sprites, currentFrameId, isAnimationPreviewModalOpen, dispatch]);
 
   // STYLING
   const canvasWidth = `calc(100vw - ${
@@ -230,6 +235,7 @@ function AnimationCanvas() {
       }
     },
   });
+  drop(dndContainerRef);
 
   // RESIZE BY CMD + SCROLL
   const [prevDelta, setPrevDelta] = useState(0);
@@ -403,7 +409,11 @@ function AnimationCanvas() {
           style={scrollContainerStyle}
           ref={scrollContainerRef}
         >
-          <div id="large-container" style={largeContainerStyle} ref={drop}>
+          <div
+            id="large-container"
+            style={largeContainerStyle}
+            ref={dndContainerRef}
+          >
             <div
               id="container"
               style={{
@@ -411,103 +421,105 @@ function AnimationCanvas() {
                 cursor: cursor,
               }}
             >
-              <Stage
-                width={2 * VIEWPORT_WIDTH + 2 * OFFSET}
-                height={2 * VIEWPORT_HEIGHT + 2 * OFFSET}
-                ref={stageRef}
-                onClick={(e: any) => {
-                  const emptySpace =
-                    e.target === e.target.getStage() ||
-                    e.target === viewportRef.current;
-                  if (!emptySpace) return;
+              <React.Suspense>
+                <Stage
+                  width={2 * VIEWPORT_WIDTH + 2 * OFFSET}
+                  height={2 * VIEWPORT_HEIGHT + 2 * OFFSET}
+                  ref={stageRef}
+                  onClick={(e: any) => {
+                    const emptySpace =
+                      e.target === e.target.getStage() ||
+                      e.target === viewportRef.current;
+                    if (!emptySpace) return;
 
-                  dispatch(unselectAllSprites());
-                }}
-                onContextMenu={handleContextMenu}
-                scale={{ x: scale, y: scale }}
-                x={stagePosition.x}
-                y={stagePosition.y}
-                offsetX={-(VIEWPORT_WIDTH / 2 + OFFSET) * (1 / scale)}
-                offsetY={-(VIEWPORT_HEIGHT / 2 + OFFSET) * (1 / scale)}
-                // style={{backgroundColor: 'white'}}
-              >
-                <Layer>
-                  <Rect
-                    ref={viewportRef}
-                    x={0}
-                    y={0}
-                    stroke={"#eaeaea"}
-                    strokeWidth={1}
-                    width={VIEWPORT_WIDTH}
-                    height={VIEWPORT_HEIGHT}
-                    fill="white"
-                    shadowColor="#555"
-                    shadowBlur={90}
-                    shadowOffset={{ x: 10, y: 10 }}
-                    shadowOpacity={0.1}
-                  />
-                  {sprites.map((s: Sprite) => {
-                    shapeRefs.current[s.id] = React.createRef();
-                    const nextFrameSprite = nextFrame?.sprites.find(
-                      (s2) => s2.id.toString() === s.id.toString()
-                    );
-                    const isSelected = selectedSprites.find(
-                      (s2) => s2.id.toString() === s.id.toString()
-                    );
-                    return (
-                      <React.Fragment key={s.id}>
-                        {isSelected && nextFrameSprite && (
-                          <AnimationCanvasPreview
-                            x1={s.position.x}
-                            y1={s.position.y}
-                            animationProps={s.animationProps}
-                            animationType={s.animationType}
-                            width1={s.width}
-                            height1={s.height}
-                            width2={nextFrameSprite.width}
-                            height2={nextFrameSprite.height}
-                          />
-                        )}
-                        <CanvasSprite
-                          backgroundUrl={s.backgroundUrl}
-                          x={s.position.x}
-                          y={s.position.y}
-                          width={s.width}
-                          height={s.height}
-                          rotation={s.rotation}
-                          onSelect={(e: MouseEvent) => {
-                            handleSelectSprite(e, s.id);
-                          }}
-                          ref={shapeRefs.current[s.id]}
-                          spriteId={s.id}
-                          onMouseEnter={() => setCursor("pointer")}
-                          onMouseLeave={() => setCursor("default")}
-                          offsetX={s.width / 2}
-                          offsetY={s.height / 2}
-                        />
-                      </React.Fragment>
-                    );
-                  })}
-                  {selectedSprites.length > 0 && (
-                    <Transformer
-                      ref={trRef}
-                      boundBoxFunc={(oldBox, newBox) => {
-                        // limit resize
-                        if (newBox.width < 5 || newBox.height < 5) {
-                          return oldBox;
-                        }
-                        return newBox;
-                      }}
-                      draggable
-                      shouldOverdrawWholeArea
-                      onDragEnd={handleDrag}
-                      onTransformEnd={handleTransform}
-                      onMouseEnter={() => setCursor("move")}
-                      onMouseLeave={() => setCursor("default")}
+                    dispatch(unselectAllSprites());
+                  }}
+                  onContextMenu={handleContextMenu}
+                  scale={{ x: scale, y: scale }}
+                  x={stagePosition.x}
+                  y={stagePosition.y}
+                  offsetX={-(VIEWPORT_WIDTH / 2 + OFFSET) * (1 / scale)}
+                  offsetY={-(VIEWPORT_HEIGHT / 2 + OFFSET) * (1 / scale)}
+                  // style={{backgroundColor: 'white'}}
+                >
+                  <Layer>
+                    <Rect
+                      ref={viewportRef}
+                      x={0}
+                      y={0}
+                      stroke={"#eaeaea"}
+                      strokeWidth={1}
+                      width={VIEWPORT_WIDTH}
+                      height={VIEWPORT_HEIGHT}
+                      fill="white"
+                      shadowColor="#555"
+                      shadowBlur={90}
+                      shadowOffset={{ x: 10, y: 10 }}
+                      shadowOpacity={0.1}
                     />
-                  )}
-                </Layer>
-              </Stage>
+                    {sprites.map((s: Sprite) => {
+                      shapeRefs.current[s.id] = React.createRef();
+                      const nextFrameSprite = nextFrame?.sprites.find(
+                        (s2) => s2.id.toString() === s.id.toString()
+                      );
+                      const isSelected = selectedSprites.find(
+                        (s2) => s2.id.toString() === s.id.toString()
+                      );
+                      return (
+                        <React.Fragment key={s.id}>
+                          {isSelected && nextFrameSprite && (
+                            <AnimationCanvasPreview
+                              x1={s.position.x}
+                              y1={s.position.y}
+                              animationProps={s.animationProps}
+                              animationType={s.animationType}
+                              width1={s.width}
+                              height1={s.height}
+                              width2={nextFrameSprite.width}
+                              height2={nextFrameSprite.height}
+                            />
+                          )}
+                          <CanvasSprite
+                            backgroundUrl={s.backgroundUrl}
+                            x={s.position.x}
+                            y={s.position.y}
+                            width={s.width}
+                            height={s.height}
+                            rotation={s.rotation}
+                            onSelect={(e: MouseEvent) => {
+                              handleSelectSprite(e, s.id);
+                            }}
+                            ref={shapeRefs.current[s.id]}
+                            spriteId={s.id}
+                            onMouseEnter={() => setCursor("pointer")}
+                            onMouseLeave={() => setCursor("default")}
+                            offsetX={s.width / 2}
+                            offsetY={s.height / 2}
+                          />
+                        </React.Fragment>
+                      );
+                    })}
+                    {selectedSprites.length > 0 && (
+                      <Transformer
+                        ref={trRef}
+                        boundBoxFunc={(oldBox, newBox) => {
+                          // limit resize
+                          if (newBox.width < 5 || newBox.height < 5) {
+                            return oldBox;
+                          }
+                          return newBox;
+                        }}
+                        draggable
+                        shouldOverdrawWholeArea
+                        onDragEnd={handleDrag}
+                        onTransformEnd={handleTransform}
+                        onMouseEnter={() => setCursor("move")}
+                        onMouseLeave={() => setCursor("default")}
+                      />
+                    )}
+                  </Layer>
+                </Stage>
+              </React.Suspense>
             </div>
           </div>
         </div>
