@@ -25,7 +25,8 @@ export const Actions = {
   SET_IS_FRAMES_SAVING: 'SET_IS_FRAMES_SAVING',
   SET_FRAME_PREVIEW: 'SET_FRAME_PREVIEW',
   SEND_SPRITE_TO_BACK: 'SEND_SPRITE_TO_BACK',
-  BRING_SPRITE_TO_FRONT: 'BRING_SPRITE_TO_FRONT'
+  BRING_SPRITE_TO_FRONT: 'BRING_SPRITE_TO_FRONT',
+  SET_CURRENT_FRAME_BACKGROUND: 'SET_CURRENT_FRAME_BACKGROUND',
 }
 
 export const loadInitialData = (payload: any) => ({
@@ -150,4 +151,9 @@ export const bringSpriteToFront = () => ({
 
 export const recomputeFrames = () => ({
   type: Actions.RECOMPUTE_FRAMES,
+})
+
+export const setCurrentFrameBackground = (background: string) => ({
+  type: Actions.SET_CURRENT_FRAME_BACKGROUND,
+  payload: background,
 })

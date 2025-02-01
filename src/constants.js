@@ -18,7 +18,7 @@ import Neutrophil from "../public/assets/cells/neutrophil.svg";
 
 export const rightDrawerWidth = 300;
 export const bottomDrawerHeight = 240;
-export const leftDrawerWidth = 150;
+export const leftDrawerWidth = 300;
 
 export const OFFSET = 200;
 export const VIEWPORT_WIDTH = 810;

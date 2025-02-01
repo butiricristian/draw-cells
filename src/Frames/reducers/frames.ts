@@ -53,6 +53,7 @@ export interface Frame {
   title: string;
   sprites: Array<Sprite>;
   preview?: any;
+  backgroundUrl?: string | undefined;
 }
 
 export interface FramesState {
@@ -851,6 +852,19 @@ export const frames = (
           ...state.currentFrame,
           sprites,
         },
+      };
+    }
+    case Actions.SET_CURRENT_FRAME_BACKGROUND: {
+      const newFrames = state.frames.map((x) =>
+        x.id === state.currentFrame.id ? { ...x, backgroundUrl: payload } : x
+      );
+      return {
+        ...state,
+        currentFrame: {
+          ...state.currentFrame,
+          backgroundUrl: payload,
+        },
+        frames: newFrames,
       };
     }
     default:
