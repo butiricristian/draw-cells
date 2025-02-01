@@ -17,7 +17,10 @@ export const toggleProperties = () => ({
   type: Actions.TOGGLE_PROPERTIES,
 });
 
-export const loadBackgrounds = (backgrounds) => ({
+export const loadBackgrounds = (payload: {
+  backgrounds: Array<any>;
+  hasEnded?: boolean;
+}) => ({
   type: Actions.LOAD_BACKGROUNDS,
-  payload: backgrounds,
+  payload,
 });

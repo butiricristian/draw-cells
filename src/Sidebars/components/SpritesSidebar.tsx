@@ -50,9 +50,7 @@ export default function SpritesSidebar() {
     (state: State) => state.sidebars.isSpritesOpen
   );
   const classes = useStyles();
-  const backgrounds = useSelector(
-    (state: State) => state.sidebars.backgrounds || []
-  );
+  const backgrounds = useSelector((state: State) => state.sidebars.backgrounds);
 
   const pageTokens = useRef<(string | undefined)[]>([]);
   const [page, setPage] = useState<number>(0);
@@ -62,7 +60,7 @@ export default function SpritesSidebar() {
   };
 
   useEffect(() => {
-    if (!isSpritesSidebarOpen) return;
+    if (!isSpritesSidebarOpen || backgrounds.hasEnded) return;
 
     const getBg = async () => {
       const currentToken = pageTokens.current?.shift();
@@ -71,14 +69,18 @@ export default function SpritesSidebar() {
         pageToken: currentToken,
       });
       pageTokens.current?.push(imageRefs.nextPageToken);
-      console.log(pageTokens.current);
       const images = await Promise.all<any>(
         imageRefs.items.map(async (itemRef) => {
           const url = await getDownloadURL(itemRef);
           return url;
         })
       );
-      dispatch(loadBackgrounds(images));
+      dispatch(
+        loadBackgrounds({
+          backgrounds: images,
+          hasEnded: !pageTokens.current[0],
+        })
+      );
     };
 
     getBg();
@@ -98,7 +100,7 @@ export default function SpritesSidebar() {
         }
         anchor="left"
       >
-        <Accordion className={classes.accordion}>
+        <Accordion elevation={0} className={classes.accordion}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             Sprites
           </AccordionSummary>
@@ -108,19 +110,19 @@ export default function SpritesSidebar() {
             ))}
           </div>
         </Accordion>
-        <Accordion className={classes.accordion}>
+        <Accordion elevation={0} className={classes.accordion}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             Background Images
           </AccordionSummary>
           <InfiniteScroll
-            dataLength={backgrounds?.length} //This is important field to render the next data
+            dataLength={backgrounds.list.length} //This is important field to render the next data
             next={handleNext}
-            hasMore={!!pageTokens.current[0]}
+            hasMore={!backgrounds?.hasEnded}
             loader={<CircularProgress />}
             height={500}
           >
             <div className={classes.backgroundsContainer}>
-              {backgrounds?.map((bg: any, index: number) => (
+              {backgrounds?.list?.map((bg: any, index: number) => (
                 <div
                   key={`bg-image-${index}`}
                   onClick={() => handleFrameBackground(bg)}
