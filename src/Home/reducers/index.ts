@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, Reducer } from "@reduxjs/toolkit";
 
 export interface HomeState {
   loginModalOpen: boolean,
@@ -10,8 +10,8 @@ const initialState: HomeState = {
   user: {}
 }
 
-const toggleLoginModalOpenReducer = (state: HomeState, action: PayloadAction<any>) => {
-  state.loginModalOpen = action.payload
+const toggleLoginModalOpenReducer = (state: HomeState, action: PayloadAction<boolean>) => {
+  state.loginModalOpen = action.payload as unknown as boolean
 }
 
 const setUserReducer = (state: HomeState, action: PayloadAction<any>) => {
@@ -23,7 +23,7 @@ const homeSlice = createSlice({
   initialState,
   reducers: {
     toggleLoginModalOpen: toggleLoginModalOpenReducer,
-    setUser: setUserReducer,
+    setUser: setUserReducer
   }
 })
 

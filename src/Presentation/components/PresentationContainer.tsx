@@ -1,16 +1,31 @@
+"use client";
+
 import { Button } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import { Layer, Stage } from "react-konva";
 import { useDispatch, useSelector } from "react-redux";
 import { VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "../../constants";
-import { nextAnimationFrame, prevAnimationFrame } from "../../Frames/actions";
+import {
+  loadInitialData,
+  nextAnimationFrame,
+  prevAnimationFrame,
+} from "../../Frames/actions";
 import { Sprite } from "../../Frames/reducers/frames";
 import AnimationSprite from "../../Sprites/AnimationSprite";
 import State from "../../stateInterface";
+import { get, ref } from "firebase/database";
+import { db } from "../../../src/firebase-config";
 
-const SCALE = Math.min((window.innerWidth - 250) / VIEWPORT_WIDTH, (window.innerHeight - 200) / VIEWPORT_HEIGHT);
+const SCALE = Math.min(
+  (window.innerWidth - 250) / VIEWPORT_WIDTH,
+  (window.innerHeight - 200) / VIEWPORT_HEIGHT
+);
 
-const PresentationContainer = ({ style }: any) => {
+const PresentationContainer = ({
+  presentationId,
+}: {
+  presentationId?: string;
+}) => {
   const currentFrame = useSelector((state: State) => state.frames.currentFrame);
   const prevFrame = useSelector((state: State) => state.frames.prevFrame);
 
@@ -22,16 +37,26 @@ const PresentationContainer = ({ style }: any) => {
 
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (!presentationId) {
+      return;
+    }
+
+    get(ref(db, `presentations/${presentationId}`)).then((res) => {
+      console.log("Pres container", res.val());
+      dispatch(loadInitialData(res.val()));
+    });
+  }, [presentationId]);
+
   return (
     <div
       style={{
         height: "calc(100% - 30px)",
         backgroundColor: "white",
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        ...style,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
       <div
@@ -40,7 +65,6 @@ const PresentationContainer = ({ style }: any) => {
           backgroundColor: "white",
           width: VIEWPORT_WIDTH * SCALE,
           height: VIEWPORT_HEIGHT * SCALE,
-          ...style,
         }}
       >
         <Stage
@@ -54,32 +78,40 @@ const PresentationContainer = ({ style }: any) => {
           }}
         >
           <Layer>
-            {currentFrame.sprites.concat(...spritesToRemove).map((s: Sprite) => (
-              <AnimationSprite
-                backgroundUrl={s.backgroundUrl}
-                id={s.id}
-                position={s.position}
-                key={`animation-${s.id}`}
-                animationType={s.animationType}
-                scale={s.scale}
-                // angle={s.angle}
-                opacity={s.opacity}
-                animationProps={s.animationProps}
-                duration={s.duration}
-                nrOfIterations={s.nrOfIterations}
-                // zIndex={s.zIndex}
-                width={s.width}
-                height={s.height}
-                rotation={s.rotation}
-                currentFrame={currentFrame}
-                prevFrame={prevFrame}
-                isRemoved={s.opacity === 0}
-              />
-            ))}
+            {currentFrame.sprites
+              .concat(...spritesToRemove)
+              .map((s: Sprite) => (
+                <AnimationSprite
+                  backgroundUrl={s.backgroundUrl}
+                  id={s.id}
+                  position={s.position}
+                  key={`animation-${s.id}`}
+                  animationType={s.animationType}
+                  scale={s.scale}
+                  // angle={s.angle}
+                  opacity={s.opacity}
+                  animationProps={s.animationProps}
+                  duration={s.duration}
+                  nrOfIterations={s.nrOfIterations}
+                  // zIndex={s.zIndex}
+                  width={s.width}
+                  height={s.height}
+                  rotation={s.rotation}
+                  currentFrame={currentFrame}
+                  prevFrame={prevFrame}
+                  isRemoved={s.opacity === 0}
+                />
+              ))}
           </Layer>
         </Stage>
-        </div>
-      <div style={{ display: "flex", justifyContent: "space-around", width: VIEWPORT_WIDTH }}>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-around",
+          width: VIEWPORT_WIDTH,
+        }}
+      >
         <Button
           variant="outlined"
           color="primary"
