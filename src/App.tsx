@@ -27,6 +27,11 @@ function App({ children }: { children?: React.ReactNode }) {
   const theme = createTheme({});
 
   onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      store.dispatch(setUser(null));
+      return;
+    }
+
     store.dispatch(
       setUser({
         uid: user?.uid,
