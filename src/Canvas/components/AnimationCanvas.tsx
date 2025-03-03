@@ -14,7 +14,7 @@ import {
   VIEWPORT_HEIGHT,
   VIEWPORT_WIDTH,
 } from "../../constants";
-import { db, storage } from "../../firebase-config";
+import { db } from "../../firebase-config";
 import {
   addCurrentSprite,
   addSprite,
@@ -150,6 +150,7 @@ function AnimationCanvas() {
     console.log("currentFrameBgUrl", currentFrameBgUrl);
     if (currentFrameBgUrl) {
       const img = new Image();
+      img.crossOrigin = "anonymous";
       img.src = currentFrameBgUrl;
       img.onload = () => {
         viewportRef.current.fillPatternImage(img);
@@ -162,25 +163,25 @@ function AnimationCanvas() {
   }, [currentFrameBgUrl]);
 
   // SAVE FRAME PREVIEW
-  // useEffect(() => {
-  //   if (isAnimationPreviewModalOpen) return;
-  //   const t = setTimeout(async () => {
-  //     if (!stageRef.current) return;
+  useEffect(() => {
+    if (isAnimationPreviewModalOpen) return;
+    const t = setTimeout(async () => {
+      if (!stageRef.current) return;
 
-  //     const viewportImg = await stageRef.current.toDataURL({
-  //       pixelRatio: 3,
-  //       x: VIEWPORT_WIDTH - OFFSET - 5,
-  //       y: VIEWPORT_HEIGHT - OFFSET / 2 + 30,
-  //       width: VIEWPORT_WIDTH,
-  //       height: VIEWPORT_HEIGHT,
-  //     });
-  //     if (currentFrameId)
-  //       dispatch(setFramePreview(currentFrameId, viewportImg));
-  //   }, 200);
-  //   return () => {
-  //     clearTimeout(t);
-  //   };
-  // }, [sprites, currentFrameId, isAnimationPreviewModalOpen, dispatch]);
+      const viewportImg = await stageRef.current.toDataURL({
+        pixelRatio: 3,
+        x: VIEWPORT_WIDTH - OFFSET - 5,
+        y: VIEWPORT_HEIGHT - OFFSET / 2 + 30,
+        width: VIEWPORT_WIDTH,
+        height: VIEWPORT_HEIGHT,
+      });
+      if (currentFrameId)
+        dispatch(setFramePreview(currentFrameId, viewportImg));
+    }, 200);
+    return () => {
+      clearTimeout(t);
+    };
+  }, [sprites, currentFrameId, isAnimationPreviewModalOpen, dispatch]);
 
   // STYLING
   const canvasWidth = `calc(100vw - ${
