@@ -10,6 +10,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  console.log("Using layout");
+
   return (
     <html lang="en">
       <body>

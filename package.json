@@ -20,6 +20,7 @@
     "@types/react-dom": "^17.0.6",
     "clsx": "^1.1.1",
     "firebase": "^11.0.1",
+    "firebase-admin": "^13.1.0",
     "html-to-image": "^1.7.0",
     "html2canvas": "^1.4.1",
     "konva": "^9.3.1",

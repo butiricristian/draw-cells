@@ -1,3 +1,5 @@
+const path = require("path");
+
 module.exports = {
   images: {
     localPatterns: [
@@ -16,6 +18,7 @@ module.exports = {
       test: /\.svg$/,
       use: ["@svgr/webpack"],
     });
+    config.resolve.alias["@"] = path.resolve(__dirname, "/");
 
     return config;
   },
