@@ -43,6 +43,7 @@ const HomeHeader = () => {
   const handleNewPresentation = () => {
     startTransition(async () => {
       const res = await createNewPresentation({ user });
+      console.log("handleNewPresentation", res);
       if (res) {
         router.push(`/presentations/${res.key}`);
       } else {

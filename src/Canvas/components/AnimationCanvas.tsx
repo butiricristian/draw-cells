@@ -99,7 +99,6 @@ function AnimationCanvas() {
   const headerHeight: number = parseInt(theme.spacing(8).replace("px", ""));
 
   const { id: presentationId } = useParams();
-  console.log("presentationId: ", presentationId);
 
   const viewportRef: any = React.useRef();
 
@@ -109,7 +108,6 @@ function AnimationCanvas() {
     setIsLoading(true);
     const getData = async () => {
       const res = await get(ref(db, `presentations/${presentationId}`));
-      console.log("received data: ", res.val());
       dispatch(loadInitialData(res.val()));
       setIsLoading(false);
 
@@ -138,7 +136,6 @@ function AnimationCanvas() {
         [`presentations/${presentationId}/frames`]: framesList,
       });
       dispatch(setIsFramesSaving(false));
-      console.log(res);
     }, 2000);
     return () => {
       clearTimeout(t);
@@ -147,7 +144,6 @@ function AnimationCanvas() {
 
   // Get bg from db
   useEffect(() => {
-    console.log("currentFrameBgUrl", currentFrameBgUrl);
     if (currentFrameBgUrl) {
       const img = new Image();
       img.crossOrigin = "anonymous";
