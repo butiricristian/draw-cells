@@ -476,7 +476,7 @@ function AnimationCanvas() {
                       fillPatternRepeat="no-repeat"
                       fill={currentFrameBgUrl ? undefined : "white"}
                     />
-                    {sprites.map((s: Sprite) => {
+                    {sprites?.map((s: Sprite) => {
                       shapeRefs.current[s.id] = React.createRef();
                       const nextFrameSprite = nextFrame?.sprites.find(
                         (s2) => s2.id.toString() === s.id.toString()
