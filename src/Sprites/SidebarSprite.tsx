@@ -1,5 +1,4 @@
-import { Typography } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
+import { Box, Typography } from "@mui/material";
 import React, { LegacyRef, useEffect, useState } from "react";
 import { useDrag } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
@@ -10,25 +9,10 @@ interface SidebarSpriteProps {
   name: string;
 }
 
-const useStyles = makeStyles({
-  sprite: {
-    width: 50,
-    height: 50,
-    cursor: "pointer",
-  },
-  spriteContainer: {
-    display: "flex",
-    alignItems: "center",
-    marginBottom: 5,
-    flexDirection: "column",
-  },
-});
-
 export default function SidebarSprite({
   backgroundUrl,
   name,
 }: SidebarSpriteProps) {
-  const classes = useStyles();
   const [ratio, setRatio] = useState(1);
 
   const [{ isDragging: isSquareDragging }, squareDrag, preview] = useDrag(
@@ -61,15 +45,22 @@ export default function SidebarSprite({
   const spriteToSvgMap: any = SPRITE_TO_SVG_ELEMENT_MAP;
 
   return (
-    <div className={classes.spriteContainer}>
-      <div
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        marginBottom: 1,
+        flexDirection: "column",
+      }}
+    >
+      <Box
         ref={squareDrag as any}
-        className={classes.sprite}
+        sx={{ width: 50, height: 50, cursor: "pointer" }}
         style={{ opacity: isSquareDragging ? 0.5 : 1 }}
       >
         {backgroundUrl && spriteToSvgMap[backgroundUrl]}
-      </div>
+      </Box>
       <Typography variant="body2">{name}</Typography>
-    </div>
+    </Box>
   );
 }
