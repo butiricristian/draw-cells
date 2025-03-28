@@ -12,7 +12,6 @@ import {
   Link,
   TextField,
   Typography,
-  useTheme,
 } from "@mui/material";
 import {
   createUserWithEmailAndPassword,
@@ -238,7 +237,6 @@ function LoginForm({ handleClose, toggleForm }: LoginFormProps) {
 export default function LoginModal() {
   const open = useSelector((state: State) => state.home.loginModalOpen);
   const dispatch = useDispatch();
-  const theme = useTheme();
   const [currentForm, setCurrentForm] = useState("sign_in");
 
   const handleClose = () => {
@@ -249,10 +247,8 @@ export default function LoginModal() {
     <Dialog open={open} onClose={handleClose}>
       <Grid container>
         <Grid
-          item
-          xs={0}
-          sm={6}
-          sx={{ backgroundColor: theme.palette.primary.main }}
+          size={{ xs: 0, sm: 6 }}
+          sx={{ bgcolor: "primary.main", color: "white" }}
         >
           <Grid
             container
@@ -260,7 +256,7 @@ export default function LoginModal() {
             justifyContent="center"
             sx={{ height: "100%" }}
           >
-            <Grid item>
+            <Grid>
               <Typography
                 variant="h3"
                 textAlign="center"
@@ -271,7 +267,11 @@ export default function LoginModal() {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} sm={6} alignItems="center" justifyContent="center">
+        <Grid
+          size={{ xs: 12, sm: 6 }}
+          alignItems="center"
+          justifyContent="center"
+        >
           {currentForm === "sign_in" && (
             <LoginForm handleClose={handleClose} toggleForm={setCurrentForm} />
           )}

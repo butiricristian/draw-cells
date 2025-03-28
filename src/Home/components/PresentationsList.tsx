@@ -1,6 +1,6 @@
 "use client";
 
-import { Edit } from "@mui/icons-material";
+import Edit from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Button,
@@ -13,7 +13,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { child, get, push, ref, remove, set } from "firebase/database";
+import { child, get, ref, remove } from "firebase/database";
 import React, { startTransition, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
@@ -81,7 +81,7 @@ export default function PresentationsList() {
       {Object.entries(presentations).length > 0 && (
         <Grid container spacing={2}>
           {Object.entries(presentations).map(([id, val]: any) => (
-            <Grid item key={id} xs={12} sm={6} md={4} lg={3}>
+            <Grid key={id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
               <Card>
                 <CardContent>
                   <Typography variant="h5">
@@ -117,12 +117,12 @@ export default function PresentationsList() {
       )}
       {Object.entries(presentations).length <= 0 && (
         <Grid container spacing={1} alignItems="center" direction="column">
-          <Grid item>
+          <Grid>
             <Typography variant="subtitle1">
               <i>You haven't created any presentation yet.</i>
             </Typography>
           </Grid>
-          <Grid item>
+          <Grid>
             <Button
               color="primary"
               variant="contained"

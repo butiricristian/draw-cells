@@ -17,7 +17,7 @@ export default function Landing() {
 
   return (
     <Grid container sx={{ height: "calc(100vh - 70px)" }} spacing={4}>
-      <Grid item xs={12} lg={5}>
+      <Grid size={{ xs: 12, lg: 5 }}>
         <Stack sx={{ height: "80%", pl: 10, pr: 10, pt: 20 }}>
           <Typography
             variant="h1"
@@ -30,7 +30,7 @@ export default function Landing() {
             Give life to your cells
           </Typography>
           <Grid container spacing={2} sx={{ mt: 4 }}>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <Button
                 fullWidth
                 variant="contained"
@@ -40,7 +40,7 @@ export default function Landing() {
                 Sign up
               </Button>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <Button
                 fullWidth
                 variant="outlined"
@@ -53,7 +53,7 @@ export default function Landing() {
           </Grid>
         </Stack>
       </Grid>
-      <Grid item xs={12} lg={7}>
+      <Grid size={{ xs: 12, lg: 7 }}>
         <Stack
           alignItems="center"
           justifyContent="center"

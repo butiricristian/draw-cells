@@ -1,6 +1,7 @@
 "use client";
 
-import { AccountCircle, ArrowDropDown } from "@mui/icons-material";
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
 import {
   AppBar,
   Button,
@@ -9,7 +10,6 @@ import {
   Stack,
   Toolbar,
   Typography,
-  useTheme,
 } from "@mui/material";
 import { signOut } from "firebase/auth";
 import React, { useEffect, useState, useTransition } from "react";
@@ -21,7 +21,6 @@ import { createNewPresentation } from "../actions";
 import { useRouter } from "next/navigation";
 
 const HomeHeader = () => {
-  const theme = useTheme();
   const dispatch = useDispatch();
   const user = useSelector((state: State) => state.home.user);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -61,12 +60,7 @@ const HomeHeader = () => {
 
   return (
     <AppBar position="static" style={{ zIndex: 25 }}>
-      <Toolbar
-        style={{
-          paddingLeft: theme.spacing(7),
-          paddingRight: theme.spacing(7),
-        }}
-      >
+      <Toolbar sx={{ pl: 7, pr: 7 }}>
         <Stack direction="row" style={{ flexGrow: 1 }} alignItems="center">
           <Typography variant="h6">Draw Cells</Typography>
           {user && (

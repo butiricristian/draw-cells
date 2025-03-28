@@ -1,4 +1,6 @@
-import { Close, Edit, Save } from "@mui/icons-material";
+import Close from "@mui/icons-material/Close";
+import Edit from "@mui/icons-material/Edit";
+import Save from "@mui/icons-material/Save";
 import {
   AppBar,
   Box,
