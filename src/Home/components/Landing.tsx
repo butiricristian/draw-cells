@@ -1,15 +1,19 @@
 import { Button, Grid, Stack, Typography } from "@mui/material";
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toggleLoginModalOpen } from "../reducers";
 import Image from "next/image";
+import State from "../../stateInterface";
 
 export default function Landing() {
+  const user = useSelector((state: State) => state.home.user);
   const dispatch = useDispatch();
 
   const handleLogin = () => {
     dispatch(toggleLoginModalOpen(true));
   };
+
+  if (user) return null;
 
   return (
     <Grid container sx={{ height: "calc(100vh - 70px)" }} spacing={4}>

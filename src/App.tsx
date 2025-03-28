@@ -26,21 +26,6 @@ const store = configureStore<any, PayloadAction<any>, any>({
 function App({ children }: { children?: React.ReactNode }) {
   const theme = createTheme({});
 
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      store.dispatch(setUser(null));
-      return;
-    }
-
-    store.dispatch(
-      setUser({
-        uid: user?.uid,
-        displayName: user?.displayName,
-        email: user?.email,
-      })
-    );
-  });
-
   return (
     <ThemeProvider theme={theme}>
       <Provider store={store}>{children}</Provider>

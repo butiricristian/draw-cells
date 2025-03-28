@@ -12,7 +12,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { signOut } from "firebase/auth";
-import React from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { auth } from "../../firebase-config";
 import { toggleLoginModalOpen } from "../../Home/reducers";
@@ -24,9 +24,14 @@ const HomeHeader = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const user = useSelector((state: State) => state.home.user);
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [isPending, startTransition] = React.useTransition();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [hasMounted, setHasMounted] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   const openLoginModal = () => {
     dispatch(toggleLoginModalOpen(true));
@@ -43,14 +48,16 @@ const HomeHeader = () => {
   const handleNewPresentation = () => {
     startTransition(async () => {
       const res = await createNewPresentation({ user });
-      console.log("handleNewPresentation", res);
       if (res) {
+        console.log("handleNewPresentation", res);
         router.push(`/presentations/${res.key}`);
       } else {
         console.error("Failed to create new presentation");
       }
     });
   };
+
+  if (!hasMounted) return null;
 
   return (
     <AppBar position="static" style={{ zIndex: 25 }}>

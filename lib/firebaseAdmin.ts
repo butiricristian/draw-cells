@@ -11,5 +11,6 @@ if (!admin.apps.length) {
   });
 }
 
+export const adminApp = admin.app();
 export const db = admin.database();
 export const auth = admin.auth();

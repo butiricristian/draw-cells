@@ -2,7 +2,6 @@
 
 import { CircularProgress, useTheme } from "@mui/material";
 import { get, ref, update } from "firebase/database";
-import { getDownloadURL, ref as storageRef } from "firebase/storage";
 import React, { useEffect, useRef, useState } from "react";
 import { DndProvider, useDrop, XYCoord } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
