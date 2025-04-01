@@ -27,6 +27,9 @@ import BCRIgG from "../public/assets/cells/BCR_IgG.svg";
 import BCRIgMMonomer from "../public/assets/cells/BCR_IgM_monomer.svg";
 import BCRIgMPentamer from "../public/assets/cells/BCR_IgM_pentamer.svg";
 import BCRIgMPentamer2 from "../public/assets/cells/BCR_IgM_pentamer_2.svg";
+import UpworkCell1 from "../public/assets/cells/upwork_cell_1.svg";
+import UpworkCell3 from "../public/assets/cells/upwork_cell_3.svg";
+import UpworkCell4 from "../public/assets/cells/upwork_cell_4.svg";
 // import SvgInline from './Sprites/SvgInline'
 
 export const rightDrawerWidth = 300;
@@ -65,4 +68,7 @@ export const SPRITE_TO_SVG_ELEMENT_MAP = {
   BCR_IgM_monomer: <BCRIgMMonomer id="BCR_IgM_monomer" />,
   BCR_IgM_pentamer: <BCRIgMPentamer id="BCR_IgM_pentamer" />,
   BCR_IgM_pentamer_2: <BCRIgMPentamer2 id="BCR_IgM_pentamer_2" />,
+  upwork_cell_1: <UpworkCell1 id="upwork_cells_1" />,
+  upwork_cell_3: <UpworkCell3 id="upwork_cells_3" />,
+  upwork_cell_4: <UpworkCell4 id="upwork_cells_4" />,
 };
