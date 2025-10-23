@@ -19,6 +19,7 @@ import { db } from "../../firebase-config";
 import { recomputeFrames, updatePresentationTitle } from "../../Frames/actions";
 import { toggleModal } from "../../Presentation/actions";
 import State from "../../stateInterface";
+import ExportVideo from "./ExportVideo";
 
 // interface HeaderProps {
 // }
@@ -121,6 +122,7 @@ const CanvasHeader = () => {
         >
           Get presentation link
         </Button>
+        <ExportVideo />
       </Toolbar>
     </AppBar>
   );
