@@ -32,7 +32,7 @@ export interface Sprite {
   position: Position;
   backgroundUrl?: string | undefined;
   animationType?: string | undefined;
-  scale?: { x: number | undefined; y: number | undefined };
+  scale?: number | undefined;
   duration?: number | undefined;
   minTravelDistance?: number | undefined;
   rangeOfMovement?: number | undefined;
