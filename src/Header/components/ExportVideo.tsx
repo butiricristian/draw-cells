@@ -48,13 +48,18 @@ export default function ExportVideo({}) {
       const img = new window.Image();
       img.src = `/assets/cells/${s.backgroundUrl}.svg`;
 
+      console.log("Rendering sprite", s.id, s);
+
       const sprite = new Konva.Image({
         x: s.position.x,
         y: s.position.y,
         image: img,
         width: s.width,
         height: s.height,
-        rotation: s.rotation,
+        rotationDeg: s.rotation,
+        offsetX: s.width / 2,
+        offsetY: s.height / 2,
+        opacity: s.opacity ?? 1,
       });
       layer.add(sprite);
     }
@@ -82,6 +87,21 @@ export default function ExportVideo({}) {
           const nextSprite = nextFrame.sprites.find((s) => s.id === sprite.id);
           const currentFrameIndex = Math.min(i, 30 * (sprite.duration ?? 1));
           if (nextSprite) {
+            const sharedProps = {
+              width:
+                sprite.width +
+                (nextSprite.width - sprite.width) *
+                  (currentFrameIndex / (30 * (sprite.duration ?? 1))),
+              height:
+                sprite.height +
+                (nextSprite.height - sprite.height) *
+                  (currentFrameIndex / (30 * (sprite.duration ?? 1))),
+              rotation:
+                sprite.rotation +
+                (nextSprite.rotation - sprite.rotation) *
+                  (currentFrameIndex / (30 * (sprite.duration ?? 1))),
+            };
+
             if (sprite.animationType === "LINEAR") {
               const newPosition = {
                 x:
@@ -95,6 +115,7 @@ export default function ExportVideo({}) {
               };
               newSprites.push({
                 ...sprite,
+                ...sharedProps,
                 id: `${sprite.id}-${i}`,
                 position: newPosition,
               });
@@ -122,6 +143,7 @@ export default function ExportVideo({}) {
               };
               newSprites.push({
                 ...sprite,
+                ...sharedProps,
                 id: `${sprite.id}-${i}`,
                 position: newPosition,
               });
@@ -154,6 +176,7 @@ export default function ExportVideo({}) {
 
               newSprites.push({
                 ...sprite,
+                ...sharedProps,
                 id: `${sprite.id}-${i}`,
                 position: newPosition,
               });
