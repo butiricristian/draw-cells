@@ -19,7 +19,6 @@ const BaseSpritePreview = memo(function BoxDragPreview(props: Sprite) {
     },
     [tickTock]
   );
-  const spriteToSvgMap: any = SPRITE_TO_SVG_ELEMENT_MAP;
 
   return (
     <div style={styles}>
@@ -40,7 +39,10 @@ const BaseSpritePreview = memo(function BoxDragPreview(props: Sprite) {
           zIndex: props.zIndex,
         }}
       >
-        {props.backgroundUrl && spriteToSvgMap[props.backgroundUrl]}
+        {props.backgroundUrl &&
+          SPRITE_TO_SVG_ELEMENT_MAP[
+            props.backgroundUrl as keyof typeof SPRITE_TO_SVG_ELEMENT_MAP
+          ].svg}
       </Box>
     </div>
   );

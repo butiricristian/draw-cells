@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import React, { LegacyRef, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDrag } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
 import { SPRITE_TO_SVG_ELEMENT_MAP } from "../constants";
@@ -42,8 +42,6 @@ export default function SidebarSprite({
     }
   }, [backgroundUrl]);
 
-  const spriteToSvgMap: any = SPRITE_TO_SVG_ELEMENT_MAP;
-
   return (
     <Box
       sx={{
@@ -58,7 +56,10 @@ export default function SidebarSprite({
         sx={{ width: 50, height: 50, cursor: "pointer" }}
         style={{ opacity: isSquareDragging ? 0.5 : 1 }}
       >
-        {backgroundUrl && spriteToSvgMap[backgroundUrl]}
+        {backgroundUrl &&
+          SPRITE_TO_SVG_ELEMENT_MAP[
+            backgroundUrl as keyof typeof SPRITE_TO_SVG_ELEMENT_MAP
+          ].svg}
       </Box>
       <Typography variant="body2">{name}</Typography>
     </Box>

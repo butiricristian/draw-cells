@@ -2,11 +2,9 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import SidebarSprite from "../../Sprites/SidebarSprite";
 import State from "../../stateInterface";
 import { loadBackgrounds, toggleSprites } from "../actions";
 import BaseSidebar from "./BaseSidebar";
-import { SPRITE_TO_SVG_ELEMENT_MAP } from "../../constants";
 import {
   Accordion,
   AccordionSummary,
@@ -18,8 +16,7 @@ import { setCurrentFrameBackground } from "../../Frames/actions";
 import { getDownloadURL, ref as storageRef, list } from "firebase/storage";
 import { storage } from "../../firebase-config";
 import InfiniteScroll from "react-infinite-scroll-component";
-
-const SPRITES_LIST = Object.keys(SPRITE_TO_SVG_ELEMENT_MAP);
+import SpritesSection from "./SpritesSection";
 
 export default function SpritesSidebar() {
   const dispatch = useDispatch();
@@ -76,33 +73,7 @@ export default function SpritesSidebar() {
         }
         anchor="left"
       >
-        <Accordion
-          elevation={0}
-          sx={{
-            width: "100%",
-            boxShadow: "none",
-            "&.MuiPaper-rounded": { borderRadius: 0 },
-          }}
-        >
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            Sprites
-          </AccordionSummary>
-          <Box
-            sx={{
-              height: "100%",
-              width: "100%",
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              alignItems: "center",
-              maxHeight: "calc(80vh)",
-              overflowY: "auto",
-            }}
-          >
-            {SPRITES_LIST.map((s, i) => (
-              <SidebarSprite key={`sprite-${i}`} backgroundUrl={s} name={s} />
-            ))}
-          </Box>
-        </Accordion>
+        <SpritesSection />
         <Accordion
           elevation={0}
           sx={{
