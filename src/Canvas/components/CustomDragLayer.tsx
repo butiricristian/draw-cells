@@ -57,6 +57,7 @@ export const CustomDragLayer = () => {
             height={item.height}
             rotation={item.rotation}
             name={item.name}
+            ratio={item.ratio}
           />
         );
       default:
