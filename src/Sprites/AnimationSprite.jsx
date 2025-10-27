@@ -162,7 +162,7 @@ export default function AnimationSprite(props) {
 
   useEffect(() => {
     const newImg = new window.Image();
-    newImg.src = `/assets/cells/${backgroundUrl}.svg`;
+    newImg.src = `/assets/cells/${backgroundUrl}`;
     newImg.onload = () => setImg(newImg);
   });
 
