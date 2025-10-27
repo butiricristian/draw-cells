@@ -2,6 +2,7 @@ import React, { memo, useEffect, useState } from "react";
 import { SPRITE_TO_SVG_ELEMENT_MAP } from "../constants";
 import { Sprite } from "../Frames/reducers/frames";
 import { Box } from "@mui/material";
+import InlineSvg from "./SvgInline";
 
 const styles: any = {
   position: "absolute",
@@ -10,7 +11,9 @@ const styles: any = {
   height: 50,
 };
 
-const BaseSpritePreview = memo(function BoxDragPreview(props: Sprite) {
+const BaseSpritePreview = memo(function BoxDragPreview(
+  props: Sprite & { name: string; ratio: number }
+) {
   const [tickTock, setTickTock] = useState(false);
   useEffect(
     function subscribeToIntervalTick() {
@@ -39,10 +42,14 @@ const BaseSpritePreview = memo(function BoxDragPreview(props: Sprite) {
           zIndex: props.zIndex,
         }}
       >
-        {props.backgroundUrl &&
-          SPRITE_TO_SVG_ELEMENT_MAP[
-            props.backgroundUrl as keyof typeof SPRITE_TO_SVG_ELEMENT_MAP
-          ].svg}
+        {props.backgroundUrl && (
+          <img
+            src={`/assets/cells/${props.backgroundUrl}`}
+            alt={props.name}
+            width={50}
+            height={50 / props.ratio}
+          />
+        )}
       </Box>
     </div>
   );

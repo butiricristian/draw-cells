@@ -68,13 +68,18 @@ export default function SpritesSection() {
             overflowY: "auto",
           }}
         >
-          {filteredSprites.map((s, i) => (
-            <SidebarSprite
-              key={`sprite-${i}`}
-              backgroundUrl={s}
-              name={SPRITE_TO_SVG_ELEMENT_MAP[s].name}
-            />
-          ))}
+          {filteredSprites.map((s, i) => {
+            const sprite = SPRITE_TO_SVG_ELEMENT_MAP[s];
+            return (
+              <SidebarSprite
+                key={`sprite-${i}`}
+                backgroundUrl={`${sprite.category}/${sprite.name}${
+                  sprite.variants ? ` - ${sprite.variants[0]}` : ""
+                }.svg`}
+                name={sprite.name}
+              />
+            );
+          })}
         </Box>
       </Box>
     </Accordion>

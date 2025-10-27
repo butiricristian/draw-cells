@@ -9,7 +9,8 @@ const CanvasSprite = React.forwardRef(
 
     React.useEffect(() => {
       const img = new window.Image();
-      img.src = `/assets/cells/${shapeProps.backgroundUrl}.svg`;
+      console.log("Loading image for sprite:", shapeProps.backgroundUrl);
+      img.src = `/assets/cells/${shapeProps.backgroundUrl}`;
       img.onload = () => setImage(img);
       img.onerror = (err) => console.error("Error loading image", err);
     }, [shapeProps.backgroundUrl]);

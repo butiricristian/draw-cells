@@ -2,7 +2,7 @@ import { Box, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useDrag } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
-import { SPRITE_TO_SVG_ELEMENT_MAP } from "../constants";
+import InlineSvg from "./SvgInline";
 
 interface SidebarSpriteProps {
   backgroundUrl: string;
@@ -22,6 +22,7 @@ export default function SidebarSprite({
         type: "SIDEBAR_SPRITE",
         backgroundUrl,
         ratio: ratio,
+        name,
       },
       collect: (monitor) => ({
         isDragging: !!monitor.isDragging(),
@@ -56,12 +57,18 @@ export default function SidebarSprite({
         sx={{ width: 50, height: 50, cursor: "pointer" }}
         style={{ opacity: isSquareDragging ? 0.5 : 1 }}
       >
-        {backgroundUrl &&
-          SPRITE_TO_SVG_ELEMENT_MAP[
-            backgroundUrl as keyof typeof SPRITE_TO_SVG_ELEMENT_MAP
-          ].svg}
+        {backgroundUrl && (
+          <img
+            src={`/assets/cells/${backgroundUrl}`}
+            alt={name}
+            width={50}
+            height={50 / ratio}
+          />
+        )}
       </Box>
-      <Typography variant="body2">{name}</Typography>
+      <Typography variant="caption" sx={{ textAlign: "center" }}>
+        {name}
+      </Typography>
     </Box>
   );
 }
