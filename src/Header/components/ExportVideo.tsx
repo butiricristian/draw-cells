@@ -46,7 +46,7 @@ export default function ExportVideo({}) {
 
     for (const s of sprites) {
       const img = new window.Image();
-      img.src = `/assets/cells/${s.backgroundUrl}.svg`;
+      img.src = `/assets/cells/${s.backgroundUrl}`;
 
       console.log("Rendering sprite", s.id, s);
 
@@ -56,7 +56,7 @@ export default function ExportVideo({}) {
         image: img,
         width: s.width,
         height: s.height,
-        rotationDeg: s.rotation,
+        rotation: s.rotation,
         offsetX: s.width / 2,
         offsetY: s.height / 2,
         opacity: s.opacity ?? 1,
