@@ -6,7 +6,39 @@ import { VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "../../constants";
 import { Sprite } from "../../Frames/reducers/frames";
 import Konva from "konva";
 
-export default function ExportVideo({}) {
+async function uploadImage(file: File, presentationId: string) {
+  // Step 1: get a presigned URL
+  const res = await fetch("/api/presign", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      filename: file.name,
+      filetype: file.type,
+      presentationId,
+    }),
+  });
+
+  const { url, key } = await res.json();
+
+  // Step 2: upload directly to S3
+  const upload = await fetch(url, {
+    method: "PUT",
+    headers: { "Content-Type": file.type },
+    body: file,
+  });
+
+  if (!upload.ok) throw new Error("Upload failed");
+
+  const fileUrl = `https://${process.env.NEXT_PUBLIC_S3_BUCKET!}.s3.${process
+    .env.NEXT_PUBLIC_AWS_REGION!}.amazonaws.com/${key}`;
+  return fileUrl;
+}
+
+export default function ExportVideo({
+  presentationId,
+}: {
+  presentationId: string;
+}) {
   const [isExporting, setIsExporting] = useState(false);
 
   const frames = useSelector((state: State) => state.frames.frames);
@@ -30,7 +62,7 @@ export default function ExportVideo({}) {
     return stage;
   };
 
-  const renderSprites = (stage: Konva.Stage, sprites: Sprite[]) => {
+  const renderSprites = async (stage: Konva.Stage, sprites: Sprite[]) => {
     stage.destroyChildren();
     const layer = new Konva.Layer();
     stage.add(layer);
@@ -65,13 +97,21 @@ export default function ExportVideo({}) {
     }
 
     stage.draw();
-    return stage.toDataURL();
+    const canvas = stage.toCanvas({ pixelRatio: 2 });
+    const blob: Blob = await new Promise((resolve, reject) => {
+      canvas.toBlob(
+        (b) => (b ? resolve(b) : reject(new Error("Canvas toBlob failed"))),
+        "image/png",
+        1
+      );
+    });
+    return blob;
   };
 
   const handleExport = async () => {
     setIsExporting(true);
     const stage = createStage();
-    const framesDataURLs: string[] = [];
+    const files = [];
 
     for (let frameIdx = 0; frameIdx < frames.length - 1; frameIdx++) {
       const frame = frames[frameIdx];
@@ -190,10 +230,20 @@ export default function ExportVideo({}) {
             });
           }
         }
-        const newFrame = renderSprites(stage, newSprites);
-        framesDataURLs.push(newFrame);
+        const newFrame: Blob = await renderSprites(stage, newSprites);
+        const filename = `frame-${String(frameIdx).padStart(4, "0")}-${String(
+          i
+        ).padStart(4, "0")}.png`;
+        const file = new File([newFrame], filename, {
+          type: newFrame.type || "image/png",
+        });
+        files.push(file);
       }
     }
+
+    const frameURLs = await Promise.all(
+      files.map((file) => uploadImage(file, presentationId))
+    );
 
     try {
       const response = await fetch("/api/export-video", {
@@ -201,7 +251,10 @@ export default function ExportVideo({}) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ frames: framesDataURLs }), // Replace with actual user ID
+        body: JSON.stringify({
+          frames: frameURLs,
+          bucket: "draw-cells-s3-bucket",
+        }), // Replace with actual user ID
       });
       const blob = await response.blob(); // 👈 Get video as a Blob
       const url = URL.createObjectURL(blob); // 👈 Create temporary URL

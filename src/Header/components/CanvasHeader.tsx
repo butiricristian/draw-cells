@@ -35,7 +35,7 @@ const CanvasHeader = () => {
   const [isTitleEditing, setIsTitleEditing] = useState(false);
   const [currentTitle, setCurrentTitle] = useState(presentationTitle);
   const user = useSelector((state: State) => state.home.user);
-  const { id: presentationId } = useParams();
+  const { id: presentationId } = useParams<{ id: string }>();
 
   useEffect(() => {
     setCurrentTitle(presentationTitle);
@@ -122,7 +122,7 @@ const CanvasHeader = () => {
         >
           Get presentation link
         </Button>
-        <ExportVideo />
+        <ExportVideo presentationId={presentationId} />
       </Toolbar>
     </AppBar>
   );

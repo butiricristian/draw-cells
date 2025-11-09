@@ -23,9 +23,7 @@ export async function POST(req: NextRequest) {
     const invoke = new InvokeCommand({
       FunctionName: process.env.LAMBDA_FUNCTION_NAME!, // e.g., "ffmpeg-images-to-video"
       InvocationType: "RequestResponse",
-      Payload: Buffer.from(
-        JSON.stringify({ body: JSON.stringify(body), isBase64Encoded: false })
-      ),
+      Payload: new TextEncoder().encode(JSON.stringify(body)),
     });
 
     const resp = await lambdaClient.send(invoke);
